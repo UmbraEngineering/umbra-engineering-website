@@ -11,7 +11,6 @@
   "dependencies": {
     "handlebars": "1.0.5beta",
     "express": "2.5.8",
-    "hook.io": "0.8.9",
     "mailer": "0.6.7",
     "async": "0.1.18",
     "sechash": "0.2.1",
