@@ -1,0 +1,17 @@
+{
+  "author": "James Brumond <james@umbraengineering.com> (http://umbraengineering.com)",
+  "name": "umbraengineering.com",
+  "description": "Website application for umbraengineering.com",
+  "version": "0.0.0",
+  "homepage": "http://umbraengineering.com",
+  "repository": {
+    "url": "git://github.com/UmbraEngineering/umbra-engineering-website.git"
+  },
+  "main": "start.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
