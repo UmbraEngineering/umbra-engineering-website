@@ -46,7 +46,7 @@ require('./routes');
 
 // Start the server
 
-app.listen(3000, function() {
+app.listen(conf.core.port, function() {
 	console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 

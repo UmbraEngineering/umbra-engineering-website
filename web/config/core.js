@@ -1,11 +1,13 @@
 module.exports = function(app, conf) {
 	
 	app.configure('development', function() {
-		conf.baseUrl = 'http://localhost:3000';
+		conf.port     = 3000;
+		conf.baseUrl  = 'http://localhost:' + port;
 	});
 
 	app.configure('production', function() {
-		conf.baseUrl = 'http://umbraengineering.com';
+		conf.port     = process.env.PORT;
+		conf.baseUrl  = 'http://umbraengineering.com';
 	});
 	
 };
