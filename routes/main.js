@@ -1,8 +1,8 @@
 
-var consts     = require('consts');
-var app        = require(consts.LIB_PATH + '/app');
+var consts  = require('consts');
+var app     = require(consts.LIB_PATH + '/app');
 
-app.get('/foo', function(req, res) {
-	res.send('FOO!');
+app.get('/', function(req, res) {
+	
 });
 
