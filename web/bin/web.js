@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 
-var WebHook = require('../lib/web').WebHook;
+var WebHook = require('../lib/web').Web;
 
-var myhook = new WebHook({
-	name: "web-hook",
+var hook = global.webHook = new WebHook({
+	name: 'web-hook',
 	debug: true,
 	autoheal: true
 });
 
-myhook.start();
+hook.start();
 
-/* End of file web.js */
-/* Location: ./web/bin/web.js */

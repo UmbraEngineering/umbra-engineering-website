@@ -1,40 +1,18 @@
 
-var Hook  = require('hook.io').Hook;
-var util  = require('util');
+var Hook = require('hook.io').Hook;
+var util = require('util');
 
-var WebHook = exports.WebHook = function(options) {
+exports.hook = null;
+
+var Web = exports.Web = function(options) {
 	Hook.call(this, options);
+	var self = exports.hook = this;
 	
-	// Load configuration
-	this.config.use('file', { file: './config.json' });
-	this.conf = this.config.get('web');
-	
-	// Bind event listeners
-	this.on('hook::ready', function() {
-		
-		/**
-		 * Event listener
-		 *
-		 * @param   function  callback
-		 */
-		this.on('*::foo', function(callback) {
-			
-		}.bind(this));
-		
-	}.bind(this));
+	self.on('hook::ready', function() {
+		require('./app');
+	});
 };
 
-util.inherits(WebHook, Hook);
+// Web inherits from Hook
+util.inherits(Web, Hook);
 
-/**
- * Do something
- * 
- * @access  public
- * @return  void
- */
-WebHook.prototype.doSomething = function() {
-	
-};
-
-/* End of file web.js */
-/* Location: ./web/lib/web.js */
