@@ -1,0 +1,59 @@
+
+#wrapper {
+	padding: 25px 0;
+}
+
+#header {
+	color: #aaa;
+	padding: 10px;
+}
+
+#header h1 {
+	padding: 0;
+	color: #444;
+	font-size: 24px;
+	font-size: 2.4rem;
+	font-weight: normal;
+}
+
+#header h1 .umbra {
+	color: #aaa;
+}
+
+#header a {
+	color: inherit;
+}
+
+nav ul {
+	margin: 0;
+	padding: 0;
+}
+
+nav li {
+	margin: 0;
+	float: left;
+	padding: 10px 25px;
+}
+
+nav ul:after {
+	display: block;
+	visibility: hidden;
+	content: " ";
+	height: 0;
+	line-height: 0;
+	clear: left;
+}
+
+#content {
+	
+}
+
+#content a {
+	color: #5B7C8F;
+}
+
+#content a:hover {
+	text-decoration: underline;
+}
+
+
