@@ -18,9 +18,12 @@
     "merge": "1.0.0",
     "async-functions": "0.0.1",
     "json-output": "0.0.0",
-    "dateformat": "1.0.2-1.2.3"
+    "dateformat": "1.0.2-1.2.3",
+    "useragent": "1.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt-css": "latest"
+  },
   "optionalDependencies": {},
   "engines": {
     "node": "0.6.18"

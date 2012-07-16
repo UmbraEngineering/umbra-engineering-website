@@ -1,41 +1,95 @@
 
+body, html {
+	height: 100%;
+	background: #ccc;
+}
+
+::selection {
+	color: #888;
+	background: #222;
+	text-shadow: none;
+}
+
 #wrapper {
-	padding: 25px 0;
+	padding: 0;
+	min-height: 100%;
+	position: relative;
+}
+
+#header-wrapper {
+	width: 100%;
+	margin: 0;
+	padding: 0 0 12px;
+	overflow: hidden;
 }
 
 #header {
 	color: #aaa;
-	padding: 10px;
+	background: #222 url('../images/bg.png') top left repeat;
+	padding: 50px 10px 25px;
+	box-shadow: 0 6px 6px #111;
+	border-bottom: 35px solid #333;
 }
 
 #header h1 {
+	margin: 0;
 	padding: 0;
-	color: #444;
-	font-size: 24px;
-	font-size: 2.4rem;
-	font-weight: normal;
+	color: #3a3a3a;
+	font-size: 50px;
+	font-size: 5rem;
+	font-family: Tangerine;
+	text-shadow: -1px -1px 1px #111;
 }
 
-#header h1 .umbra {
-	color: #aaa;
-}
-
-#header a {
+#header h1 a,
+#header h1 a:hover {
 	color: inherit;
 }
 
-nav ul {
-	margin: 0;
-	padding: 0;
+#header .big-heading {
+	color: #fff;
+	font-size: 56px;
+	font-size: 5.6rem;
+	font-weight: normal;
+	padding: 50px 50px 25px;
+	font-family: DistrictThin;
+	text-shadow: 0 2px 1px #000;
 }
 
-nav li {
+#nav ul {
+	margin: 0;
+	padding: 25px 0 0;
+}
+
+#nav li {
 	margin: 0;
 	float: left;
-	padding: 10px 25px;
+	font-style: italic;
+	padding-right: 40px;
 }
 
-nav ul:after {
+#nav li:last-of-type {
+	padding-right: 0;
+}
+
+#nav a {
+	font-size: 18px;
+	font-size: 1.8rem;
+	text-shadow: 1px 2px 1px #000;
+}
+
+#header a,
+#footer a {
+	color: #888;
+}
+
+
+#header a:hover,
+#footer a:hover {
+	color: #fff;
+}
+
+#nav ul:after {
 	display: block;
 	visibility: hidden;
 	content: " ";
@@ -45,7 +99,19 @@ nav ul:after {
 }
 
 #content {
-	
+	padding: 75px 0 275px;
+}
+
+#content p {
+	color: #333;
+	text-shadow: 0px 1px 1px #eee;
+}
+
+#content h3 {
+	color: #555;
+	text-shadow: none;
+	font-weight: normal;
+	margin-bottom: 25px;
 }
 
 #content a {
@@ -55,5 +121,47 @@ nav ul:after {
 #content a:hover {
 	text-decoration: underline;
 }
+
+#footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	font-size: 12px;
+	font-size: 1.2rem;
+	padding-top: 12px;
+	overflow: hidden;
+}
+
+#footer-inner {
+	height: 150px;
+	background: #000;
+	border-top: 3px #888 solid;
+}
+
+#footer p {
+	padding: 25px 0;
+	font-size: 12px;
+	font-size: 1.2rem;
+	text-shadow: 1px 1px 1px #000;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

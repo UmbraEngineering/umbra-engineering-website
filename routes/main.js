@@ -3,6 +3,6 @@ var consts  = require('consts');
 var app     = require(consts.LIB_PATH + '/app');
 
 app.get('/', function(req, res) {
-	res.render('index', res.view.data());
+	res.renderPage('index', {ua: req.ua});
 });
 

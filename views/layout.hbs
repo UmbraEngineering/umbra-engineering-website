@@ -12,25 +12,46 @@
 	
 	<title>Umbra Engineering</title>
 	
+	{{#if _development }}
 	{{#each _stylesheets }}
 	<link rel="stylesheet" type="text/css" href="{{ this }}" />
 	{{/each}}
+	{{else}}
+	<link rel="stylesheet" type="text/css" href="/style.min.css" />
+	{{/if}}
 	
 	<!--[if lt IE 9]>
-		<link rel="stylesheet" type="text/css" href="public/css/ie.css">
+		<link rel="stylesheet" type="text/css" href="/stylesheets/ie.css">
 	<![endif]-->
 	
-	<script type="text/javascript" src="javascripts/prefixfree.min.js"></script>
+	<script type="text/javascript" src="/javascripts/prefixfree.min.js"></script>
 	
 </head>
 <body>
 	
 	<div class="container" id="wrapper">
 		
-		<div class="row" id="header">
-			<div class="twelve columns">
-				<h1><a href="/"><span class="umbra">Umbra</span> Engineering</a></h1>
-				{{> navigation }}
+		<div id="header-wrapper">
+			<div id="header">
+				<div class="row">
+					<div class="five columns">
+						<h1><a href="/">Umbra Engineering</a></h1>
+					</div>
+					<div class="seven columns" id="nav">
+						<ul class="top-level">
+							<li><a href="/services">Services</a></li>
+							<li><a href="/contact">Contact Us</a></li>
+							<li><a href="/portfolio">Portfolio</a></li>
+							<li><a href="/open-source">Open Source</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="row">
+					<h2 class="big-heading">
+						Professional Node.js<br />
+						application development
+					</h2>
+				</div>
 			</div>
 		</div>
 		
@@ -38,17 +59,26 @@
 			{{{ body }}}
 		</div>
 		
-		<div class="row" id="footer">
-			<p>
-				Copyright &copy; {{now "yyyy" }} Umbra Engineering LLC
-			</p>
+		<div id="footer">
+			<div id="footer-inner">
+				<div class="row">
+					<p>
+						Copyright &copy; {{now "yyyy" }} Umbra Engineering LLC<br />
+						Powered by <a href="http://nodejs.org">Node.js</a> and <a href="http://expressjs.com">Express</a>.
+						Hosted on <a href="http://heroku.com">Heroku</a>.
+					</p>
+				</div>
+			</div>
 		</div>
 	
 	</div>
 	
-	{{#each _javascripts }}
-	<script type="text/javascript" src="{{ this }}"></script>
-	{{/each}}
+	{{#if _development}}
+	<script type="text/javascript" src="/javascripts/yepnope.js"></script>
+	<script type="text/javascript" src="/javascripts/main.js"></script>
+	{{else}}
+	<script type="text/javascript" src="/app.min.js"></script>
+	{{/if}}
 	
 </body>
 </html>

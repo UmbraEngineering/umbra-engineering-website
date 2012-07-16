@@ -110,3 +110,52 @@
     	dl.contained.tabs.mobile dd a { padding: 18px 20px; }
     	dl.nice.contained.tabs.mobile dd a { padding: 18px 20px; }
 	}
+	
+	@media only screen and (max-width: 767px) {
+		
+		#wrapper {
+			padding: 10px 0;
+		}
+		
+		#header {
+			border-bottom-width: 2px;
+		}
+		
+		#header h1 {
+			font-size: 32px;
+			font-size: 3.2rem;
+			border-bottom: 2px #468 solid;
+		}
+		
+		nav {
+			padding: 0;
+			border-radius: 0;
+			box-shadow: none;
+			background: transparent;
+		}
+		
+		nav li {
+			padding: 10px 25px 0 0;
+		}
+		
+		nav a {
+			font-size: 18px;
+			font-size: 1.8rem;
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
