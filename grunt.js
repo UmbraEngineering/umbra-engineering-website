@@ -1,14 +1,12 @@
 
+require('exists-patch').patch();
+
 module.exports = exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-css');
 	init(grunt);
 };
 	
 exports.stylesheets = [
-	'public/fonts/district-thin/stylesheet.css',
-	'public/fonts/latin-modern/stylesheet.css',
-	'public/fonts/tangerine/stylesheet.css',
-	'public/fonts/calligraffiti/stylesheet.css',
 	'public/stylesheets/globals.css',
 	'public/stylesheets/ui.css',
 	'public/stylesheets/forms.css',
