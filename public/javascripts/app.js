@@ -169,7 +169,9 @@
 
 	// ------------------------------------------------------------------
 	// ------------------------------------------------------------------
-		this.showMessage('warn', 'This site is still under construction. Please come back later.');
+		setTimeout(_.bind(function() {
+			this.showMessage('warn', 'This site is still under construction. Please come back later.');
+		}, this), 2000);
 	// ------------------------------------------------------------------
 	// ------------------------------------------------------------------
 		
