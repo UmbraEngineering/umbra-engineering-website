@@ -1,0 +1,79 @@
+<div class="content-section">
+	<div class="row">
+		<h3>Contact US</h3>
+		<p>
+			Want to work with us? Feel free to use the form below to contact us and we'll try to
+			get back to you soon.
+		</p>
+		<form action="/contact" method="post" id="contact-form">
+			
+			<!-- Left Panel -->
+			<fieldset class="basics four columns">
+			
+				<label class="name required">
+					<div class="label">Name</div>
+					<input type="text" name="name" value="" placeholder="eg. Joe Bob" required />
+				</label>
+				
+				<label class="company">
+					<div class="label">Company</div>
+					<input type="text" name="company" value="" placeholder="eg. Joe Bob's Awesome Shop" />
+				</label>
+				
+				<label class="email required">
+					<div class="label">Email</div>
+					<input type="email" name="email" value="" placeholder="eg. joebob@example.com" required />
+				</label>
+				
+				<label class="reason required" for="reason">
+					<div class="label">Reason for Contact</div>
+				</label>
+				
+				<ul class="reasons radios">
+					<li><label>
+						<input type="radio" name="reason" value="request-quote" /> Request a Quote
+					</label></li>
+					<li><label>
+						<input type="radio" name="reason" value="request-info" /> Request Information
+					</label></li>
+					<li><label>
+						<input type="radio" name="reason" value="other" /> Other:
+						<input type="text" name="reason-other" value="" placeholder="Enter reason here..." />
+					</label></li>
+				</ul>
+				
+			</fieldset>
+			
+			<!-- Right Panel -->
+			<fieldset class="message eight columns">
+			
+				<label class="message required">
+					<div class="label">Message</div>
+					<textarea name="message" placeholder="Type you message here..." required></textarea>
+				</label>
+				
+				<div class="buttons">
+					<input type="reset" value="Clear Form" class="reset" />
+					<input type="submit" value="Send Message" class="submit" />
+				</div>
+				
+			</fieldset>
+		</form>
+	</div>
+</div>
+<div class="content-section darker-1">
+	<div class="row">
+		<h3>Connect With Us</h3>
+		<p>
+			Use Facebook? Twitter? LinkedIn? Find us all over the internet!
+		</p>
+		{{#each socialIcons}}
+		<div class="social-icon">
+			<a href="{{ this.url }}">
+				<img src="/images/{{ this.img }}" width="64" height="64" alt="{{ this.alt }}" title="" />
+				<span>{{ this.text }}</span>
+			</a>
+		</div>
+		{{/each}}
+	</div>
+</div>

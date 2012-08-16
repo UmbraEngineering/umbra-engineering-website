@@ -18,7 +18,7 @@ exports.stylesheets = [
 	
 exports.javascripts = [
 	'public/javascripts/jquery-1.7.2.min.js',
-	'public/javascripts/jquery.placeholder.min.js',
+	'public/javascripts/placeholder.js',
 	'public/javascripts/lodash.js',
 	'public/javascripts/eventemitter2.js',
 	'public/javascripts/spin.js',

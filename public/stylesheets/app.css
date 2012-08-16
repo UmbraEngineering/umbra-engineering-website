@@ -16,6 +16,8 @@ body, html {
 	position: relative;
 }
 
+/* ==  Header  == */
+
 #header-wrapper {
 	width: 100%;
 	margin: 0;
@@ -55,6 +57,8 @@ body, html {
 	font-family: DistrictThin;
 	text-shadow: 0 2px 1px #000;
 }
+
+/* ==  Navigation  == */
 
 #nav ul {
 	margin: 0;
@@ -98,13 +102,59 @@ body, html {
 	clear: left;
 }
 
-#content {
-	padding: 75px 0 275px;
+/* ==  Loading/Messages  == */
+
+#loading {
+	width: 150px;
+	height: 75px;
+	margin: auto;
+	display: none;
 }
 
-#content p {
-	color: #333;
-	text-shadow: 0px 1px 1px #eee;
+#messages .msg {
+	position: relative;
+}
+
+#messages .msg .close {
+	position: absolute;
+	top: 1px;
+	right: 4px;
+	cursor: pointer;
+}
+
+#messages .msg.warn {
+	color: #770;
+	padding: 10px;
+	background: #ffc;
+	border: 1px #cc3 solid;
+	border-radius: 8px;
+}
+
+
+
+/* ==  Content Area  == */
+
+#content-wrapper {
+	padding: 25px 0 0;
+}
+
+#content {
+	
+}
+
+.content-section {
+	padding: 50px 0 100px;
+	border-bottom: 1px #555 solid;
+}
+
+#content .content-section:last-of-type {
+	padding-bottom: 275px;
+	border: 0;
+}
+
+.content-section.darker-1 {
+	background: #88888c;
+	border-color: #aaa;
 }
 
 #content h3 {
@@ -114,6 +164,24 @@ body, html {
 	margin-bottom: 25px;
 }
 
+#content .darker-1 h3 {
+	color: #eee;
+}
+
+#content p {
+	color: #333;
+	line-height: 1.4;
+	font-size: 18px;
+	font-size: 1.8rem;
+	margin: 10px 25px;
+	text-shadow: 0px 1px 1px #eee;
+}
+
+#content .darker-1 p {
+	color: #eee;
+	text-shadow: 0px 1px 1px #555;
+}
+
 #content a {
 	color: #5B7C8F;
 }
@@ -121,6 +189,177 @@ body, html {
 #content a:hover {
 	text-decoration: underline;
 }
+
+#content pre {
+	font-size: 16px;
+	font-family: 'Ubuntu Mono', monospace;
+}
+
+/* ==  Clients  == */
+
+#clients {
+	padding: 25px;
+}
+
+.client {
+	display: inline-block;
+}
+
+.client img {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+/* ==  Forms  == */
+
+form fieldset {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+form input[type="text"],
+form input[type="email"],
+form textarea {
+	padding: 10px;
+	border: 2px #aaa solid;
+	border-radius: 5px;
+	font: inherit;
+	font-size: 16px;
+	font-size: 1.6rem;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form textarea:focus {
+	outline: 0;
+	border-color: #26b;
+}
+
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+	background: #e3e3e3;
+	border: 1px solid #bbb;
+	border-radius: 3px;
+	box-shadow: inset 0 0 1px 1px #f6f6f6;
+	color: #333;
+	font: bold 12px "helvetica neue", helvetica, arial, sans-serif;
+	line-height: 1;
+	padding: 8px 0 9px;
+	text-align: center;
+	text-shadow: 0 1px 0 #fff;
+	width: 150px;
+}
+
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover {
+	background: #d9d9d9;
+	box-shadow: inset 0 0 1px 1px #eaeaea;
+	color: #222;
+	cursor: pointer;
+}
+
+input[type="button"]:active,
+input[type="submit"]:active,
+input[type="reset"]:active {
+	background: #d0d0d0;
+	box-shadow: inset 0 0 1px 1px #e3e3e3;
+	color: #000;
+}
+
+/* ==  Contact Form  == */
+
+#contact-form {
+	padding: 15px 50px;
+}
+
+#contact-form ul.radios {
+	margin: 0;
+	padding: 0;
+}
+
+#contact-form ul.radios li {
+	padding-left: 15px;
+	margin: 0;
+}
+
+#contact-form ul.radios input[type="radio"] {
+	position: relative;
+	top: 2px;
+}
+
+#contact-form ul.radios input[type="text"] {
+	margin-top: 8px;
+	font-size: 14px;
+	font-size: 1.4rem;
+	padding: 3px;
+	border-radius: 4px;
+}
+
+#contact-form label.message {
+	margin-left: 25px;
+}
+
+#contact-form textarea {
+	height: 250px;
+}
+
+#contact-form .reset,
+#contact-form .submit {
+	margin: 15px 0 0 25px;
+}
+
+#contact-form label.required .label:after {
+	content: "*";
+	color: #b00;
+	font-size: 12px;
+	font-size: 1.2rem;
+	position: relative;
+	top: -3px;
+	left: 3px;
+}
+
+/* ==  Social Icons  == */
+
+#content .social-icon {
+	position: relative;
+	padding: 15px 35px;
+}
+
+#content .social-icon a {
+	color: #fff;
+	font-size: 16px;
+	font-size: 1.6rem;
+	letter-spacing: 1px;
+	text-shadow: 1px 1px 1px #555;
+	font-family: RockSalt, sans-serif;
+}
+
+#content .social-icon a:hover {
+	text-decoration: none;
+	text-shadow: 1px 1px 1px #222;
+}
+
+#content .social-icon a img {
+	width: 64px;
+	height: 64px;
+}
+
+#content .social-icon a:hover img {
+	
+}
+
+#content .social-icon a span {
+	position: relative;
+	top: -25px;
+}
+
+/* ==  Footer  == */
 
 #footer {
 	position: absolute;
@@ -135,11 +374,11 @@ body, html {
 #footer-inner {
 	height: 150px;
 	background: #000;
-	border-top: 3px #888 solid;
+	border-top: 1px #bbb solid;
 }
 
 #footer p {
-	padding: 25px 0;
+	padding: 50px 0;
 	font-size: 12px;
 	font-size: 1.2rem;
 	text-shadow: 1px 1px 1px #000;
