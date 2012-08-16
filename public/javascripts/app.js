@@ -114,7 +114,9 @@
 					$loading.animate({ opacity: 'show', height: 'show' }, 500, function() {
 						spinner._spinner.spin($loading[0]);
 						spinner._shown = true;
-						callback && callback();
+						if (typeof callback === 'function') {
+							callback();
+						}
 					});
 				}
 			},
@@ -123,7 +125,9 @@
 					spinner._spinner.stop();
 					$loading.animate({ opacity: 'hide', height: 'hide' }, 500, function() {
 						spinner._shown = false;
-						callback && callback();
+						if (typeof callback === 'function') {
+							callback();
+						}
 					});
 				}
 			}
@@ -282,7 +286,7 @@
 			paddingBottom: showHide,
 			marginTop: showHide,
 			marginBottom: showHide
-		}
+		};
 	}
 
 }(window, document, location));
