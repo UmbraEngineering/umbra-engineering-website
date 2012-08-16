@@ -125,14 +125,14 @@ exports.validateNumberField = function(value, reqs) {
  * @return  array
  */
 
-required: true,
-values: ['request-quote', 'request-info'],
-otherValue: 'other',
-otherValidation: validation.textField({
-	required: true,
-	minLength: 2,
-	maxLength: 50
-})
+//required: true,
+//values: ['request-quote', 'request-info'],
+//otherValue: 'other',
+//otherValidation: validation.textField({
+//	required: true,
+//	minLength: 2,
+//	maxLength: 50
+//})
 
 exports.validateRadioField = function(value, reqs) {
 	var failures = [ ];
