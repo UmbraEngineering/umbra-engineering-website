@@ -22,7 +22,8 @@ exports.javascripts = [
 	'public/javascripts/lodash.js',
 	'public/javascripts/eventemitter2.js',
 	'public/javascripts/spin.js',
-	'public/javascripts/app.js'
+	'public/javascripts/app.js',
+	'public/javascripts/main.prod.js'
 ];
 
 function init(grunt) {

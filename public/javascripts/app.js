@@ -237,6 +237,7 @@
 		}, this));
 	};
 	
+	// This displays messages at the top of the page
 	App.prototype.showMessage = function(style, msg, callback, onclose) {
 		if (typeof msg === 'undefined') {
 			msg = style;
