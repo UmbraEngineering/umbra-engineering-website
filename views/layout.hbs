@@ -60,7 +60,18 @@
 		
 		<div id="content-wrapper">
 			<div id="loading"></div>
-			<div id="messages" class="row"></div>
+			<div id="messages" class="row">
+			{{#if messages}}
+				{{#each messages}}
+				<div class="msg">{{ this }}</div>
+				{{/each}}
+			{{/if}}
+			{{#if errors}}
+				{{#each errors}}
+				<div class="msg error">{{ this }}</div>
+				{{/each}}
+			{{/if}}
+			</div>
 			<div id="content">
 				{{{ body }}}
 			</div>

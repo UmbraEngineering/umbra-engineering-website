@@ -9,7 +9,7 @@ module.exports = exports = function(grunt) {
 exports.stylesheets = [
 	'public/stylesheets/globals.css',
 	'public/stylesheets/ui.css',
-	'public/stylesheets/forms.css',
+//	'public/stylesheets/forms.css',
 	'public/stylesheets/orbit.css',
 	'public/stylesheets/reveal.css',
 	'public/stylesheets/app.css',

@@ -27,11 +27,9 @@ var socialIcons = [
 var contactForm = new validation.Validator({
 	name: validation.textField({
 		required: true,
-		minLength: 2,
 		maxLength: 50
 	}),
 	company: validation.textField({
-		minLength: 2,
 		maxLength: 75
 	}),
 	email: validation.textField({
@@ -44,7 +42,7 @@ var contactForm = new validation.Validator({
 		otherValue: 'other',
 		otherValidation: validation.textField({
 			required: true,
-			minLength: 2,
+			minLength: 5,
 			maxLength: 50
 		})
 	}),
@@ -57,21 +55,94 @@ var contactForm = new validation.Validator({
 
 // ------------------------------------------------------------------
 
+var validationErrorMessages = {
+	name: {
+		required: 'The "name" field is required',
+		maxLength: 'The "name" field cannot be longer than 50 characters'
+	},
+	company: {
+		maxLength: 'The "company" field cannot be longer than 75 characters'
+	},
+	email: {
+		required: 'The "email" field is required',
+		type: 'Please enter a valid email address'
+	},
+	reason: {
+		required: 'The "reason" field is required',
+		values: 'Please select one of the given options for the "reason" field',
+		other: {
+			required: 'The "reason" field is required',
+			minLength: 'The "reason" field must be at least 5 characters long',
+			maxLength: 'The "reason" field cannot be longer than 50 characters'
+		}
+	},
+	message: {
+		required: 'The "message" field is required',
+		minLength: 'The "message" field must contain at least 25 characters',
+		maxLength: 'The "message" field cannot contain more than 5000 characters'
+	}
+};
+
+// ------------------------------------------------------------------
+
 app.get('/contact', function(req, res) {
 	res.renderPage('contact', {socialIcons: socialIcons});
 });
 
 app.post('/contact', function(req, res) {
-	var form = {
+	var data = {
 		name: req.body.name,
 		company: req.body.company,
 		email: req.body.email,
 		reason: [req.body.reason, req.body['reason-other']],
 		message: req.body.message
 	};
+	var failures = contactForm.validate(data);
 	
+	// Respond with validation errors
+	if (failures._total) {
+		delete failures._total;
+		
+		var errors = [ ];
+		Object.keys(failures).forEach(function(field) {
+			failures[field].forEach(function(failure) {
+				failure = failure.split(':');
+				if (failure.length === 2) {
+					errors.push(validationErrorMessages[field][failure[0]][failure[1]]);
+				} else {
+					errors.push(validationErrorMessages[field][failure[0]]);
+				}
+			});
+		});
+		
+		if (req.xhr) {
+			res.json({errors: errors}, 400);
+		} else {
+			res.renderPage('contact', {socialIcons: socialIcons, errors: errors});
+		}
+	}
 	
-	
-	res.renderPage('contact', {socialIcons: socialIcons});
+	// Respond with success message
+	else {
+		var msg = 'Your message has been sent.';
+		if (req.xhr) {
+			res.json({
+				status: 200,
+				message: msg
+			}, 200);
+		} else {
+			res.renderPage('contact', {socialIcons: socialIcons, messages: [msg]});
+		}
+	}
 });
+
+
+
+
+
+
+
+
+
+
 

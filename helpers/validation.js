@@ -52,28 +52,35 @@ exports.radioField = function(reqs) {
  */
 exports.validateTextField = function(value, reqs) {
 	var failures = [ ];
+	
 	if (! value) {
 		if (reqs.required) {
 			failures.push('required');
-		} else {
-			return failures;
 		}
+		return failures;
 	}
+	
 	if (reqs.minLength && value.length < reqs.minLength) {
 		failures.push('minLength');
 	}
+	
 	if (reqs.maxLength && value.length > reqs.maxLength) {
 		failures.push('maxLength');
 	}
+	
 	if (reqs.regex && ! reqs.regex.test(value)) {
 		failures.push('regex');
 	}
+	
 	if (reqs.type) {
 		if (typeof exports.types[req.type] !== 'function') {
 			throw new Error('Validation type "' + req.type + '" is not defined.');
 		}
-		exports.types[req.type](value);
+		if (! exports.types[req.type](value)) {
+			failures.push('type');
+		}
 	}
+	
 	return failures;
 };
 
@@ -89,51 +96,49 @@ exports.validateTextField = function(value, reqs) {
  */
 exports.validateNumberField = function(value, reqs) {
 	var failures = [ ];
-	var empty = isEmpty(value);
-	if (reqs.required || ! empty) {
-		value = Number(value);
-		if (reqs.required && empty) {
+	
+	if (isEmpty(value)) {
+		if (reqs.required) {
 			failures.push('required');
 		}
-		if (reqs.min && value < reqs.min) {
-			failures.push('min');
+		return failures;
+	}
+	
+	value = Number(value);
+	
+	if (reqs.min && value < reqs.min) {
+		failures.push('min');
+	}
+	
+	if (reqs.max && value > reqs.max) {
+		failures.push('max');
+	}
+	
+	if (reqs.int && ! isInt(value)) {
+		failures.push('int');
+	}
+	
+	if (reqs.type) {
+		if (typeof exports.types[req.type] !== 'function') {
+			throw new Error('Validation type "' + req.type + '" is not defined.');
 		}
-		if (reqs.max && value > reqs.max) {
-			failures.push('max');
-		}
-		if (reqs.int && ! isInt(value)) {
-			failures.push('int');
-		}
-		if (reqs.type) {
-			if (typeof exports.types[req.type] !== 'function') {
-				throw new Error('Validation type "' + req.type + '" is not defined.');
-			}
-			exports.types[req.type](value);
+		if (! exports.types[req.type](value)) {
+			failures.push('type');
 		}
 	}
+	
 	return failures;
 };
 
 /**
  * @param   mixed     the value to validate
  * @param   object    validation requirements
- *     { type: string,
- *       required: boolean,
+ *     { required: boolean,
  *       values: array,
  *       otherValue: string,
  *       otherValidation: function }
  * @return  array
  */
-
-//required: true,
-//values: ['request-quote', 'request-info'],
-//otherValue: 'other',
-//otherValidation: validation.textField({
-//	required: true,
-//	minLength: 2,
-//	maxLength: 50
-//})
-
 exports.validateRadioField = function(value, reqs) {
 	var failures = [ ];
 	
@@ -143,7 +148,26 @@ exports.validateRadioField = function(value, reqs) {
 		value = value[0];
 	}
 	
+	if (isEmpty(value)) {
+		if (reqs.required) {
+			failures.push('required');
+		}
+		return failures;
+	}
 	
+	if (reqs.otherValue && value === reqs.otherValue) {
+		if (reqs.otherValidation) {
+			failures.push.apply(failures,
+				reqs.otherValidation(other).map(function(failure) {
+					return 'other:' + failure
+				})
+			);
+		}
+	}
+	
+	else if (reqs.values && reqs.values.indexOf(value) < 0) {
+		failures.push('values');
+	}
 	
 	return failures;
 };

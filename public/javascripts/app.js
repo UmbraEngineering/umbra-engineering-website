@@ -30,19 +30,12 @@
 	// Initialize the app
 	App.prototype.init = function() {
 		
-		this.$body = $('body');
-		this.$content = $('#content');
-		this.$messages = $('#messages');
-		
-		this.$content[0].appendChild(
-			$('<a href="#">Spinner</a>').click(function(e) {
-				e.preventDefault();
-				app.emit('redirect', 'foo');
-			})[0]
-		);
-		
 		var port = location.port ? '(:' + location.port + ')?' : '';
 		var isLocalHref = new RegExp('^' + location.protocol + '//' + location.host + port);
+		
+		this.$body      = $('body');
+		this.$content   = $('#content');
+		this.$messages  = $('#messages');
 		
 	// First thing, we define the error handler
 		
@@ -93,6 +86,7 @@
 	// Build the loading animation/spinner
 		
 		var animating = false;
+		var contentReady = false;
 		var contentVisible = true;
 		var loadingHref = null;
 		var $loading = $('#loading');
@@ -111,24 +105,28 @@
 			}),
 			show: function(callback) {
 				if (! spinner._shown) {
-					$loading.animate({ opacity: 'show', height: 'show' }, 500, function() {
+					$loading.animate(animateVertical('show'), 500, function() {
 						spinner._spinner.spin($loading[0]);
 						spinner._shown = true;
 						if (typeof callback === 'function') {
 							callback();
 						}
 					});
+				} else if (typeof callback === 'function') {
+					callback();
 				}
 			},
-			hide: function() {
+			hide: function(callback) {
 				if (spinner._shown) {
 					spinner._spinner.stop();
-					$loading.animate({ opacity: 'hide', height: 'hide' }, 500, function() {
+					$loading.animate(animateVertical('hide'), 500, function() {
 						spinner._shown = false;
 						if (typeof callback === 'function') {
 							callback();
 						}
 					});
+				} else if (typeof callback === 'function') {
+					callback();
 				}
 			}
 		};
@@ -138,34 +136,53 @@
 		this.on('redirect', function(href) {
 			animating = true;
 			loadingHref = href;
-			this.$content.animate({ opacity: 'hide', height: 'hide' }, 500, _.bind(function() {
+			this.$content.animate(animateVertical('hide'), 500, _.bind(function() {
 				animating = contentVisible = false;
-				spinner.show();
 				this.emit('redirect.afterAnimate');
+				if (! contentReady) {
+					spinner.show(_.bind(function() {
+					
+					}, this));
+				}
 			}, this));
 		});
 		
-		this.on('load', function(callback) {
-			var onready = _.bind(function() {
-				
-			}, this);
-			
-			// Make sure we are not still animating
+		var showContent = _.bind(function(content) {
+			var $elem = this.$content;
+			return function() {
+				$elem.html(content);
+				spinner.hide(function() {
+					$elem.animate(animateVertical('show'), 500, function() {
+						contentVisible = true;
+						animating = contentReady = false;
+					});
+				});
+			};
+		}, this);
+		
+		var onload = _.bind(function(content) {
+			contentReady = true;
 			if (animating) {
-				this.once('redirect.afterAnimate', onready);
-			} else {onready();}
+				this.once('redirect.afterAnimate', showContent(content));
+			} else {
+				showContent(content)();
+			}
+		}, this);
+		
+		this.on('load', function(xhr, status) {
+			var json = JSON.parse(xhr.responseText);
+			onload(json.content);
 		});
 		
 		this.on('load.timeout', function() {
-			var onready = _.bind(function() {
-				
-			}, this);
-			
-			// Make sure we are not still animating
-			if (animating) {
-				this.once('redirect.afterAnimate', onready);
-			} else {onready();}
+			// TODO Define actual timeout content
+			var content = 'Timeout!';
+			onload(content);
 		});
+		
+	// Parse the DOM
+		
+		this.parse(this.$body[0]);
 
 	// ------------------------------------------------------------------
 	// ------------------------------------------------------------------
