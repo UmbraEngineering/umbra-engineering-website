@@ -1,6 +1,7 @@
 
 var consts      = require('consts');
 var app         = require(consts.LIB_PATH + '/app');
+var mailer      = require(consts.BASE_PATH + '/helpers/mailer');
 var validation  = require(consts.BASE_PATH + '/helpers/validation');
 
 var socialIcons = [
@@ -55,6 +56,14 @@ var contactForm = new validation.Validator({
 
 // ------------------------------------------------------------------
 
+var reasonSubjectTags = {
+	'request-quote': 'Quote',
+	'request-info': 'Info',
+	'other': 'Other'
+};
+
+// ------------------------------------------------------------------
+
 var validationErrorMessages = {
 	name: {
 		required: 'The "name" field is required',
@@ -86,7 +95,7 @@ var validationErrorMessages = {
 // ------------------------------------------------------------------
 
 app.get('/contact', function(req, res) {
-	res.renderPage('contact', {socialIcons: socialIcons});
+	res.renderPage('contact', {socialIcons: socialIcons, prefill: { }});
 });
 
 app.post('/contact', function(req, res) {
@@ -118,21 +127,43 @@ app.post('/contact', function(req, res) {
 		if (req.xhr) {
 			res.json({errors: errors}, 400);
 		} else {
-			res.renderPage('contact', {socialIcons: socialIcons, errors: errors});
+			res.renderPage('contact', {
+				socialIcons: socialIcons,
+				errors: errors,
+				prefill: req.body
+			});
 		}
 	}
 	
 	// Respond with success message
 	else {
-		var msg = 'Your message has been sent.';
-		if (req.xhr) {
-			res.json({
-				status: 200,
-				message: msg
-			}, 200);
-		} else {
-			res.renderPage('contact', {socialIcons: socialIcons, messages: [msg]});
-		}
+		var message = {
+			to: 'contact@umbraengineering.com',
+			from: data.name + ' <' + data.email + '>',
+			subject: 'UmbraEngineering.com Contact Form [' + reasonSubjectTags[data.reason[0]] + ']',
+			template: 'contact-email',
+			data: data
+		};
+		mailer.send(message, function(err) {
+			var status = 200;
+			var msg = 'Your message has been sent.';
+			if (err) {
+				console.log(err);
+				status = 500;
+				msg = 'There was an error sending your message.';
+			}
+			if (req.xhr) {
+				res.json({
+					status: status,
+					message: msg
+				}, status);
+			} else {
+				res.status(status).renderPage('contact', {
+					socialIcons: socialIcons,
+					messages: [msg]
+				});
+			}
+		});
 	}
 });
 

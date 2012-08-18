@@ -6,6 +6,7 @@ yepnope({
 		'/javascripts/lodash.js',
 		'/javascripts/eventemitter2.js',
 		'/javascripts/spin.js',
+		'/javascripts/spin.jquery.js',
 		'/javascripts/app.js'
 	],
 	complete: function() {

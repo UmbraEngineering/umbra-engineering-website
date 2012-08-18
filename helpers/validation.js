@@ -14,6 +14,7 @@ Validator.prototype.validate = function(data) {
 		failures[field] = this.def[field](data[field]);
 		failures._total += failures[field].length;
 	}.bind(this));
+	return failures;
 };
 
 // ------------------------------------------------------------------
@@ -73,10 +74,10 @@ exports.validateTextField = function(value, reqs) {
 	}
 	
 	if (reqs.type) {
-		if (typeof exports.types[req.type] !== 'function') {
-			throw new Error('Validation type "' + req.type + '" is not defined.');
+		if (typeof exports.types[reqs.type] !== 'function') {
+			throw new Error('Validation type "' + reqs.type + '" is not defined.');
 		}
-		if (! exports.types[req.type](value)) {
+		if (! exports.types[reqs.type](value)) {
 			failures.push('type');
 		}
 	}
@@ -119,10 +120,10 @@ exports.validateNumberField = function(value, reqs) {
 	}
 	
 	if (reqs.type) {
-		if (typeof exports.types[req.type] !== 'function') {
-			throw new Error('Validation type "' + req.type + '" is not defined.');
+		if (typeof exports.types[reqs.type] !== 'function') {
+			throw new Error('Validation type "' + reqs.type + '" is not defined.');
 		}
-		if (! exports.types[req.type](value)) {
+		if (! exports.types[reqs.type](value)) {
 			failures.push('type');
 		}
 	}

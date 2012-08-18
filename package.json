@@ -20,7 +20,8 @@
     "json-output": "0.0.0",
     "dateformat": "1.0.2-1.2.3",
     "useragent": "1.1.0",
-    "exists-patch": "0.0.0"
+    "exists-patch": "0.0.0",
+    "nodemailer": "~0.3.22"
   },
   "devDependencies": {
     "grunt-css": "latest"

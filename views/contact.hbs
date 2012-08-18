@@ -12,17 +12,19 @@
 			
 				<label class="name required">
 					<div class="label">Name</div>
-					<input type="text" name="name" value="" placeholder="eg. Joe Bob" required />
+					<input type="text" name="name" value="{{ prefill.name }}" placeholder="eg. Joe Bob" required />
 				</label>
 				
 				<label class="company">
 					<div class="label">Company</div>
-					<input type="text" name="company" value="" placeholder="eg. Joe Bob's Awesome Shop" />
+					<input type="text" name="company" value="{{ prefill.company }}"
+						placeholder="eg. Joe Bob's Awesome Shop" />
 				</label>
 				
 				<label class="email required">
 					<div class="label">Email</div>
-					<input type="email" name="email" value="" placeholder="eg. joebob@example.com" required />
+					<input type="email" name="email" value="{{ prefill.email }}"
+						placeholder="eg. joebob@example.com" required />
 				</label>
 				
 				<label class="reason required" for="reason">
@@ -38,7 +40,8 @@
 					</label></li>
 					<li><label>
 						<input type="radio" name="reason" value="other" /> Other:
-						<input type="text" name="reason-other" value="" placeholder="Enter reason here..." />
+						<input type="text" name="reason-other" value="{{ prefill.[reason-other] }}"
+							placeholder="Enter reason here..." />
 					</label></li>
 				</ul>
 				
@@ -49,12 +52,13 @@
 			
 				<label class="message required">
 					<div class="label">Message</div>
-					<textarea name="message" placeholder="Type you message here..." required></textarea>
+					<textarea name="message" placeholder="Type you message here..." required>{{ prefill.message }}</textarea>
 				</label>
 				
 				<div class="buttons">
 					<input type="reset" value="Clear Form" class="reset" />
 					<input type="submit" value="Send Message" class="submit" />
+					<div class="spinner"></div>
 				</div>
 				
 			</fieldset>

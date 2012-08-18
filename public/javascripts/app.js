@@ -15,6 +15,16 @@
 			maxListeners: 10
 		});
 		
+		if (App.historySupported) {
+			$(window).bind('popstate', _.bind(function(e) {
+				if (e.originalEvent.state) {
+					this.emit('popstate', e.originalEvent.state);
+				} else {
+					(new HistoryState(location.href)).replace();
+				}
+			}, this));
+		}
+		
 		// Make sure the DOM is ready before running init
 		$(document).ready(this.init);
 	};
@@ -83,6 +93,12 @@
 			}
 		});
 		
+	// Handle history navigation
+		
+		this.on('popstate', function(state) {
+			HistoryState.fromHistory(state).loadPage();
+		});
+		
 	// Build the loading animation/spinner
 		
 		var animating = false;
@@ -130,8 +146,8 @@
 				}
 			}
 		};
-		
-//		spinner.show();
+	
+	// Handle page loading
 		
 		this.on('redirect', function(href) {
 			animating = true;
@@ -149,15 +165,16 @@
 		
 		var showContent = _.bind(function(content) {
 			var $elem = this.$content;
-			return function() {
+			return _.bind(function() {
 				$elem.html(content);
+				this.parse(this.$content[0]);
 				spinner.hide(function() {
 					$elem.animate(animateVertical('show'), 500, function() {
 						contentVisible = true;
 						animating = contentReady = false;
 					});
 				});
-			};
+			}, this);
 		}, this);
 		
 		var onload = _.bind(function(content) {
@@ -178,6 +195,38 @@
 			// TODO Define actual timeout content
 			var content = 'Timeout!';
 			onload(content);
+		});
+		
+	// Handle form submission
+		
+		this.on('formSubmit', function(form) {
+			$('.spinner', form).spin('tiny', '#26b');
+		});
+		
+		this.on('formSubmit.load', function(form, xhr, status) {
+			$('.spinner', form).spin(false);
+			var json = JSON.parse(xhr.responseText);
+			if (json.message) {
+				this.showMessage(json.message);
+			}
+			if (json.error) {
+				this.showMessage('error', json.error);
+			} else if (json.errors) {
+				this.showMessage('error',
+					'<ul class="circle">' +
+						_.map(json.errors, function(err) {
+							return '<li>' + err + '</li>';
+						}).join('\n') +
+					'</ul>'
+				);
+			} else {
+				form.reset();
+			}
+		});
+		
+		this.on('formSubmit.timeout', function() {
+			$('.spinner', form).spin(false);
+			this.showMessage('warn', 'The form submit request timed out. Please try again.');
 		});
 		
 	// Parse the DOM
@@ -205,6 +254,7 @@
 	App.prototype.redirect = function(href) {
 		this.emit('redirect', href);
 		if (App.historySupported) {
+			(new HistoryState(href)).push();
 			this._loadPage(href);
 		} else {
 			window.location.replace(href);
@@ -237,8 +287,22 @@
 	};
 	
 	// Submit a form
-	App.prototype.submitForm = function(evt) {
-		
+	App.prototype.submitForm = function(form) {
+		this.emit('formSubmit', form);
+		$.ajax({
+			type: form.method.toUpperCase(),
+			url: form.getAttribute('action'),
+			cache: false,
+			data: $(form).serialize(),
+			complete: _.bind(function(xhr, status) {
+				if (xhr.statusText === 'timeout') {
+					this.emit('formSubmit.timeout', form, xhr, status);
+				} else {
+					this._trackPageview();
+					this.emit('formSubmit.load', form, xhr, status);
+				}
+			}, this)
+		});
 	};
 	
 	// This parser the DOM and makes the needed changes every "load"
@@ -298,6 +362,7 @@
 		this.style.outline = null;
 	}
 	
+	// Creates an object of options for animating an element vertically
 	function animateVertical(showHide) {
 		return {
 			height: showHide,
@@ -308,6 +373,39 @@
 			marginBottom: showHide
 		};
 	}
+	
+// ------------------------------------------------------------------
+//  History state control
+	
+	function HistoryState(href, data) {
+		this.href = href;
+		this.data = data || { };
+		this.data.href = this.href;
+	}
+	
+	HistoryState.prototype.push = function() {
+		if (this.href && this.data) {
+			history.pushState(this.data, '', this.href);
+		}
+	};
+	
+	HistoryState.prototype.replace = function() {
+		if (this.href && this.data) {
+			history.replaceState(this.data, '', this.href);
+		}
+	};
+	
+	HistoryState.prototype.loadPage = function() {
+		if (this.href && this.data) {
+			app._loadPage(this.href);
+		}
+	};
+	
+	HistoryState.fromHistory = function(state) {
+		state = state || { };
+		state = new HistoryState(state.href, state);
+		return state;
+	};
 
 }(window, document, location));
 
