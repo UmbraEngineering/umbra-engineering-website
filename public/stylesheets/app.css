@@ -171,6 +171,8 @@ body, html {
 	border-color: #aaa;
 }
 
+/* ==  Typography  == */
+
 #content h3 {
 	color: #555;
 	text-shadow: none;
@@ -201,7 +203,7 @@ body, html {
 }
 
 #content .darker-1 a {
-	color: #ABCCFF;
+	color: #fff;
 }
 
 #content a:hover {
