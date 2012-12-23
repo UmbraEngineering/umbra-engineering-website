@@ -14,12 +14,12 @@
 
 	<link rel="stylesheet" type="text/css" href="/stylesheets/styles.css" />
 	
-	<script type="text/javascript" src="/javascripts/prefixfree.min.js"></script>
+	<script type="text/javascript" src="/javascripts/lib/prefixfree.min.js"></script>
 	
 </head>
 <body>
 	
-	<div class="container" id="wrapper">
+	<div id="wrapper">
 		
 		<div id="header-wrapper">
 			<div id="header">
@@ -33,6 +33,7 @@
 							<li><a href="/contact">Contact</a></li>
 							<li><a href="/portfolio">Portfolio</a></li>
 							<li><a href="/open-source">Open Source</a></li>
+							<li><a href="/careers">Careers</a></li>
 						</ul>
 					</div>
 				</div>
@@ -46,7 +47,6 @@
 		</div>
 		
 		<div id="content-wrapper">
-			<div id="loading"></div>
 			<div id="content"></div>
 		</div>
 		
@@ -55,8 +55,8 @@
 				<div class="row">
 					<p>
 						Copyright &copy; {{now "yyyy" }} Umbra Engineering LLC<br />
-						Powered by <a href="http://nodejs.org">Node.js</a> and <a href="http://expressjs.com">Express</a>.
-						Hosted on <a href="http://heroku.com">Heroku</a>.
+						Powered by <a href="http://nodejs.org" rel="external">Node.js</a> and <a href="http://expressjs.com" rel="external">Express</a>.
+						Hosted on <a href="http://heroku.com" rel="external">Heroku</a>.
 					</p>
 				</div>
 			</div>
@@ -64,7 +64,7 @@
 	
 	</div>
 
-	<script type="text/javascript" src="/javascripts/app.min.js"></script>
+	<script type="text/javascript" src="/javascripts/app.js"></script>
 	
 </body>
 </html>

@@ -490,10 +490,13 @@ if (typeof JSON !== 'object') {
  * A simple JavaScript class system
  *
  * @author     James Brumond
- * @version    0.2.0
+ * @version    0.2.1
  * @copyright  Copyright 2012 James Brumond
  * @license    Dual licensed under MIT and GPL
  */
+
+/*jshint browser: true, bitwise: false, camelcase: false, eqnull: true, latedef: false,
+  plusplus: false, jquery: true, shadow: true, smarttabs: true, loopfunc: true */
 
 (function() {
 	var _global = this;
@@ -524,14 +527,19 @@ if (typeof JSON !== 'object') {
 			}
 			// Set the scope for super
 			inst.__scope__ = self.prototype.__scope__;
+			// This allows .apply() type expansion with constructor calls
+			var _args = arguments[0];
+			if (! (_args && _args.__shouldExpand__)) {
+				_args = arguments;
+			}
 			// If a function was given as the constructor, it should
 			// be called every time a new instance is created
 			if (typeof constructor === 'function') {
-				constructor.apply(inst, arguments);
+				constructor.apply(inst, _args);
 			}
 			// If a construct() method exists, it should also be called
 			if (typeof inst.construct === 'function') {
-				inst.construct.apply(inst, arguments);
+				inst.construct.apply(inst, _args);
 			}
 		};
 		
@@ -549,6 +557,7 @@ if (typeof JSON !== 'object') {
 			}
 		}
 		var ctor = function() {
+			this._super = _super;
 			this.constructor = self;
 		};
 		ctor.prototype = _super;
@@ -556,11 +565,11 @@ if (typeof JSON !== 'object') {
 		
 		// Inherit from mixins
 		if (mixins) {
-			for (var i = 0, c = mixins.length; i < c; i++) {
-				if (typeof mixins[i] === 'string') {
-					mixins[i] = namespace[mixins[i]];
+			for (var j = 0, c = mixins.length; j < c; j++) {
+				if (typeof mixins[j] === 'string') {
+					mixins[j] = namespace[mixins[j]];
 				}
-				mixins[i].mixinTo(self);
+				mixins[j].mixinTo(self);
 			}
 		}
 		
@@ -576,11 +585,11 @@ if (typeof JSON !== 'object') {
 		// If an object was given as the constructor, the properties
 		// should be placed on the prototype
 		if (typeof constructor === 'object') {
-			for (var i in constructor) {
-				self.prototype[i] = constructor[i];
+			for (var k in constructor) {
+				self.prototype[k] = constructor[k];
 				// Build a parent method on all class methods that will allow
 				// calling supers with this.method.parent(this, ...)
-				if (isFunc(self.prototype[i])) {
+				if (isFunc(self.prototype[k])) {
 					(function(method) {
 						self.prototype[method].parent = function(that) {
 							var scope = that.__scope__;
@@ -588,18 +597,18 @@ if (typeof JSON !== 'object') {
 								throw new Error('Could not determine super scope. Did you forget to ' +
 									'pass `this` to `.parent`?');
 							}
-							var args = Array.prototype.slice.call(arguments, 1);
+							var args = slice(arguments, 1);
 							that.__scope__ = that.__scope__.parent;
 							var result = scope.parent.prototype[method].apply(that, args);
 							that.__scope__ = scope;
 							return result;
 						};
 						self.prototype[method].parentApply = function(that, args) {
-							args = Array.prototype.slice.call(args, 0);
+							args = slice(args);
 							args.unshift(that);
 							return self.prototype[method].parent.apply(that, args);
 						};
-					}(i));
+					}(k));
 				}
 			}
 		}
@@ -626,7 +635,9 @@ if (typeof JSON !== 'object') {
 		 * @return  object
 		 */
 		self.create = function() {
-			return new self();
+			var args = slice(arguments);
+			args.__shouldExpand__ = true;
+			return new self(args);
 		};
 		
 		/**
@@ -672,7 +683,7 @@ if (typeof JSON !== 'object') {
 	
 	function Class(name, parent, constructor) {
 		if (arguments.length <= 1) {
-			if (name && (typeof name === 'object' || isFunc(name))) {
+			if (name && (typeof name === 'object' || isFunc(name)) && ! isArray(name)) {
 				return createClass(null, null, [ ], name);
 			}
 			return new TempClass(name);
@@ -715,6 +726,14 @@ if (typeof JSON !== 'object') {
 	
 	function isFunc(value) {
 		return (toString.call(value) === '[object Function]');
+	}
+
+	function isArray(value) {
+		return (toString.call(value) === '[object Array]');
+	}
+
+	function slice(value, index) {
+		return Array.prototype.slice.call(value, index);
 	}
 	
 	function assignTo(name, constructor) {
@@ -5607,623 +5626,6 @@ Handlebars.registerHelper('log', function(context) {
 
 }(this.Handlebars));
 ;
-// lib/handlebars/compiler/parser.js
-/* Jison generated parser */
-var handlebars = (function(){
-var parser = {trace: function trace() { },
-yy: {},
-symbols_: {"error":2,"root":3,"program":4,"EOF":5,"statements":6,"simpleInverse":7,"statement":8,"openInverse":9,"closeBlock":10,"openBlock":11,"mustache":12,"partial":13,"CONTENT":14,"COMMENT":15,"OPEN_BLOCK":16,"inMustache":17,"CLOSE":18,"OPEN_INVERSE":19,"OPEN_ENDBLOCK":20,"path":21,"OPEN":22,"OPEN_UNESCAPED":23,"OPEN_PARTIAL":24,"params":25,"hash":26,"DATA":27,"param":28,"STRING":29,"INTEGER":30,"BOOLEAN":31,"hashSegments":32,"hashSegment":33,"ID":34,"EQUALS":35,"pathSegments":36,"SEP":37,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",14:"CONTENT",15:"COMMENT",16:"OPEN_BLOCK",18:"CLOSE",19:"OPEN_INVERSE",20:"OPEN_ENDBLOCK",22:"OPEN",23:"OPEN_UNESCAPED",24:"OPEN_PARTIAL",27:"DATA",29:"STRING",30:"INTEGER",31:"BOOLEAN",34:"ID",35:"EQUALS",37:"SEP"},
-productions_: [0,[3,2],[4,3],[4,1],[4,0],[6,1],[6,2],[8,3],[8,3],[8,1],[8,1],[8,1],[8,1],[11,3],[9,3],[10,3],[12,3],[12,3],[13,3],[13,4],[7,2],[17,3],[17,2],[17,2],[17,1],[17,1],[25,2],[25,1],[28,1],[28,1],[28,1],[28,1],[28,1],[26,1],[32,2],[32,1],[33,3],[33,3],[33,3],[33,3],[33,3],[21,1],[36,3],[36,1]],
-performAction: function anonymous(yytext,yyleng,yylineno,yy,yystate,$$,_$) {
-
-var $0 = $$.length - 1;
-switch (yystate) {
-case 1: return $$[$0-1]; 
-break;
-case 2: this.$ = new yy.ProgramNode($$[$0-2], $$[$0]); 
-break;
-case 3: this.$ = new yy.ProgramNode($$[$0]); 
-break;
-case 4: this.$ = new yy.ProgramNode([]); 
-break;
-case 5: this.$ = [$$[$0]]; 
-break;
-case 6: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
-break;
-case 7: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1].inverse, $$[$0-1], $$[$0]); 
-break;
-case 8: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0-1].inverse, $$[$0]); 
-break;
-case 9: this.$ = $$[$0]; 
-break;
-case 10: this.$ = $$[$0]; 
-break;
-case 11: this.$ = new yy.ContentNode($$[$0]); 
-break;
-case 12: this.$ = new yy.CommentNode($$[$0]); 
-break;
-case 13: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
-break;
-case 14: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
-break;
-case 15: this.$ = $$[$0-1]; 
-break;
-case 16: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
-break;
-case 17: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true); 
-break;
-case 18: this.$ = new yy.PartialNode($$[$0-1]); 
-break;
-case 19: this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]); 
-break;
-case 20: 
-break;
-case 21: this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]]; 
-break;
-case 22: this.$ = [[$$[$0-1]].concat($$[$0]), null]; 
-break;
-case 23: this.$ = [[$$[$0-1]], $$[$0]]; 
-break;
-case 24: this.$ = [[$$[$0]], null]; 
-break;
-case 25: this.$ = [[new yy.DataNode($$[$0])], null]; 
-break;
-case 26: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
-break;
-case 27: this.$ = [$$[$0]]; 
-break;
-case 28: this.$ = $$[$0]; 
-break;
-case 29: this.$ = new yy.StringNode($$[$0]); 
-break;
-case 30: this.$ = new yy.IntegerNode($$[$0]); 
-break;
-case 31: this.$ = new yy.BooleanNode($$[$0]); 
-break;
-case 32: this.$ = new yy.DataNode($$[$0]); 
-break;
-case 33: this.$ = new yy.HashNode($$[$0]); 
-break;
-case 34: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
-break;
-case 35: this.$ = [$$[$0]]; 
-break;
-case 36: this.$ = [$$[$0-2], $$[$0]]; 
-break;
-case 37: this.$ = [$$[$0-2], new yy.StringNode($$[$0])]; 
-break;
-case 38: this.$ = [$$[$0-2], new yy.IntegerNode($$[$0])]; 
-break;
-case 39: this.$ = [$$[$0-2], new yy.BooleanNode($$[$0])]; 
-break;
-case 40: this.$ = [$$[$0-2], new yy.DataNode($$[$0])]; 
-break;
-case 41: this.$ = new yy.IdNode($$[$0]); 
-break;
-case 42: $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
-break;
-case 43: this.$ = [$$[$0]]; 
-break;
-}
-},
-table: [{3:1,4:2,5:[2,4],6:3,8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],22:[1,13],23:[1,14],24:[1,15]},{1:[3]},{5:[1,16]},{5:[2,3],7:17,8:18,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,19],20:[2,3],22:[1,13],23:[1,14],24:[1,15]},{5:[2,5],14:[2,5],15:[2,5],16:[2,5],19:[2,5],20:[2,5],22:[2,5],23:[2,5],24:[2,5]},{4:20,6:3,8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],20:[2,4],22:[1,13],23:[1,14],24:[1,15]},{4:21,6:3,8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],20:[2,4],22:[1,13],23:[1,14],24:[1,15]},{5:[2,9],14:[2,9],15:[2,9],16:[2,9],19:[2,9],20:[2,9],22:[2,9],23:[2,9],24:[2,9]},{5:[2,10],14:[2,10],15:[2,10],16:[2,10],19:[2,10],20:[2,10],22:[2,10],23:[2,10],24:[2,10]},{5:[2,11],14:[2,11],15:[2,11],16:[2,11],19:[2,11],20:[2,11],22:[2,11],23:[2,11],24:[2,11]},{5:[2,12],14:[2,12],15:[2,12],16:[2,12],19:[2,12],20:[2,12],22:[2,12],23:[2,12],24:[2,12]},{17:22,21:23,27:[1,24],34:[1,26],36:25},{17:27,21:23,27:[1,24],34:[1,26],36:25},{17:28,21:23,27:[1,24],34:[1,26],36:25},{17:29,21:23,27:[1,24],34:[1,26],36:25},{21:30,34:[1,26],36:25},{1:[2,1]},{6:31,8:4,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],22:[1,13],23:[1,14],24:[1,15]},{5:[2,6],14:[2,6],15:[2,6],16:[2,6],19:[2,6],20:[2,6],22:[2,6],23:[2,6],24:[2,6]},{17:22,18:[1,32],21:23,27:[1,24],34:[1,26],36:25},{10:33,20:[1,34]},{10:35,20:[1,34]},{18:[1,36]},{18:[2,24],21:41,25:37,26:38,27:[1,45],28:39,29:[1,42],30:[1,43],31:[1,44],32:40,33:46,34:[1,47],36:25},{18:[2,25]},{18:[2,41],27:[2,41],29:[2,41],30:[2,41],31:[2,41],34:[2,41],37:[1,48]},{18:[2,43],27:[2,43],29:[2,43],30:[2,43],31:[2,43],34:[2,43],37:[2,43]},{18:[1,49]},{18:[1,50]},{18:[1,51]},{18:[1,52],21:53,34:[1,26],36:25},{5:[2,2],8:18,9:5,11:6,12:7,13:8,14:[1,9],15:[1,10],16:[1,12],19:[1,11],20:[2,2],22:[1,13],23:[1,14],24:[1,15]},{14:[2,20],15:[2,20],16:[2,20],19:[2,20],22:[2,20],23:[2,20],24:[2,20]},{5:[2,7],14:[2,7],15:[2,7],16:[2,7],19:[2,7],20:[2,7],22:[2,7],23:[2,7],24:[2,7]},{21:54,34:[1,26],36:25},{5:[2,8],14:[2,8],15:[2,8],16:[2,8],19:[2,8],20:[2,8],22:[2,8],23:[2,8],24:[2,8]},{14:[2,14],15:[2,14],16:[2,14],19:[2,14],20:[2,14],22:[2,14],23:[2,14],24:[2,14]},{18:[2,22],21:41,26:55,27:[1,45],28:56,29:[1,42],30:[1,43],31:[1,44],32:40,33:46,34:[1,47],36:25},{18:[2,23]},{18:[2,27],27:[2,27],29:[2,27],30:[2,27],31:[2,27],34:[2,27]},{18:[2,33],33:57,34:[1,58]},{18:[2,28],27:[2,28],29:[2,28],30:[2,28],31:[2,28],34:[2,28]},{18:[2,29],27:[2,29],29:[2,29],30:[2,29],31:[2,29],34:[2,29]},{18:[2,30],27:[2,30],29:[2,30],30:[2,30],31:[2,30],34:[2,30]},{18:[2,31],27:[2,31],29:[2,31],30:[2,31],31:[2,31],34:[2,31]},{18:[2,32],27:[2,32],29:[2,32],30:[2,32],31:[2,32],34:[2,32]},{18:[2,35],34:[2,35]},{18:[2,43],27:[2,43],29:[2,43],30:[2,43],31:[2,43],34:[2,43],35:[1,59],37:[2,43]},{34:[1,60]},{14:[2,13],15:[2,13],16:[2,13],19:[2,13],20:[2,13],22:[2,13],23:[2,13],24:[2,13]},{5:[2,16],14:[2,16],15:[2,16],16:[2,16],19:[2,16],20:[2,16],22:[2,16],23:[2,16],24:[2,16]},{5:[2,17],14:[2,17],15:[2,17],16:[2,17],19:[2,17],20:[2,17],22:[2,17],23:[2,17],24:[2,17]},{5:[2,18],14:[2,18],15:[2,18],16:[2,18],19:[2,18],20:[2,18],22:[2,18],23:[2,18],24:[2,18]},{18:[1,61]},{18:[1,62]},{18:[2,21]},{18:[2,26],27:[2,26],29:[2,26],30:[2,26],31:[2,26],34:[2,26]},{18:[2,34],34:[2,34]},{35:[1,59]},{21:63,27:[1,67],29:[1,64],30:[1,65],31:[1,66],34:[1,26],36:25},{18:[2,42],27:[2,42],29:[2,42],30:[2,42],31:[2,42],34:[2,42],37:[2,42]},{5:[2,19],14:[2,19],15:[2,19],16:[2,19],19:[2,19],20:[2,19],22:[2,19],23:[2,19],24:[2,19]},{5:[2,15],14:[2,15],15:[2,15],16:[2,15],19:[2,15],20:[2,15],22:[2,15],23:[2,15],24:[2,15]},{18:[2,36],34:[2,36]},{18:[2,37],34:[2,37]},{18:[2,38],34:[2,38]},{18:[2,39],34:[2,39]},{18:[2,40],34:[2,40]}],
-defaultActions: {16:[2,1],24:[2,25],38:[2,23],55:[2,21]},
-parseError: function parseError(str, hash) {
-    throw new Error(str);
-},
-parse: function parse(input) {
-    var self = this, stack = [0], vstack = [null], lstack = [], table = this.table, yytext = "", yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
-    this.lexer.setInput(input);
-    this.lexer.yy = this.yy;
-    this.yy.lexer = this.lexer;
-    this.yy.parser = this;
-    if (typeof this.lexer.yylloc == "undefined")
-        this.lexer.yylloc = {};
-    var yyloc = this.lexer.yylloc;
-    lstack.push(yyloc);
-    var ranges = this.lexer.options && this.lexer.options.ranges;
-    if (typeof this.yy.parseError === "function")
-        this.parseError = this.yy.parseError;
-    function popStack(n) {
-        stack.length = stack.length - 2 * n;
-        vstack.length = vstack.length - n;
-        lstack.length = lstack.length - n;
-    }
-    function lex() {
-        var token;
-        token = self.lexer.lex() || 1;
-        if (typeof token !== "number") {
-            token = self.symbols_[token] || token;
-        }
-        return token;
-    }
-    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
-    while (true) {
-        state = stack[stack.length - 1];
-        if (this.defaultActions[state]) {
-            action = this.defaultActions[state];
-        } else {
-            if (symbol === null || typeof symbol == "undefined") {
-                symbol = lex();
-            }
-            action = table[state] && table[state][symbol];
-        }
-        if (typeof action === "undefined" || !action.length || !action[0]) {
-            var errStr = "";
-            if (!recovering) {
-                expected = [];
-                for (p in table[state])
-                    if (this.terminals_[p] && p > 2) {
-                        expected.push("'" + this.terminals_[p] + "'");
-                    }
-                if (this.lexer.showPosition) {
-                    errStr = "Parse error on line " + (yylineno + 1) + ":\n" + this.lexer.showPosition() + "\nExpecting " + expected.join(", ") + ", got '" + (this.terminals_[symbol] || symbol) + "'";
-                } else {
-                    errStr = "Parse error on line " + (yylineno + 1) + ": Unexpected " + (symbol == 1?"end of input":"'" + (this.terminals_[symbol] || symbol) + "'");
-                }
-                this.parseError(errStr, {text: this.lexer.match, token: this.terminals_[symbol] || symbol, line: this.lexer.yylineno, loc: yyloc, expected: expected});
-            }
-        }
-        if (action[0] instanceof Array && action.length > 1) {
-            throw new Error("Parse Error: multiple actions possible at state: " + state + ", token: " + symbol);
-        }
-        switch (action[0]) {
-        case 1:
-            stack.push(symbol);
-            vstack.push(this.lexer.yytext);
-            lstack.push(this.lexer.yylloc);
-            stack.push(action[1]);
-            symbol = null;
-            if (!preErrorSymbol) {
-                yyleng = this.lexer.yyleng;
-                yytext = this.lexer.yytext;
-                yylineno = this.lexer.yylineno;
-                yyloc = this.lexer.yylloc;
-                if (recovering > 0)
-                    recovering--;
-            } else {
-                symbol = preErrorSymbol;
-                preErrorSymbol = null;
-            }
-            break;
-        case 2:
-            len = this.productions_[action[1]][1];
-            yyval.$ = vstack[vstack.length - len];
-            yyval._$ = {first_line: lstack[lstack.length - (len || 1)].first_line, last_line: lstack[lstack.length - 1].last_line, first_column: lstack[lstack.length - (len || 1)].first_column, last_column: lstack[lstack.length - 1].last_column};
-            if (ranges) {
-                yyval._$.range = [lstack[lstack.length - (len || 1)].range[0], lstack[lstack.length - 1].range[1]];
-            }
-            r = this.performAction.call(yyval, yytext, yyleng, yylineno, this.yy, action[1], vstack, lstack);
-            if (typeof r !== "undefined") {
-                return r;
-            }
-            if (len) {
-                stack = stack.slice(0, -1 * len * 2);
-                vstack = vstack.slice(0, -1 * len);
-                lstack = lstack.slice(0, -1 * len);
-            }
-            stack.push(this.productions_[action[1]][0]);
-            vstack.push(yyval.$);
-            lstack.push(yyval._$);
-            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-            stack.push(newState);
-            break;
-        case 3:
-            return true;
-        }
-    }
-    return true;
-}
-};
-/* Jison generated lexer */
-var lexer = (function(){
-var lexer = ({EOF:1,
-parseError:function parseError(str, hash) {
-        if (this.yy.parser) {
-            this.yy.parser.parseError(str, hash);
-        } else {
-            throw new Error(str);
-        }
-    },
-setInput:function (input) {
-        this._input = input;
-        this._more = this._less = this.done = false;
-        this.yylineno = this.yyleng = 0;
-        this.yytext = this.matched = this.match = '';
-        this.conditionStack = ['INITIAL'];
-        this.yylloc = {first_line:1,first_column:0,last_line:1,last_column:0};
-        if (this.options.ranges) this.yylloc.range = [0,0];
-        this.offset = 0;
-        return this;
-    },
-input:function () {
-        var ch = this._input[0];
-        this.yytext += ch;
-        this.yyleng++;
-        this.offset++;
-        this.match += ch;
-        this.matched += ch;
-        var lines = ch.match(/(?:\r\n?|\n).*/g);
-        if (lines) {
-            this.yylineno++;
-            this.yylloc.last_line++;
-        } else {
-            this.yylloc.last_column++;
-        }
-        if (this.options.ranges) this.yylloc.range[1]++;
-
-        this._input = this._input.slice(1);
-        return ch;
-    },
-unput:function (ch) {
-        var len = ch.length;
-        var lines = ch.split(/(?:\r\n?|\n)/g);
-
-        this._input = ch + this._input;
-        this.yytext = this.yytext.substr(0, this.yytext.length-len-1);
-        //this.yyleng -= len;
-        this.offset -= len;
-        var oldLines = this.match.split(/(?:\r\n?|\n)/g);
-        this.match = this.match.substr(0, this.match.length-1);
-        this.matched = this.matched.substr(0, this.matched.length-1);
-
-        if (lines.length-1) this.yylineno -= lines.length-1;
-        var r = this.yylloc.range;
-
-        this.yylloc = {first_line: this.yylloc.first_line,
-          last_line: this.yylineno+1,
-          first_column: this.yylloc.first_column,
-          last_column: lines ?
-              (lines.length === oldLines.length ? this.yylloc.first_column : 0) + oldLines[oldLines.length - lines.length].length - lines[0].length:
-              this.yylloc.first_column - len
-          };
-
-        if (this.options.ranges) {
-            this.yylloc.range = [r[0], r[0] + this.yyleng - len];
-        }
-        return this;
-    },
-more:function () {
-        this._more = true;
-        return this;
-    },
-less:function (n) {
-        this.unput(this.match.slice(n));
-    },
-pastInput:function () {
-        var past = this.matched.substr(0, this.matched.length - this.match.length);
-        return (past.length > 20 ? '...':'') + past.substr(-20).replace(/\n/g, "");
-    },
-upcomingInput:function () {
-        var next = this.match;
-        if (next.length < 20) {
-            next += this._input.substr(0, 20-next.length);
-        }
-        return (next.substr(0,20)+(next.length > 20 ? '...':'')).replace(/\n/g, "");
-    },
-showPosition:function () {
-        var pre = this.pastInput();
-        var c = new Array(pre.length + 1).join("-");
-        return pre + this.upcomingInput() + "\n" + c+"^";
-    },
-next:function () {
-        if (this.done) {
-            return this.EOF;
-        }
-        if (!this._input) this.done = true;
-
-        var token,
-            match,
-            tempMatch,
-            index,
-            col,
-            lines;
-        if (!this._more) {
-            this.yytext = '';
-            this.match = '';
-        }
-        var rules = this._currentRules();
-        for (var i=0;i < rules.length; i++) {
-            tempMatch = this._input.match(this.rules[rules[i]]);
-            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
-                match = tempMatch;
-                index = i;
-                if (!this.options.flex) break;
-            }
-        }
-        if (match) {
-            lines = match[0].match(/(?:\r\n?|\n).*/g);
-            if (lines) this.yylineno += lines.length;
-            this.yylloc = {first_line: this.yylloc.last_line,
-                           last_line: this.yylineno+1,
-                           first_column: this.yylloc.last_column,
-                           last_column: lines ? lines[lines.length-1].length-lines[lines.length-1].match(/\r?\n?/)[0].length : this.yylloc.last_column + match[0].length};
-            this.yytext += match[0];
-            this.match += match[0];
-            this.matches = match;
-            this.yyleng = this.yytext.length;
-            if (this.options.ranges) {
-                this.yylloc.range = [this.offset, this.offset += this.yyleng];
-            }
-            this._more = false;
-            this._input = this._input.slice(match[0].length);
-            this.matched += match[0];
-            token = this.performAction.call(this, this.yy, this, rules[index],this.conditionStack[this.conditionStack.length-1]);
-            if (this.done && this._input) this.done = false;
-            if (token) return token;
-            else return;
-        }
-        if (this._input === "") {
-            return this.EOF;
-        } else {
-            return this.parseError('Lexical error on line '+(this.yylineno+1)+'. Unrecognized text.\n'+this.showPosition(),
-                    {text: "", token: null, line: this.yylineno});
-        }
-    },
-lex:function lex() {
-        var r = this.next();
-        if (typeof r !== 'undefined') {
-            return r;
-        } else {
-            return this.lex();
-        }
-    },
-begin:function begin(condition) {
-        this.conditionStack.push(condition);
-    },
-popState:function popState() {
-        return this.conditionStack.pop();
-    },
-_currentRules:function _currentRules() {
-        return this.conditions[this.conditionStack[this.conditionStack.length-1]].rules;
-    },
-topState:function () {
-        return this.conditionStack[this.conditionStack.length-2];
-    },
-pushState:function begin(condition) {
-        this.begin(condition);
-    }});
-lexer.options = {};
-lexer.performAction = function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
-
-var YYSTATE=YY_START
-switch($avoiding_name_collisions) {
-case 0:
-                                   if(yy_.yytext.slice(-1) !== "\\") this.begin("mu");
-                                   if(yy_.yytext.slice(-1) === "\\") yy_.yytext = yy_.yytext.substr(0,yy_.yyleng-1), this.begin("emu");
-                                   if(yy_.yytext) return 14;
-                                 
-break;
-case 1: return 14; 
-break;
-case 2:
-                                   if(yy_.yytext.slice(-1) !== "\\") this.popState();
-                                   if(yy_.yytext.slice(-1) === "\\") yy_.yytext = yy_.yytext.substr(0,yy_.yyleng-1);
-                                   return 14;
-                                 
-break;
-case 3: return 24; 
-break;
-case 4: return 16; 
-break;
-case 5: return 20; 
-break;
-case 6: return 19; 
-break;
-case 7: return 19; 
-break;
-case 8: return 23; 
-break;
-case 9: return 23; 
-break;
-case 10: yy_.yytext = yy_.yytext.substr(3,yy_.yyleng-5); this.popState(); return 15; 
-break;
-case 11: return 22; 
-break;
-case 12: return 35; 
-break;
-case 13: return 34; 
-break;
-case 14: return 34; 
-break;
-case 15: return 37; 
-break;
-case 16: /*ignore whitespace*/ 
-break;
-case 17: this.popState(); return 18; 
-break;
-case 18: this.popState(); return 18; 
-break;
-case 19: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2).replace(/\\"/g,'"'); return 29; 
-break;
-case 20: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2).replace(/\\"/g,'"'); return 29; 
-break;
-case 21: yy_.yytext = yy_.yytext.substr(1); return 27; 
-break;
-case 22: return 31; 
-break;
-case 23: return 31; 
-break;
-case 24: return 30; 
-break;
-case 25: return 34; 
-break;
-case 26: yy_.yytext = yy_.yytext.substr(1, yy_.yyleng-2); return 34; 
-break;
-case 27: return 'INVALID'; 
-break;
-case 28: return 5; 
-break;
-}
-};
-lexer.rules = [/^(?:[^\x00]*?(?=(\{\{)))/,/^(?:[^\x00]+)/,/^(?:[^\x00]{2,}?(?=(\{\{|$)))/,/^(?:\{\{>)/,/^(?:\{\{#)/,/^(?:\{\{\/)/,/^(?:\{\{\^)/,/^(?:\{\{\s*else\b)/,/^(?:\{\{\{)/,/^(?:\{\{&)/,/^(?:\{\{![\s\S]*?\}\})/,/^(?:\{\{)/,/^(?:=)/,/^(?:\.(?=[} ]))/,/^(?:\.\.)/,/^(?:[\/.])/,/^(?:\s+)/,/^(?:\}\}\})/,/^(?:\}\})/,/^(?:"(\\["]|[^"])*")/,/^(?:'(\\[']|[^'])*')/,/^(?:@[a-zA-Z]+)/,/^(?:true(?=[}\s]))/,/^(?:false(?=[}\s]))/,/^(?:[0-9]+(?=[}\s]))/,/^(?:[a-zA-Z0-9_$-]+(?=[=}\s\/.]))/,/^(?:\[[^\]]*\])/,/^(?:.)/,/^(?:$)/];
-lexer.conditions = {"mu":{"rules":[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],"inclusive":false},"emu":{"rules":[2],"inclusive":false},"INITIAL":{"rules":[0,1,28],"inclusive":true}};
-return lexer;})()
-parser.lexer = lexer;
-function Parser () { this.yy = {}; }Parser.prototype = parser;parser.Parser = Parser;
-return new Parser;
-})();
-if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = handlebars;
-exports.Parser = handlebars.Parser;
-exports.parse = function () { return handlebars.parse.apply(handlebars, arguments); }
-exports.main = function commonjsMain(args) {
-    if (!args[1])
-        throw new Error('Usage: '+args[0]+' FILE');
-    var source, cwd;
-    if (typeof process !== 'undefined') {
-        source = require('fs').readFileSync(require('path').resolve(args[1]), "utf8");
-    } else {
-        source = require("file").path(require("file").cwd()).join(args[1]).read({charset: "utf-8"});
-    }
-    return exports.parser.parse(source);
-}
-if (typeof module !== 'undefined' && require.main === module) {
-  exports.main(typeof process !== 'undefined' ? process.argv.slice(1) : require("system").args);
-}
-};
-;
-// lib/handlebars/compiler/base.js
-Handlebars.Parser = handlebars;
-
-Handlebars.parse = function(string) {
-  Handlebars.Parser.yy = Handlebars.AST;
-  return Handlebars.Parser.parse(string);
-};
-
-Handlebars.print = function(ast) {
-  return new Handlebars.PrintVisitor().accept(ast);
-};
-
-Handlebars.logger = {
-  DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3, level: 3,
-
-  // override in the host environment
-  log: function(level, str) {}
-};
-
-Handlebars.log = function(level, str) { Handlebars.logger.log(level, str); };
-;
-// lib/handlebars/compiler/ast.js
-(function() {
-
-  Handlebars.AST = {};
-
-  Handlebars.AST.ProgramNode = function(statements, inverse) {
-    this.type = "program";
-    this.statements = statements;
-    if(inverse) { this.inverse = new Handlebars.AST.ProgramNode(inverse); }
-  };
-
-  Handlebars.AST.MustacheNode = function(rawParams, hash, unescaped) {
-    this.type = "mustache";
-    this.escaped = !unescaped;
-    this.hash = hash;
-
-    var id = this.id = rawParams[0];
-    var params = this.params = rawParams.slice(1);
-
-    // a mustache is an eligible helper if:
-    // * its id is simple (a single part, not `this` or `..`)
-    var eligibleHelper = this.eligibleHelper = id.isSimple;
-
-    // a mustache is definitely a helper if:
-    // * it is an eligible helper, and
-    // * it has at least one parameter or hash segment
-    this.isHelper = eligibleHelper && (params.length || hash);
-
-    // if a mustache is an eligible helper but not a definite
-    // helper, it is ambiguous, and will be resolved in a later
-    // pass or at runtime.
-  };
-
-  Handlebars.AST.PartialNode = function(id, context) {
-    this.type    = "partial";
-
-    // TODO: disallow complex IDs
-
-    this.id      = id;
-    this.context = context;
-  };
-
-  var verifyMatch = function(open, close) {
-    if(open.original !== close.original) {
-      throw new Handlebars.Exception(open.original + " doesn't match " + close.original);
-    }
-  };
-
-  Handlebars.AST.BlockNode = function(mustache, program, inverse, close) {
-    verifyMatch(mustache.id, close);
-    this.type = "block";
-    this.mustache = mustache;
-    this.program  = program;
-    this.inverse  = inverse;
-
-    if (this.inverse && !this.program) {
-      this.isInverse = true;
-    }
-  };
-
-  Handlebars.AST.ContentNode = function(string) {
-    this.type = "content";
-    this.string = string;
-  };
-
-  Handlebars.AST.HashNode = function(pairs) {
-    this.type = "hash";
-    this.pairs = pairs;
-  };
-
-  Handlebars.AST.IdNode = function(parts) {
-    this.type = "ID";
-    this.original = parts.join(".");
-
-    var dig = [], depth = 0;
-
-    for(var i=0,l=parts.length; i<l; i++) {
-      var part = parts[i];
-
-      if(part === "..") { depth++; }
-      else if(part === "." || part === "this") { this.isScoped = true; }
-      else { dig.push(part); }
-    }
-
-    this.parts    = dig;
-    this.string   = dig.join('.');
-    this.depth    = depth;
-
-    // an ID is simple if it only has one part, and that part is not
-    // `..` or `this`.
-    this.isSimple = parts.length === 1 && !this.isScoped && depth === 0;
-  };
-
-  Handlebars.AST.DataNode = function(id) {
-    this.type = "DATA";
-    this.id = id;
-  };
-
-  Handlebars.AST.StringNode = function(string) {
-    this.type = "STRING";
-    this.string = string;
-  };
-
-  Handlebars.AST.IntegerNode = function(integer) {
-    this.type = "INTEGER";
-    this.integer = integer;
-  };
-
-  Handlebars.AST.BooleanNode = function(bool) {
-    this.type = "BOOLEAN";
-    this.bool = bool;
-  };
-
-  Handlebars.AST.CommentNode = function(comment) {
-    this.type = "comment";
-    this.comment = comment;
-  };
-
-})();;
 // lib/handlebars/utils.js
 Handlebars.Exception = function(message) {
   var tmp = Error.prototype.constructor.apply(this, arguments);
@@ -6289,1068 +5691,6 @@ Handlebars.SafeString.prototype.toString = function() {
     }
   };
 })();;
-// lib/handlebars/compiler/compiler.js
-
-/*jshint eqnull:true*/
-Handlebars.Compiler = function() {};
-Handlebars.JavaScriptCompiler = function() {};
-
-(function(Compiler, JavaScriptCompiler) {
-  // the foundHelper register will disambiguate helper lookup from finding a
-  // function in a context. This is necessary for mustache compatibility, which
-  // requires that context functions in blocks are evaluated by blockHelperMissing,
-  // and then proceed as if the resulting value was provided to blockHelperMissing.
-
-  Compiler.prototype = {
-    compiler: Compiler,
-
-    disassemble: function() {
-      var opcodes = this.opcodes, opcode, out = [], params, param;
-
-      for (var i=0, l=opcodes.length; i<l; i++) {
-        opcode = opcodes[i];
-
-        if (opcode.opcode === 'DECLARE') {
-          out.push("DECLARE " + opcode.name + "=" + opcode.value);
-        } else {
-          params = [];
-          for (var j=0; j<opcode.args.length; j++) {
-            param = opcode.args[j];
-            if (typeof param === "string") {
-              param = "\"" + param.replace("\n", "\\n") + "\"";
-            }
-            params.push(param);
-          }
-          out.push(opcode.opcode + " " + params.join(" "));
-        }
-      }
-
-      return out.join("\n");
-    },
-
-    guid: 0,
-
-    compile: function(program, options) {
-      this.children = [];
-      this.depths = {list: []};
-      this.options = options;
-
-      // These changes will propagate to the other compiler components
-      var knownHelpers = this.options.knownHelpers;
-      this.options.knownHelpers = {
-        'helperMissing': true,
-        'blockHelperMissing': true,
-        'each': true,
-        'if': true,
-        'unless': true,
-        'with': true,
-        'log': true
-      };
-      if (knownHelpers) {
-        for (var name in knownHelpers) {
-          this.options.knownHelpers[name] = knownHelpers[name];
-        }
-      }
-
-      return this.program(program);
-    },
-
-    accept: function(node) {
-      return this[node.type](node);
-    },
-
-    program: function(program) {
-      var statements = program.statements, statement;
-      this.opcodes = [];
-
-      for(var i=0, l=statements.length; i<l; i++) {
-        statement = statements[i];
-        this[statement.type](statement);
-      }
-      this.isSimple = l === 1;
-
-      this.depths.list = this.depths.list.sort(function(a, b) {
-        return a - b;
-      });
-
-      return this;
-    },
-
-    compileProgram: function(program) {
-      var result = new this.compiler().compile(program, this.options);
-      var guid = this.guid++, depth;
-
-      this.usePartial = this.usePartial || result.usePartial;
-
-      this.children[guid] = result;
-
-      for(var i=0, l=result.depths.list.length; i<l; i++) {
-        depth = result.depths.list[i];
-
-        if(depth < 2) { continue; }
-        else { this.addDepth(depth - 1); }
-      }
-
-      return guid;
-    },
-
-    block: function(block) {
-      var mustache = block.mustache,
-          program = block.program,
-          inverse = block.inverse;
-
-      if (program) {
-        program = this.compileProgram(program);
-      }
-
-      if (inverse) {
-        inverse = this.compileProgram(inverse);
-      }
-
-      var type = this.classifyMustache(mustache);
-
-      if (type === "helper") {
-        this.helperMustache(mustache, program, inverse);
-      } else if (type === "simple") {
-        this.simpleMustache(mustache);
-
-        // now that the simple mustache is resolved, we need to
-        // evaluate it by executing `blockHelperMissing`
-        this.opcode('pushProgram', program);
-        this.opcode('pushProgram', inverse);
-        this.opcode('pushLiteral', '{}');
-        this.opcode('blockValue');
-      } else {
-        this.ambiguousMustache(mustache, program, inverse);
-
-        // now that the simple mustache is resolved, we need to
-        // evaluate it by executing `blockHelperMissing`
-        this.opcode('pushProgram', program);
-        this.opcode('pushProgram', inverse);
-        this.opcode('pushLiteral', '{}');
-        this.opcode('ambiguousBlockValue');
-      }
-
-      this.opcode('append');
-    },
-
-    hash: function(hash) {
-      var pairs = hash.pairs, pair, val;
-
-      this.opcode('push', '{}');
-
-      for(var i=0, l=pairs.length; i<l; i++) {
-        pair = pairs[i];
-        val  = pair[1];
-
-        this.accept(val);
-        this.opcode('assignToHash', pair[0]);
-      }
-    },
-
-    partial: function(partial) {
-      var id = partial.id;
-      this.usePartial = true;
-
-      if(partial.context) {
-        this.ID(partial.context);
-      } else {
-        this.opcode('push', 'depth0');
-      }
-
-      this.opcode('invokePartial', id.original);
-      this.opcode('append');
-    },
-
-    content: function(content) {
-      this.opcode('appendContent', content.string);
-    },
-
-    mustache: function(mustache) {
-      var options = this.options;
-      var type = this.classifyMustache(mustache);
-
-      if (type === "simple") {
-        this.simpleMustache(mustache);
-      } else if (type === "helper") {
-        this.helperMustache(mustache);
-      } else {
-        this.ambiguousMustache(mustache);
-      }
-
-      if(mustache.escaped && !options.noEscape) {
-        this.opcode('appendEscaped');
-      } else {
-        this.opcode('append');
-      }
-    },
-
-    ambiguousMustache: function(mustache, program, inverse) {
-      var id = mustache.id, name = id.parts[0];
-
-      this.opcode('getContext', id.depth);
-
-      this.opcode('pushProgram', program);
-      this.opcode('pushProgram', inverse);
-
-      this.opcode('invokeAmbiguous', name);
-    },
-
-    simpleMustache: function(mustache, program, inverse) {
-      var id = mustache.id;
-
-      if (id.type === 'DATA') {
-        this.DATA(id);
-      } else if (id.parts.length) {
-        this.ID(id);
-      } else {
-        // Simplified ID for `this`
-        this.addDepth(id.depth);
-        this.opcode('getContext', id.depth);
-        this.opcode('pushContext');
-      }
-
-      this.opcode('resolvePossibleLambda');
-    },
-
-    helperMustache: function(mustache, program, inverse) {
-      var params = this.setupFullMustacheParams(mustache, program, inverse),
-          name = mustache.id.parts[0];
-
-      if (this.options.knownHelpers[name]) {
-        this.opcode('invokeKnownHelper', params.length, name);
-      } else if (this.knownHelpersOnly) {
-        throw new Error("You specified knownHelpersOnly, but used the unknown helper " + name);
-      } else {
-        this.opcode('invokeHelper', params.length, name);
-      }
-    },
-
-    ID: function(id) {
-      this.addDepth(id.depth);
-      this.opcode('getContext', id.depth);
-
-      var name = id.parts[0];
-      if (!name) {
-        this.opcode('pushContext');
-      } else {
-        this.opcode('lookupOnContext', id.parts[0]);
-      }
-
-      for(var i=1, l=id.parts.length; i<l; i++) {
-        this.opcode('lookup', id.parts[i]);
-      }
-    },
-
-    DATA: function(data) {
-      this.options.data = true;
-      this.opcode('lookupData', data.id);
-    },
-
-    STRING: function(string) {
-      this.opcode('pushString', string.string);
-    },
-
-    INTEGER: function(integer) {
-      this.opcode('pushLiteral', integer.integer);
-    },
-
-    BOOLEAN: function(bool) {
-      this.opcode('pushLiteral', bool.bool);
-    },
-
-    comment: function() {},
-
-    // HELPERS
-    opcode: function(name) {
-      this.opcodes.push({ opcode: name, args: [].slice.call(arguments, 1) });
-    },
-
-    declare: function(name, value) {
-      this.opcodes.push({ opcode: 'DECLARE', name: name, value: value });
-    },
-
-    addDepth: function(depth) {
-      if(isNaN(depth)) { throw new Error("EWOT"); }
-      if(depth === 0) { return; }
-
-      if(!this.depths[depth]) {
-        this.depths[depth] = true;
-        this.depths.list.push(depth);
-      }
-    },
-
-    classifyMustache: function(mustache) {
-      var isHelper   = mustache.isHelper;
-      var isEligible = mustache.eligibleHelper;
-      var options    = this.options;
-
-      // if ambiguous, we can possibly resolve the ambiguity now
-      if (isEligible && !isHelper) {
-        var name = mustache.id.parts[0];
-
-        if (options.knownHelpers[name]) {
-          isHelper = true;
-        } else if (options.knownHelpersOnly) {
-          isEligible = false;
-        }
-      }
-
-      if (isHelper) { return "helper"; }
-      else if (isEligible) { return "ambiguous"; }
-      else { return "simple"; }
-    },
-
-    pushParams: function(params) {
-      var i = params.length, param;
-
-      while(i--) {
-        param = params[i];
-
-        if(this.options.stringParams) {
-          if(param.depth) {
-            this.addDepth(param.depth);
-          }
-
-          this.opcode('getContext', param.depth || 0);
-          this.opcode('pushStringParam', param.string);
-        } else {
-          this[param.type](param);
-        }
-      }
-    },
-
-    setupMustacheParams: function(mustache) {
-      var params = mustache.params;
-      this.pushParams(params);
-
-      if(mustache.hash) {
-        this.hash(mustache.hash);
-      } else {
-        this.opcode('pushLiteral', '{}');
-      }
-
-      return params;
-    },
-
-    // this will replace setupMustacheParams when we're done
-    setupFullMustacheParams: function(mustache, program, inverse) {
-      var params = mustache.params;
-      this.pushParams(params);
-
-      this.opcode('pushProgram', program);
-      this.opcode('pushProgram', inverse);
-
-      if(mustache.hash) {
-        this.hash(mustache.hash);
-      } else {
-        this.opcode('pushLiteral', '{}');
-      }
-
-      return params;
-    }
-  };
-
-  var Literal = function(value) {
-    this.value = value;
-  };
-
-  JavaScriptCompiler.prototype = {
-    // PUBLIC API: You can override these methods in a subclass to provide
-    // alternative compiled forms for name lookup and buffering semantics
-    nameLookup: function(parent, name, type) {
-      if (/^[0-9]+$/.test(name)) {
-        return parent + "[" + name + "]";
-      } else if (JavaScriptCompiler.isValidJavaScriptVariableName(name)) {
-        return parent + "." + name;
-      }
-      else {
-        return parent + "['" + name + "']";
-      }
-    },
-
-    appendToBuffer: function(string) {
-      if (this.environment.isSimple) {
-        return "return " + string + ";";
-      } else {
-        return "buffer += " + string + ";";
-      }
-    },
-
-    initializeBuffer: function() {
-      return this.quotedString("");
-    },
-
-    namespace: "Handlebars",
-    // END PUBLIC API
-
-    compile: function(environment, options, context, asObject) {
-      this.environment = environment;
-      this.options = options || {};
-
-      Handlebars.log(Handlebars.logger.DEBUG, this.environment.disassemble() + "\n\n");
-
-      this.name = this.environment.name;
-      this.isChild = !!context;
-      this.context = context || {
-        programs: [],
-        aliases: { }
-      };
-
-      this.preamble();
-
-      this.stackSlot = 0;
-      this.stackVars = [];
-      this.registers = { list: [] };
-      this.compileStack = [];
-
-      this.compileChildren(environment, options);
-
-      var opcodes = environment.opcodes, opcode;
-
-      this.i = 0;
-
-      for(l=opcodes.length; this.i<l; this.i++) {
-        opcode = opcodes[this.i];
-
-        if(opcode.opcode === 'DECLARE') {
-          this[opcode.name] = opcode.value;
-        } else {
-          this[opcode.opcode].apply(this, opcode.args);
-        }
-      }
-
-      return this.createFunctionContext(asObject);
-    },
-
-    nextOpcode: function() {
-      var opcodes = this.environment.opcodes, opcode = opcodes[this.i + 1];
-      return opcodes[this.i + 1];
-    },
-
-    eat: function(opcode) {
-      this.i = this.i + 1;
-    },
-
-    preamble: function() {
-      var out = [];
-
-      if (!this.isChild) {
-        var namespace = this.namespace;
-        var copies = "helpers = helpers || " + namespace + ".helpers;";
-        if (this.environment.usePartial) { copies = copies + " partials = partials || " + namespace + ".partials;"; }
-        if (this.options.data) { copies = copies + " data = data || {};"; }
-        out.push(copies);
-      } else {
-        out.push('');
-      }
-
-      if (!this.environment.isSimple) {
-        out.push(", buffer = " + this.initializeBuffer());
-      } else {
-        out.push("");
-      }
-
-      // track the last context pushed into place to allow skipping the
-      // getContext opcode when it would be a noop
-      this.lastContext = 0;
-      this.source = out;
-    },
-
-    createFunctionContext: function(asObject) {
-      var locals = this.stackVars.concat(this.registers.list);
-
-      if(locals.length > 0) {
-        this.source[1] = this.source[1] + ", " + locals.join(", ");
-      }
-
-      // Generate minimizer alias mappings
-      if (!this.isChild) {
-        var aliases = [];
-        for (var alias in this.context.aliases) {
-          this.source[1] = this.source[1] + ', ' + alias + '=' + this.context.aliases[alias];
-        }
-      }
-
-      if (this.source[1]) {
-        this.source[1] = "var " + this.source[1].substring(2) + ";";
-      }
-
-      // Merge children
-      if (!this.isChild) {
-        this.source[1] += '\n' + this.context.programs.join('\n') + '\n';
-      }
-
-      if (!this.environment.isSimple) {
-        this.source.push("return buffer;");
-      }
-
-      var params = this.isChild ? ["depth0", "data"] : ["Handlebars", "depth0", "helpers", "partials", "data"];
-
-      for(var i=0, l=this.environment.depths.list.length; i<l; i++) {
-        params.push("depth" + this.environment.depths.list[i]);
-      }
-
-      if (asObject) {
-        params.push(this.source.join("\n  "));
-
-        return Function.apply(this, params);
-      } else {
-        var functionSource = 'function ' + (this.name || '') + '(' + params.join(',') + ') {\n  ' + this.source.join("\n  ") + '}';
-        Handlebars.log(Handlebars.logger.DEBUG, functionSource + "\n\n");
-        return functionSource;
-      }
-    },
-
-    // [blockValue]
-    //
-    // On stack, before: hash, inverse, program, value
-    // On stack, after: return value of blockHelperMissing
-    //
-    // The purpose of this opcode is to take a block of the form
-    // `{{#foo}}...{{/foo}}`, resolve the value of `foo`, and
-    // replace it on the stack with the result of properly
-    // invoking blockHelperMissing.
-    blockValue: function() {
-      this.context.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
-
-      var params = ["depth0"];
-      this.setupParams(0, params);
-
-      this.replaceStack(function(current) {
-        params.splice(1, 0, current);
-        return current + " = blockHelperMissing.call(" + params.join(", ") + ")";
-      });
-    },
-
-    // [ambiguousBlockValue]
-    //
-    // On stack, before: hash, inverse, program, value
-    // Compiler value, before: lastHelper=value of last found helper, if any
-    // On stack, after, if no lastHelper: same as [blockValue]
-    // On stack, after, if lastHelper: value
-    ambiguousBlockValue: function() {
-      this.context.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
-
-      var params = ["depth0"];
-      this.setupParams(0, params);
-
-      var current = this.topStack();
-      params.splice(1, 0, current);
-
-      this.source.push("if (!" + this.lastHelper + ") { " + current + " = blockHelperMissing.call(" + params.join(", ") + "); }");
-    },
-
-    // [appendContent]
-    //
-    // On stack, before: ...
-    // On stack, after: ...
-    //
-    // Appends the string value of `content` to the current buffer
-    appendContent: function(content) {
-      this.source.push(this.appendToBuffer(this.quotedString(content)));
-    },
-
-    // [append]
-    //
-    // On stack, before: value, ...
-    // On stack, after: ...
-    //
-    // Coerces `value` to a String and appends it to the current buffer.
-    //
-    // If `value` is truthy, or 0, it is coerced into a string and appended
-    // Otherwise, the empty string is appended
-    append: function() {
-      var local = this.popStack();
-      this.source.push("if(" + local + " || " + local + " === 0) { " + this.appendToBuffer(local) + " }");
-      if (this.environment.isSimple) {
-        this.source.push("else { " + this.appendToBuffer("''") + " }");
-      }
-    },
-
-    // [appendEscaped]
-    //
-    // On stack, before: value, ...
-    // On stack, after: ...
-    //
-    // Escape `value` and append it to the buffer
-    appendEscaped: function() {
-      var opcode = this.nextOpcode(), extra = "";
-      this.context.aliases.escapeExpression = 'this.escapeExpression';
-
-      if(opcode && opcode.opcode === 'appendContent') {
-        extra = " + " + this.quotedString(opcode.args[0]);
-        this.eat(opcode);
-      }
-
-      this.source.push(this.appendToBuffer("escapeExpression(" + this.popStack() + ")" + extra));
-    },
-
-    // [getContext]
-    //
-    // On stack, before: ...
-    // On stack, after: ...
-    // Compiler value, after: lastContext=depth
-    //
-    // Set the value of the `lastContext` compiler value to the depth
-    getContext: function(depth) {
-      if(this.lastContext !== depth) {
-        this.lastContext = depth;
-      }
-    },
-
-    // [lookupOnContext]
-    //
-    // On stack, before: ...
-    // On stack, after: currentContext[name], ...
-    //
-    // Looks up the value of `name` on the current context and pushes
-    // it onto the stack.
-    lookupOnContext: function(name) {
-      this.pushStack(this.nameLookup('depth' + this.lastContext, name, 'context'));
-    },
-
-    // [pushContext]
-    //
-    // On stack, before: ...
-    // On stack, after: currentContext, ...
-    //
-    // Pushes the value of the current context onto the stack.
-    pushContext: function() {
-      this.pushStackLiteral('depth' + this.lastContext);
-    },
-
-    // [resolvePossibleLambda]
-    //
-    // On stack, before: value, ...
-    // On stack, after: resolved value, ...
-    //
-    // If the `value` is a lambda, replace it on the stack by
-    // the return value of the lambda
-    resolvePossibleLambda: function() {
-      this.context.aliases.functionType = '"function"';
-
-      this.replaceStack(function(current) {
-        return "typeof " + current + " === functionType ? " + current + "() : " + current;
-      });
-    },
-
-    // [lookup]
-    //
-    // On stack, before: value, ...
-    // On stack, after: value[name], ...
-    //
-    // Replace the value on the stack with the result of looking
-    // up `name` on `value`
-    lookup: function(name) {
-      this.replaceStack(function(current) {
-        return current + " == null || " + current + " === false ? " + current + " : " + this.nameLookup(current, name, 'context');
-      });
-    },
-
-    // [lookupData]
-    //
-    // On stack, before: ...
-    // On stack, after: data[id], ...
-    //
-    // Push the result of looking up `id` on the current data
-    lookupData: function(id) {
-      this.pushStack(this.nameLookup('data', id, 'data'));
-    },
-
-    // [pushStringParam]
-    //
-    // On stack, before: ...
-    // On stack, after: string, currentContext, ...
-    //
-    // This opcode is designed for use in string mode, which
-    // provides the string value of a parameter along with its
-    // depth rather than resolving it immediately.
-    pushStringParam: function(string) {
-      this.pushStackLiteral('depth' + this.lastContext);
-      this.pushString(string);
-    },
-
-    // [pushString]
-    //
-    // On stack, before: ...
-    // On stack, after: quotedString(string), ...
-    //
-    // Push a quoted version of `string` onto the stack
-    pushString: function(string) {
-      this.pushStackLiteral(this.quotedString(string));
-    },
-
-    // [push]
-    //
-    // On stack, before: ...
-    // On stack, after: expr, ...
-    //
-    // Push an expression onto the stack
-    push: function(expr) {
-      this.pushStack(expr);
-    },
-
-    // [pushLiteral]
-    //
-    // On stack, before: ...
-    // On stack, after: value, ...
-    //
-    // Pushes a value onto the stack. This operation prevents
-    // the compiler from creating a temporary variable to hold
-    // it.
-    pushLiteral: function(value) {
-      this.pushStackLiteral(value);
-    },
-
-    // [pushProgram]
-    //
-    // On stack, before: ...
-    // On stack, after: program(guid), ...
-    //
-    // Push a program expression onto the stack. This takes
-    // a compile-time guid and converts it into a runtime-accessible
-    // expression.
-    pushProgram: function(guid) {
-      if (guid != null) {
-        this.pushStackLiteral(this.programExpression(guid));
-      } else {
-        this.pushStackLiteral(null);
-      }
-    },
-
-    // [invokeHelper]
-    //
-    // On stack, before: hash, inverse, program, params..., ...
-    // On stack, after: result of helper invocation
-    //
-    // Pops off the helper's parameters, invokes the helper,
-    // and pushes the helper's return value onto the stack.
-    //
-    // If the helper is not found, `helperMissing` is called.
-    invokeHelper: function(paramSize, name) {
-      this.context.aliases.helperMissing = 'helpers.helperMissing';
-
-      var helper = this.lastHelper = this.setupHelper(paramSize, name);
-      this.register('foundHelper', helper.name);
-
-      this.pushStack("foundHelper ? foundHelper.call(" +
-        helper.callParams + ") " + ": helperMissing.call(" +
-        helper.helperMissingParams + ")");
-    },
-
-    // [invokeKnownHelper]
-    //
-    // On stack, before: hash, inverse, program, params..., ...
-    // On stack, after: result of helper invocation
-    //
-    // This operation is used when the helper is known to exist,
-    // so a `helperMissing` fallback is not required.
-    invokeKnownHelper: function(paramSize, name) {
-      var helper = this.setupHelper(paramSize, name);
-      this.pushStack(helper.name + ".call(" + helper.callParams + ")");
-    },
-
-    // [invokeAmbiguous]
-    //
-    // On stack, before: hash, inverse, program, params..., ...
-    // On stack, after: result of disambiguation
-    //
-    // This operation is used when an expression like `{{foo}}`
-    // is provided, but we don't know at compile-time whether it
-    // is a helper or a path.
-    //
-    // This operation emits more code than the other options,
-    // and can be avoided by passing the `knownHelpers` and
-    // `knownHelpersOnly` flags at compile-time.
-    invokeAmbiguous: function(name) {
-      this.context.aliases.functionType = '"function"';
-
-      this.pushStackLiteral('{}');
-      var helper = this.setupHelper(0, name);
-
-      var helperName = this.lastHelper = this.nameLookup('helpers', name, 'helper');
-      this.register('foundHelper', helperName);
-
-      var nonHelper = this.nameLookup('depth' + this.lastContext, name, 'context');
-      var nextStack = this.nextStack();
-
-      this.source.push('if (foundHelper) { ' + nextStack + ' = foundHelper.call(' + helper.callParams + '); }');
-      this.source.push('else { ' + nextStack + ' = ' + nonHelper + '; ' + nextStack + ' = typeof ' + nextStack + ' === functionType ? ' + nextStack + '() : ' + nextStack + '; }');
-    },
-
-    // [invokePartial]
-    //
-    // On stack, before: context, ...
-    // On stack after: result of partial invocation
-    //
-    // This operation pops off a context, invokes a partial with that context,
-    // and pushes the result of the invocation back.
-    invokePartial: function(name) {
-      var params = [this.nameLookup('partials', name, 'partial'), "'" + name + "'", this.popStack(), "helpers", "partials"];
-
-      if (this.options.data) {
-        params.push("data");
-      }
-
-      this.context.aliases.self = "this";
-      this.pushStack("self.invokePartial(" + params.join(", ") + ");");
-    },
-
-    // [assignToHash]
-    //
-    // On stack, before: value, hash, ...
-    // On stack, after: hash, ...
-    //
-    // Pops a value and hash off the stack, assigns `hash[key] = value`
-    // and pushes the hash back onto the stack.
-    assignToHash: function(key) {
-      var value = this.popStack();
-      var hash = this.topStack();
-
-      this.source.push(hash + "['" + key + "'] = " + value + ";");
-    },
-
-    // HELPERS
-
-    compiler: JavaScriptCompiler,
-
-    compileChildren: function(environment, options) {
-      var children = environment.children, child, compiler;
-
-      for(var i=0, l=children.length; i<l; i++) {
-        child = children[i];
-        compiler = new this.compiler();
-
-        this.context.programs.push('');     // Placeholder to prevent name conflicts for nested children
-        var index = this.context.programs.length;
-        child.index = index;
-        child.name = 'program' + index;
-        this.context.programs[index] = compiler.compile(child, options, this.context);
-      }
-    },
-
-    programExpression: function(guid) {
-      this.context.aliases.self = "this";
-
-      if(guid == null) {
-        return "self.noop";
-      }
-
-      var child = this.environment.children[guid],
-          depths = child.depths.list, depth;
-
-      var programParams = [child.index, child.name, "data"];
-
-      for(var i=0, l = depths.length; i<l; i++) {
-        depth = depths[i];
-
-        if(depth === 1) { programParams.push("depth0"); }
-        else { programParams.push("depth" + (depth - 1)); }
-      }
-
-      if(depths.length === 0) {
-        return "self.program(" + programParams.join(", ") + ")";
-      } else {
-        programParams.shift();
-        return "self.programWithDepth(" + programParams.join(", ") + ")";
-      }
-    },
-
-    register: function(name, val) {
-      this.useRegister(name);
-      this.source.push(name + " = " + val + ";");
-    },
-
-    useRegister: function(name) {
-      if(!this.registers[name]) {
-        this.registers[name] = true;
-        this.registers.list.push(name);
-      }
-    },
-
-    pushStackLiteral: function(item) {
-      this.compileStack.push(new Literal(item));
-      return item;
-    },
-
-    pushStack: function(item) {
-      this.source.push(this.incrStack() + " = " + item + ";");
-      this.compileStack.push("stack" + this.stackSlot);
-      return "stack" + this.stackSlot;
-    },
-
-    replaceStack: function(callback) {
-      var item = callback.call(this, this.topStack());
-
-      this.source.push(this.topStack() + " = " + item + ";");
-      return "stack" + this.stackSlot;
-    },
-
-    nextStack: function(skipCompileStack) {
-      var name = this.incrStack();
-      this.compileStack.push("stack" + this.stackSlot);
-      return name;
-    },
-
-    incrStack: function() {
-      this.stackSlot++;
-      if(this.stackSlot > this.stackVars.length) { this.stackVars.push("stack" + this.stackSlot); }
-      return "stack" + this.stackSlot;
-    },
-
-    popStack: function() {
-      var item = this.compileStack.pop();
-
-      if (item instanceof Literal) {
-        return item.value;
-      } else {
-        this.stackSlot--;
-        return item;
-      }
-    },
-
-    topStack: function() {
-      var item = this.compileStack[this.compileStack.length - 1];
-
-      if (item instanceof Literal) {
-        return item.value;
-      } else {
-        return item;
-      }
-    },
-
-    quotedString: function(str) {
-      return '"' + str
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"')
-        .replace(/\n/g, '\\n')
-        .replace(/\r/g, '\\r') + '"';
-    },
-
-    setupHelper: function(paramSize, name) {
-      var params = [];
-      this.setupParams(paramSize, params);
-      var foundHelper = this.nameLookup('helpers', name, 'helper');
-
-      return {
-        params: params,
-        name: foundHelper,
-        callParams: ["depth0"].concat(params).join(", "),
-        helperMissingParams: ["depth0", this.quotedString(name)].concat(params).join(", ")
-      };
-    },
-
-    // the params and contexts arguments are passed in arrays
-    // to fill in
-    setupParams: function(paramSize, params) {
-      var options = [], contexts = [], param, inverse, program;
-
-      options.push("hash:" + this.popStack());
-
-      inverse = this.popStack();
-      program = this.popStack();
-
-      // Avoid setting fn and inverse if neither are set. This allows
-      // helpers to do a check for `if (options.fn)`
-      if (program || inverse) {
-        if (!program) {
-          this.context.aliases.self = "this";
-          program = "self.noop";
-        }
-
-        if (!inverse) {
-         this.context.aliases.self = "this";
-          inverse = "self.noop";
-        }
-
-        options.push("inverse:" + inverse);
-        options.push("fn:" + program);
-      }
-
-      for(var i=0; i<paramSize; i++) {
-        param = this.popStack();
-        params.push(param);
-
-        if(this.options.stringParams) {
-          contexts.push(this.popStack());
-        }
-      }
-
-      if (this.options.stringParams) {
-        options.push("contexts:[" + contexts.join(",") + "]");
-      }
-
-      if(this.options.data) {
-        options.push("data:data");
-      }
-
-      params.push("{" + options.join(",") + "}");
-      return params.join(", ");
-    }
-  };
-
-  var reservedWords = (
-    "break else new var" +
-    " case finally return void" +
-    " catch for switch while" +
-    " continue function this with" +
-    " default if throw" +
-    " delete in try" +
-    " do instanceof typeof" +
-    " abstract enum int short" +
-    " boolean export interface static" +
-    " byte extends long super" +
-    " char final native synchronized" +
-    " class float package throws" +
-    " const goto private transient" +
-    " debugger implements protected volatile" +
-    " double import public let yield"
-  ).split(" ");
-
-  var compilerWords = JavaScriptCompiler.RESERVED_WORDS = {};
-
-  for(var i=0, l=reservedWords.length; i<l; i++) {
-    compilerWords[reservedWords[i]] = true;
-  }
-
-  JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
-    if(!JavaScriptCompiler.RESERVED_WORDS[name] && /^[a-zA-Z_$][0-9a-zA-Z_$]+$/.test(name)) {
-      return true;
-    }
-    return false;
-  };
-
-})(Handlebars.Compiler, Handlebars.JavaScriptCompiler);
-
-Handlebars.precompile = function(string, options) {
-  options = options || {};
-
-  var ast = Handlebars.parse(string);
-  var environment = new Handlebars.Compiler().compile(ast, options);
-  return new Handlebars.JavaScriptCompiler().compile(environment, options);
-};
-
-Handlebars.compile = function(string, options) {
-  options = options || {};
-
-  var compiled;
-  function compile() {
-    var ast = Handlebars.parse(string);
-    var environment = new Handlebars.Compiler().compile(ast, options);
-    var templateSpec = new Handlebars.JavaScriptCompiler().compile(environment, options, undefined, true);
-    return Handlebars.template(templateSpec);
-  }
-
-  // Template is only compiled on first use and cached after that point.
-  return function(context, options) {
-    if (!compiled) {
-      compiled = compile();
-    }
-    return compiled.call(this, context, options);
-  };
-};
-;
 // lib/handlebars/runtime.js
 Handlebars.VM = {
   template: function(templateSpec) {
@@ -7415,7 +5755,6 @@ Handlebars.VM = {
 
 Handlebars.template = Handlebars.VM.template;
 ;
-
 /*!
  * jQuery JavaScript Library v1.8.2
  * http://jquery.com/
@@ -17868,7 +16207,2648 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 		return now.toLocaleTimeString() + '.' + ('000' + now.getMilliseconds()).slice(-4);
 	}
 
-}());;this["app"] = this["app"] || {};
+}());;/**
+ * History.js jQuery Adapter
+ * @author Benjamin Arthur Lupton <contact@balupton.com>
+ * @copyright 2010-2011 Benjamin Arthur Lupton <contact@balupton.com>
+ * @license New BSD License <http://creativecommons.org/licenses/BSD/>
+ */
+
+// Closure
+(function(window,undefined){
+	"use strict";
+
+	// Localise Globals
+	var
+		History = window.History = window.History||{},
+		jQuery = window.jQuery;
+
+	// Check Existence
+	if ( typeof History.Adapter !== 'undefined' ) {
+		throw new Error('History.js Adapter has already been loaded...');
+	}
+
+	// Add the Adapter
+	History.Adapter = {
+		/**
+		 * History.Adapter.bind(el,event,callback)
+		 * @param {Element|string} el
+		 * @param {string} event - custom and standard events
+		 * @param {function} callback
+		 * @return {void}
+		 */
+		bind: function(el,event,callback){
+			jQuery(el).bind(event,callback);
+		},
+
+		/**
+		 * History.Adapter.trigger(el,event)
+		 * @param {Element|string} el
+		 * @param {string} event - custom and standard events
+		 * @param {Object=} extra - a object of extra event data (optional)
+		 * @return {void}
+		 */
+		trigger: function(el,event,extra){
+			jQuery(el).trigger(event,extra);
+		},
+
+		/**
+		 * History.Adapter.extractEventData(key,event,extra)
+		 * @param {string} key - key for the event data to extract
+		 * @param {string} event - custom and standard events
+		 * @param {Object=} extra - a object of extra event data (optional)
+		 * @return {mixed}
+		 */
+		extractEventData: function(key,event,extra){
+			// jQuery Native then jQuery Custom
+			var result = (event && event.originalEvent && event.originalEvent[key]) || (extra && extra[key]) || undefined;
+
+			// Return
+			return result;
+		},
+
+		/**
+		 * History.Adapter.onDomLoad(callback)
+		 * @param {function} callback
+		 * @return {void}
+		 */
+		onDomLoad: function(callback) {
+			jQuery(callback);
+		}
+	};
+
+	// Try and Initialise History
+	if ( typeof History.init !== 'undefined' ) {
+		History.init();
+	}
+
+})(window);
+
+;/**
+ * History.js HTML4 Support
+ * Depends on the HTML5 Support
+ * @author Benjamin Arthur Lupton <contact@balupton.com>
+ * @copyright 2010-2011 Benjamin Arthur Lupton <contact@balupton.com>
+ * @license New BSD License <http://creativecommons.org/licenses/BSD/>
+ */
+
+(function(window,undefined){
+	"use strict";
+
+	// ========================================================================
+	// Initialise
+
+	// Localise Globals
+	var
+		document = window.document, // Make sure we are using the correct document
+		setTimeout = window.setTimeout||setTimeout,
+		clearTimeout = window.clearTimeout||clearTimeout,
+		setInterval = window.setInterval||setInterval,
+		History = window.History = window.History||{}; // Public History Object
+
+	// Check Existence
+	if ( typeof History.initHtml4 !== 'undefined' ) {
+		throw new Error('History.js HTML4 Support has already been loaded...');
+	}
+
+
+	// ========================================================================
+	// Initialise HTML4 Support
+
+	// Initialise HTML4 Support
+	History.initHtml4 = function(){
+		// Initialise
+		if ( typeof History.initHtml4.initialized !== 'undefined' ) {
+			// Already Loaded
+			return false;
+		}
+		else {
+			History.initHtml4.initialized = true;
+		}
+
+
+		// ====================================================================
+		// Properties
+
+		/**
+		 * History.enabled
+		 * Is History enabled?
+		 */
+		History.enabled = true;
+
+
+		// ====================================================================
+		// Hash Storage
+
+		/**
+		 * History.savedHashes
+		 * Store the hashes in an array
+		 */
+		History.savedHashes = [];
+
+		/**
+		 * History.isLastHash(newHash)
+		 * Checks if the hash is the last hash
+		 * @param {string} newHash
+		 * @return {boolean} true
+		 */
+		History.isLastHash = function(newHash){
+			// Prepare
+			var oldHash = History.getHashByIndex(),
+				isLast;
+
+			// Check
+			isLast = newHash === oldHash;
+
+			// Return isLast
+			return isLast;
+		};
+
+		/**
+		 * History.saveHash(newHash)
+		 * Push a Hash
+		 * @param {string} newHash
+		 * @return {boolean} true
+		 */
+		History.saveHash = function(newHash){
+			// Check Hash
+			if ( History.isLastHash(newHash) ) {
+				return false;
+			}
+
+			// Push the Hash
+			History.savedHashes.push(newHash);
+
+			// Return true
+			return true;
+		};
+
+		/**
+		 * History.getHashByIndex()
+		 * Gets a hash by the index
+		 * @param {integer} index
+		 * @return {string}
+		 */
+		History.getHashByIndex = function(index){
+			// Prepare
+			var hash = null;
+
+			// Handle
+			if ( typeof index === 'undefined' ) {
+				// Get the last inserted
+				hash = History.savedHashes[History.savedHashes.length-1];
+			}
+			else if ( index < 0 ) {
+				// Get from the end
+				hash = History.savedHashes[History.savedHashes.length+index];
+			}
+			else {
+				// Get from the beginning
+				hash = History.savedHashes[index];
+			}
+
+			// Return hash
+			return hash;
+		};
+
+
+		// ====================================================================
+		// Discarded States
+
+		/**
+		 * History.discardedHashes
+		 * A hashed array of discarded hashes
+		 */
+		History.discardedHashes = {};
+
+		/**
+		 * History.discardedStates
+		 * A hashed array of discarded states
+		 */
+		History.discardedStates = {};
+
+		/**
+		 * History.discardState(State)
+		 * Discards the state by ignoring it through History
+		 * @param {object} State
+		 * @return {true}
+		 */
+		History.discardState = function(discardedState,forwardState,backState){
+			//History.debug('History.discardState', arguments);
+			// Prepare
+			var discardedStateHash = History.getHashByState(discardedState),
+				discardObject;
+
+			// Create Discard Object
+			discardObject = {
+				'discardedState': discardedState,
+				'backState': backState,
+				'forwardState': forwardState
+			};
+
+			// Add to DiscardedStates
+			History.discardedStates[discardedStateHash] = discardObject;
+
+			// Return true
+			return true;
+		};
+
+		/**
+		 * History.discardHash(hash)
+		 * Discards the hash by ignoring it through History
+		 * @param {string} hash
+		 * @return {true}
+		 */
+		History.discardHash = function(discardedHash,forwardState,backState){
+			//History.debug('History.discardState', arguments);
+			// Create Discard Object
+			var discardObject = {
+				'discardedHash': discardedHash,
+				'backState': backState,
+				'forwardState': forwardState
+			};
+
+			// Add to discardedHash
+			History.discardedHashes[discardedHash] = discardObject;
+
+			// Return true
+			return true;
+		};
+
+		/**
+		 * History.discardState(State)
+		 * Checks to see if the state is discarded
+		 * @param {object} State
+		 * @return {bool}
+		 */
+		History.discardedState = function(State){
+			// Prepare
+			var StateHash = History.getHashByState(State),
+				discarded;
+
+			// Check
+			discarded = History.discardedStates[StateHash]||false;
+
+			// Return true
+			return discarded;
+		};
+
+		/**
+		 * History.discardedHash(hash)
+		 * Checks to see if the state is discarded
+		 * @param {string} State
+		 * @return {bool}
+		 */
+		History.discardedHash = function(hash){
+			// Check
+			var discarded = History.discardedHashes[hash]||false;
+
+			// Return true
+			return discarded;
+		};
+
+		/**
+		 * History.recycleState(State)
+		 * Allows a discarded state to be used again
+		 * @param {object} data
+		 * @param {string} title
+		 * @param {string} url
+		 * @return {true}
+		 */
+		History.recycleState = function(State){
+			//History.debug('History.recycleState', arguments);
+			// Prepare
+			var StateHash = History.getHashByState(State);
+
+			// Remove from DiscardedStates
+			if ( History.discardedState(State) ) {
+				delete History.discardedStates[StateHash];
+			}
+
+			// Return true
+			return true;
+		};
+
+
+		// ====================================================================
+		// HTML4 HashChange Support
+
+		if ( History.emulated.hashChange ) {
+			/*
+			 * We must emulate the HTML4 HashChange Support by manually checking for hash changes
+			 */
+
+			/**
+			 * History.hashChangeInit()
+			 * Init the HashChange Emulation
+			 */
+			History.hashChangeInit = function(){
+				// Define our Checker Function
+				History.checkerFunction = null;
+
+				// Define some variables that will help in our checker function
+				var lastDocumentHash = '',
+					iframeId, iframe,
+					lastIframeHash, checkerRunning;
+
+				// Handle depending on the browser
+				if ( History.isInternetExplorer() ) {
+					// IE6 and IE7
+					// We need to use an iframe to emulate the back and forward buttons
+
+					// Create iFrame
+					iframeId = 'historyjs-iframe';
+					iframe = document.createElement('iframe');
+
+					// Adjust iFarme
+					iframe.setAttribute('id', iframeId);
+					iframe.style.display = 'none';
+
+					// Append iFrame
+					document.body.appendChild(iframe);
+
+					// Create initial history entry
+					iframe.contentWindow.document.open();
+					iframe.contentWindow.document.close();
+
+					// Define some variables that will help in our checker function
+					lastIframeHash = '';
+					checkerRunning = false;
+
+					// Define the checker function
+					History.checkerFunction = function(){
+						// Check Running
+						if ( checkerRunning ) {
+							return false;
+						}
+
+						// Update Running
+						checkerRunning = true;
+
+						// Fetch
+						var documentHash = History.getHash()||'',
+							iframeHash = History.unescapeHash(iframe.contentWindow.document.location.hash)||'';
+
+						// The Document Hash has changed (application caused)
+						if ( documentHash !== lastDocumentHash ) {
+							// Equalise
+							lastDocumentHash = documentHash;
+
+							// Create a history entry in the iframe
+							if ( iframeHash !== documentHash ) {
+								//History.debug('hashchange.checker: iframe hash change', 'documentHash (new):', documentHash, 'iframeHash (old):', iframeHash);
+
+								// Equalise
+								lastIframeHash = iframeHash = documentHash;
+
+								// Create History Entry
+								iframe.contentWindow.document.open();
+								iframe.contentWindow.document.close();
+
+								// Update the iframe's hash
+								iframe.contentWindow.document.location.hash = History.escapeHash(documentHash);
+							}
+
+							// Trigger Hashchange Event
+							History.Adapter.trigger(window,'hashchange');
+						}
+
+						// The iFrame Hash has changed (back button caused)
+						else if ( iframeHash !== lastIframeHash ) {
+							//History.debug('hashchange.checker: iframe hash out of sync', 'iframeHash (new):', iframeHash, 'documentHash (old):', documentHash);
+
+							// Equalise
+							lastIframeHash = iframeHash;
+
+							// Update the Hash
+							History.setHash(iframeHash,false);
+						}
+
+						// Reset Running
+						checkerRunning = false;
+
+						// Return true
+						return true;
+					};
+				}
+				else {
+					// We are not IE
+					// Firefox 1 or 2, Opera
+
+					// Define the checker function
+					History.checkerFunction = function(){
+						// Prepare
+						var documentHash = History.getHash();
+
+						// The Document Hash has changed (application caused)
+						if ( documentHash !== lastDocumentHash ) {
+							// Equalise
+							lastDocumentHash = documentHash;
+
+							// Trigger Hashchange Event
+							History.Adapter.trigger(window,'hashchange');
+						}
+
+						// Return true
+						return true;
+					};
+				}
+
+				// Apply the checker function
+				History.intervalList.push(setInterval(History.checkerFunction, History.options.hashChangeInterval));
+
+				// Done
+				return true;
+			}; // History.hashChangeInit
+
+			// Bind hashChangeInit
+			History.Adapter.onDomLoad(History.hashChangeInit);
+
+		} // History.emulated.hashChange
+
+
+		// ====================================================================
+		// HTML5 State Support
+
+		// Non-Native pushState Implementation
+		if ( History.emulated.pushState ) {
+			/*
+			 * We must emulate the HTML5 State Management by using HTML4 HashChange
+			 */
+
+			/**
+			 * History.onHashChange(event)
+			 * Trigger HTML5's window.onpopstate via HTML4 HashChange Support
+			 */
+			History.onHashChange = function(event){
+				//History.debug('History.onHashChange', arguments);
+
+				// Prepare
+				var currentUrl = ((event && event.newURL) || document.location.href),
+					currentHash = History.getHashByUrl(currentUrl),
+					currentState = null,
+					currentStateHash = null,
+					currentStateHashExits = null,
+					discardObject;
+
+				// Check if we are the same state
+				if ( History.isLastHash(currentHash) ) {
+					// There has been no change (just the page's hash has finally propagated)
+					//History.debug('History.onHashChange: no change');
+					History.busy(false);
+					return false;
+				}
+
+				// Reset the double check
+				History.doubleCheckComplete();
+
+				// Store our location for use in detecting back/forward direction
+				History.saveHash(currentHash);
+
+				// Expand Hash
+				if ( currentHash && History.isTraditionalAnchor(currentHash) ) {
+					//History.debug('History.onHashChange: traditional anchor', currentHash);
+					// Traditional Anchor Hash
+					History.Adapter.trigger(window,'anchorchange');
+					History.busy(false);
+					return false;
+				}
+
+				// Create State
+				currentState = History.extractState(History.getFullUrl(currentHash||document.location.href,false),true);
+
+				// Check if we are the same state
+				if ( History.isLastSavedState(currentState) ) {
+					//History.debug('History.onHashChange: no change');
+					// There has been no change (just the page's hash has finally propagated)
+					History.busy(false);
+					return false;
+				}
+
+				// Create the state Hash
+				currentStateHash = History.getHashByState(currentState);
+
+				// Check if we are DiscardedState
+				discardObject = History.discardedState(currentState);
+				if ( discardObject ) {
+					// Ignore this state as it has been discarded and go back to the state before it
+					if ( History.getHashByIndex(-2) === History.getHashByState(discardObject.forwardState) ) {
+						// We are going backwards
+						//History.debug('History.onHashChange: go backwards');
+						History.back(false);
+					} else {
+						// We are going forwards
+						//History.debug('History.onHashChange: go forwards');
+						History.forward(false);
+					}
+					return false;
+				}
+
+				// Push the new HTML5 State
+				//History.debug('History.onHashChange: success hashchange');
+				History.pushState(currentState.data,currentState.title,currentState.url,false);
+
+				// End onHashChange closure
+				return true;
+			};
+			History.Adapter.bind(window,'hashchange',History.onHashChange);
+
+			/**
+			 * History.pushState(data,title,url)
+			 * Add a new State to the history object, become it, and trigger onpopstate
+			 * We have to trigger for HTML4 compatibility
+			 * @param {object} data
+			 * @param {string} title
+			 * @param {string} url
+			 * @return {true}
+			 */
+			History.pushState = function(data,title,url,queue){
+				//History.debug('History.pushState: called', arguments);
+
+				// Check the State
+				if ( History.getHashByUrl(url) ) {
+					throw new Error('History.js does not support states with fragement-identifiers (hashes/anchors).');
+				}
+
+				// Handle Queueing
+				if ( queue !== false && History.busy() ) {
+					// Wait + Push to Queue
+					//History.debug('History.pushState: we must wait', arguments);
+					History.pushQueue({
+						scope: History,
+						callback: History.pushState,
+						args: arguments,
+						queue: queue
+					});
+					return false;
+				}
+
+				// Make Busy
+				History.busy(true);
+
+				// Fetch the State Object
+				var newState = History.createStateObject(data,title,url),
+					newStateHash = History.getHashByState(newState),
+					oldState = History.getState(false),
+					oldStateHash = History.getHashByState(oldState),
+					html4Hash = History.getHash();
+
+				// Store the newState
+				History.storeState(newState);
+				History.expectedStateId = newState.id;
+
+				// Recycle the State
+				History.recycleState(newState);
+
+				// Force update of the title
+				History.setTitle(newState);
+
+				// Check if we are the same State
+				if ( newStateHash === oldStateHash ) {
+					//History.debug('History.pushState: no change', newStateHash);
+					History.busy(false);
+					return false;
+				}
+
+				// Update HTML4 Hash
+				if ( newStateHash !== html4Hash && newStateHash !== History.getShortUrl(document.location.href) ) {
+					//History.debug('History.pushState: update hash', newStateHash, html4Hash);
+					History.setHash(newStateHash,false);
+					return false;
+				}
+
+				// Update HTML5 State
+				History.saveState(newState);
+
+				// Fire HTML5 Event
+				//History.debug('History.pushState: trigger popstate');
+				History.Adapter.trigger(window,'statechange');
+				History.busy(false);
+
+				// End pushState closure
+				return true;
+			};
+
+			/**
+			 * History.replaceState(data,title,url)
+			 * Replace the State and trigger onpopstate
+			 * We have to trigger for HTML4 compatibility
+			 * @param {object} data
+			 * @param {string} title
+			 * @param {string} url
+			 * @return {true}
+			 */
+			History.replaceState = function(data,title,url,queue){
+				//History.debug('History.replaceState: called', arguments);
+
+				// Check the State
+				if ( History.getHashByUrl(url) ) {
+					throw new Error('History.js does not support states with fragement-identifiers (hashes/anchors).');
+				}
+
+				// Handle Queueing
+				if ( queue !== false && History.busy() ) {
+					// Wait + Push to Queue
+					//History.debug('History.replaceState: we must wait', arguments);
+					History.pushQueue({
+						scope: History,
+						callback: History.replaceState,
+						args: arguments,
+						queue: queue
+					});
+					return false;
+				}
+
+				// Make Busy
+				History.busy(true);
+
+				// Fetch the State Objects
+				var newState        = History.createStateObject(data,title,url),
+					oldState        = History.getState(false),
+					previousState   = History.getStateByIndex(-2);
+
+				// Discard Old State
+				History.discardState(oldState,newState,previousState);
+
+				// Alias to PushState
+				History.pushState(newState.data,newState.title,newState.url,false);
+
+				// End replaceState closure
+				return true;
+			};
+
+		} // History.emulated.pushState
+
+
+
+		// ====================================================================
+		// Initialise
+
+		// Non-Native pushState Implementation
+		if ( History.emulated.pushState ) {
+			/**
+			 * Ensure initial state is handled correctly
+			 */
+			if ( History.getHash() && !History.emulated.hashChange ) {
+				History.Adapter.onDomLoad(function(){
+					History.Adapter.trigger(window,'hashchange');
+				});
+			}
+
+		} // History.emulated.pushState
+
+	}; // History.initHtml4
+
+	// Try and Initialise History
+	if ( typeof History.init !== 'undefined' ) {
+		History.init();
+	}
+
+})(window);
+;/**
+ * History.js Core
+ * @author Benjamin Arthur Lupton <contact@balupton.com>
+ * @copyright 2010-2011 Benjamin Arthur Lupton <contact@balupton.com>
+ * @license New BSD License <http://creativecommons.org/licenses/BSD/>
+ */
+
+(function(window,undefined){
+	"use strict";
+
+	// ========================================================================
+	// Initialise
+
+	// Localise Globals
+	var
+		console = window.console||undefined, // Prevent a JSLint complain
+		document = window.document, // Make sure we are using the correct document
+		navigator = window.navigator, // Make sure we are using the correct navigator
+		sessionStorage = window.sessionStorage||false, // sessionStorage
+		setTimeout = window.setTimeout,
+		clearTimeout = window.clearTimeout,
+		setInterval = window.setInterval,
+		clearInterval = window.clearInterval,
+		JSON = window.JSON,
+		alert = window.alert,
+		History = window.History = window.History||{}, // Public History Object
+		history = window.history; // Old History Object
+
+	// MooTools Compatibility
+	JSON.stringify = JSON.stringify||JSON.encode;
+	JSON.parse = JSON.parse||JSON.decode;
+
+	// Check Existence
+	if ( typeof History.init !== 'undefined' ) {
+		throw new Error('History.js Core has already been loaded...');
+	}
+
+	// Initialise History
+	History.init = function(){
+		// Check Load Status of Adapter
+		if ( typeof History.Adapter === 'undefined' ) {
+			return false;
+		}
+
+		// Check Load Status of Core
+		if ( typeof History.initCore !== 'undefined' ) {
+			History.initCore();
+		}
+
+		// Check Load Status of HTML4 Support
+		if ( typeof History.initHtml4 !== 'undefined' ) {
+			History.initHtml4();
+		}
+
+		// Return true
+		return true;
+	};
+
+
+	// ========================================================================
+	// Initialise Core
+
+	// Initialise Core
+	History.initCore = function(){
+		// Initialise
+		if ( typeof History.initCore.initialized !== 'undefined' ) {
+			// Already Loaded
+			return false;
+		}
+		else {
+			History.initCore.initialized = true;
+		}
+
+
+		// ====================================================================
+		// Options
+
+		/**
+		 * History.options
+		 * Configurable options
+		 */
+		History.options = History.options||{};
+
+		/**
+		 * History.options.hashChangeInterval
+		 * How long should the interval be before hashchange checks
+		 */
+		History.options.hashChangeInterval = History.options.hashChangeInterval || 100;
+
+		/**
+		 * History.options.safariPollInterval
+		 * How long should the interval be before safari poll checks
+		 */
+		History.options.safariPollInterval = History.options.safariPollInterval || 500;
+
+		/**
+		 * History.options.doubleCheckInterval
+		 * How long should the interval be before we perform a double check
+		 */
+		History.options.doubleCheckInterval = History.options.doubleCheckInterval || 500;
+
+		/**
+		 * History.options.storeInterval
+		 * How long should we wait between store calls
+		 */
+		History.options.storeInterval = History.options.storeInterval || 1000;
+
+		/**
+		 * History.options.busyDelay
+		 * How long should we wait between busy events
+		 */
+		History.options.busyDelay = History.options.busyDelay || 250;
+
+		/**
+		 * History.options.debug
+		 * If true will enable debug messages to be logged
+		 */
+		History.options.debug = History.options.debug || false;
+
+		/**
+		 * History.options.initialTitle
+		 * What is the title of the initial state
+		 */
+		History.options.initialTitle = History.options.initialTitle || document.title;
+
+
+		// ====================================================================
+		// Interval record
+
+		/**
+		 * History.intervalList
+		 * List of intervals set, to be cleared when document is unloaded.
+		 */
+		History.intervalList = [];
+
+		/**
+		 * History.clearAllIntervals
+		 * Clears all setInterval instances.
+		 */
+		History.clearAllIntervals = function(){
+			var i, il = History.intervalList;
+			if (typeof il !== "undefined" && il !== null) {
+				for (i = 0; i < il.length; i++) {
+					clearInterval(il[i]);
+				}
+				History.intervalList = null;
+			}
+		};
+
+
+		// ====================================================================
+		// Debug
+
+		/**
+		 * History.debug(message,...)
+		 * Logs the passed arguments if debug enabled
+		 */
+		History.debug = function(){
+			if ( (History.options.debug||false) ) {
+				History.log.apply(History,arguments);
+			}
+		};
+
+		/**
+		 * History.log(message,...)
+		 * Logs the passed arguments
+		 */
+		History.log = function(){
+			// Prepare
+			var
+				consoleExists = !(typeof console === 'undefined' || typeof console.log === 'undefined' || typeof console.log.apply === 'undefined'),
+				textarea = document.getElementById('log'),
+				message,
+				i,n,
+				args,arg
+				;
+
+			// Write to Console
+			if ( consoleExists ) {
+				args = Array.prototype.slice.call(arguments);
+				message = args.shift();
+				if ( typeof console.debug !== 'undefined' ) {
+					console.debug.apply(console,[message,args]);
+				}
+				else {
+					console.log.apply(console,[message,args]);
+				}
+			}
+			else {
+				message = ("\n"+arguments[0]+"\n");
+			}
+
+			// Write to log
+			for ( i=1,n=arguments.length; i<n; ++i ) {
+				arg = arguments[i];
+				if ( typeof arg === 'object' && typeof JSON !== 'undefined' ) {
+					try {
+						arg = JSON.stringify(arg);
+					}
+					catch ( Exception ) {
+						// Recursive Object
+					}
+				}
+				message += "\n"+arg+"\n";
+			}
+
+			// Textarea
+			if ( textarea ) {
+				textarea.value += message+"\n-----\n";
+				textarea.scrollTop = textarea.scrollHeight - textarea.clientHeight;
+			}
+			// No Textarea, No Console
+			else if ( !consoleExists ) {
+				alert(message);
+			}
+
+			// Return true
+			return true;
+		};
+
+
+		// ====================================================================
+		// Emulated Status
+
+		/**
+		 * History.getInternetExplorerMajorVersion()
+		 * Get's the major version of Internet Explorer
+		 * @return {integer}
+		 * @license Public Domain
+		 * @author Benjamin Arthur Lupton <contact@balupton.com>
+		 * @author James Padolsey <https://gist.github.com/527683>
+		 */
+		History.getInternetExplorerMajorVersion = function(){
+			var result = History.getInternetExplorerMajorVersion.cached =
+					(typeof History.getInternetExplorerMajorVersion.cached !== 'undefined')
+				?	History.getInternetExplorerMajorVersion.cached
+				:	(function(){
+						var v = 3,
+								div = document.createElement('div'),
+								all = div.getElementsByTagName('i');
+						while ( (div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->') && all[0] ) {}
+						return (v > 4) ? v : false;
+					})()
+				;
+			return result;
+		};
+
+		/**
+		 * History.isInternetExplorer()
+		 * Are we using Internet Explorer?
+		 * @return {boolean}
+		 * @license Public Domain
+		 * @author Benjamin Arthur Lupton <contact@balupton.com>
+		 */
+		History.isInternetExplorer = function(){
+			var result =
+				History.isInternetExplorer.cached =
+				(typeof History.isInternetExplorer.cached !== 'undefined')
+					?	History.isInternetExplorer.cached
+					:	Boolean(History.getInternetExplorerMajorVersion())
+				;
+			return result;
+		};
+
+		/**
+		 * History.emulated
+		 * Which features require emulating?
+		 */
+		History.emulated = {
+			pushState: !Boolean(
+				window.history && window.history.pushState && window.history.replaceState
+				&& !(
+					(/ Mobile\/([1-7][a-z]|(8([abcde]|f(1[0-8]))))/i).test(navigator.userAgent) /* disable for versions of iOS before version 4.3 (8F190) */
+					|| (/AppleWebKit\/5([0-2]|3[0-2])/i).test(navigator.userAgent) /* disable for the mercury iOS browser, or at least older versions of the webkit engine */
+				)
+			),
+			hashChange: Boolean(
+				!(('onhashchange' in window) || ('onhashchange' in document))
+				||
+				(History.isInternetExplorer() && History.getInternetExplorerMajorVersion() < 8)
+			)
+		};
+
+		/**
+		 * History.enabled
+		 * Is History enabled?
+		 */
+		History.enabled = !History.emulated.pushState;
+
+		/**
+		 * History.bugs
+		 * Which bugs are present
+		 */
+		History.bugs = {
+			/**
+			 * Safari 5 and Safari iOS 4 fail to return to the correct state once a hash is replaced by a `replaceState` call
+			 * https://bugs.webkit.org/show_bug.cgi?id=56249
+			 */
+			setHash: Boolean(!History.emulated.pushState && navigator.vendor === 'Apple Computer, Inc.' && /AppleWebKit\/5([0-2]|3[0-3])/.test(navigator.userAgent)),
+
+			/**
+			 * Safari 5 and Safari iOS 4 sometimes fail to apply the state change under busy conditions
+			 * https://bugs.webkit.org/show_bug.cgi?id=42940
+			 */
+			safariPoll: Boolean(!History.emulated.pushState && navigator.vendor === 'Apple Computer, Inc.' && /AppleWebKit\/5([0-2]|3[0-3])/.test(navigator.userAgent)),
+
+			/**
+			 * MSIE 6 and 7 sometimes do not apply a hash even it was told to (requiring a second call to the apply function)
+			 */
+			ieDoubleCheck: Boolean(History.isInternetExplorer() && History.getInternetExplorerMajorVersion() < 8),
+
+			/**
+			 * MSIE 6 requires the entire hash to be encoded for the hashes to trigger the onHashChange event
+			 */
+			hashEscape: Boolean(History.isInternetExplorer() && History.getInternetExplorerMajorVersion() < 7)
+		};
+
+		/**
+		 * History.isEmptyObject(obj)
+		 * Checks to see if the Object is Empty
+		 * @param {Object} obj
+		 * @return {boolean}
+		 */
+		History.isEmptyObject = function(obj) {
+			for ( var name in obj ) {
+				return false;
+			}
+			return true;
+		};
+
+		/**
+		 * History.cloneObject(obj)
+		 * Clones a object and eliminate all references to the original contexts
+		 * @param {Object} obj
+		 * @return {Object}
+		 */
+		History.cloneObject = function(obj) {
+			var hash,newObj;
+			if ( obj ) {
+				hash = JSON.stringify(obj);
+				newObj = JSON.parse(hash);
+			}
+			else {
+				newObj = {};
+			}
+			return newObj;
+		};
+
+
+		// ====================================================================
+		// URL Helpers
+
+		/**
+		 * History.getRootUrl()
+		 * Turns "http://mysite.com/dir/page.html?asd" into "http://mysite.com"
+		 * @return {String} rootUrl
+		 */
+		History.getRootUrl = function(){
+			// Create
+			var rootUrl = document.location.protocol+'//'+(document.location.hostname||document.location.host);
+			if ( document.location.port||false ) {
+				rootUrl += ':'+document.location.port;
+			}
+			rootUrl += '/';
+
+			// Return
+			return rootUrl;
+		};
+
+		/**
+		 * History.getBaseHref()
+		 * Fetches the `href` attribute of the `<base href="...">` element if it exists
+		 * @return {String} baseHref
+		 */
+		History.getBaseHref = function(){
+			// Create
+			var
+				baseElements = document.getElementsByTagName('base'),
+				baseElement = null,
+				baseHref = '';
+
+			// Test for Base Element
+			if ( baseElements.length === 1 ) {
+				// Prepare for Base Element
+				baseElement = baseElements[0];
+				baseHref = baseElement.href.replace(/[^\/]+$/,'');
+			}
+
+			// Adjust trailing slash
+			baseHref = baseHref.replace(/\/+$/,'');
+			if ( baseHref ) baseHref += '/';
+
+			// Return
+			return baseHref;
+		};
+
+		/**
+		 * History.getBaseUrl()
+		 * Fetches the baseHref or basePageUrl or rootUrl (whichever one exists first)
+		 * @return {String} baseUrl
+		 */
+		History.getBaseUrl = function(){
+			// Create
+			var baseUrl = History.getBaseHref()||History.getBasePageUrl()||History.getRootUrl();
+
+			// Return
+			return baseUrl;
+		};
+
+		/**
+		 * History.getPageUrl()
+		 * Fetches the URL of the current page
+		 * @return {String} pageUrl
+		 */
+		History.getPageUrl = function(){
+			// Fetch
+			var
+				State = History.getState(false,false),
+				stateUrl = (State||{}).url||document.location.href,
+				pageUrl;
+
+			// Create
+			pageUrl = stateUrl.replace(/\/+$/,'').replace(/[^\/]+$/,function(part,index,string){
+				return (/\./).test(part) ? part : part+'/';
+			});
+
+			// Return
+			return pageUrl;
+		};
+
+		/**
+		 * History.getBasePageUrl()
+		 * Fetches the Url of the directory of the current page
+		 * @return {String} basePageUrl
+		 */
+		History.getBasePageUrl = function(){
+			// Create
+			var basePageUrl = document.location.href.replace(/[#\?].*/,'').replace(/[^\/]+$/,function(part,index,string){
+				return (/[^\/]$/).test(part) ? '' : part;
+			}).replace(/\/+$/,'')+'/';
+
+			// Return
+			return basePageUrl;
+		};
+
+		/**
+		 * History.getFullUrl(url)
+		 * Ensures that we have an absolute URL and not a relative URL
+		 * @param {string} url
+		 * @param {Boolean} allowBaseHref
+		 * @return {string} fullUrl
+		 */
+		History.getFullUrl = function(url,allowBaseHref){
+			// Prepare
+			var fullUrl = url, firstChar = url.substring(0,1);
+			allowBaseHref = (typeof allowBaseHref === 'undefined') ? true : allowBaseHref;
+
+			// Check
+			if ( /[a-z]+\:\/\//.test(url) ) {
+				// Full URL
+			}
+			else if ( firstChar === '/' ) {
+				// Root URL
+				fullUrl = History.getRootUrl()+url.replace(/^\/+/,'');
+			}
+			else if ( firstChar === '#' ) {
+				// Anchor URL
+				fullUrl = History.getPageUrl().replace(/#.*/,'')+url;
+			}
+			else if ( firstChar === '?' ) {
+				// Query URL
+				fullUrl = History.getPageUrl().replace(/[\?#].*/,'')+url;
+			}
+			else {
+				// Relative URL
+				if ( allowBaseHref ) {
+					fullUrl = History.getBaseUrl()+url.replace(/^(\.\/)+/,'');
+				} else {
+					fullUrl = History.getBasePageUrl()+url.replace(/^(\.\/)+/,'');
+				}
+				// We have an if condition above as we do not want hashes
+				// which are relative to the baseHref in our URLs
+				// as if the baseHref changes, then all our bookmarks
+				// would now point to different locations
+				// whereas the basePageUrl will always stay the same
+			}
+
+			// Return
+			return fullUrl.replace(/\#$/,'');
+		};
+
+		/**
+		 * History.getShortUrl(url)
+		 * Ensures that we have a relative URL and not a absolute URL
+		 * @param {string} url
+		 * @return {string} url
+		 */
+		History.getShortUrl = function(url){
+			// Prepare
+			var shortUrl = url, baseUrl = History.getBaseUrl(), rootUrl = History.getRootUrl();
+
+			// Trim baseUrl
+			if ( History.emulated.pushState ) {
+				// We are in a if statement as when pushState is not emulated
+				// The actual url these short urls are relative to can change
+				// So within the same session, we the url may end up somewhere different
+				shortUrl = shortUrl.replace(baseUrl,'');
+			}
+
+			// Trim rootUrl
+			shortUrl = shortUrl.replace(rootUrl,'/');
+
+			// Ensure we can still detect it as a state
+			if ( History.isTraditionalAnchor(shortUrl) ) {
+				shortUrl = './'+shortUrl;
+			}
+
+			// Clean It
+			shortUrl = shortUrl.replace(/^(\.\/)+/g,'./').replace(/\#$/,'');
+
+			// Return
+			return shortUrl;
+		};
+
+
+		// ====================================================================
+		// State Storage
+
+		/**
+		 * History.store
+		 * The store for all session specific data
+		 */
+		History.store = {};
+
+		/**
+		 * History.idToState
+		 * 1-1: State ID to State Object
+		 */
+		History.idToState = History.idToState||{};
+
+		/**
+		 * History.stateToId
+		 * 1-1: State String to State ID
+		 */
+		History.stateToId = History.stateToId||{};
+
+		/**
+		 * History.urlToId
+		 * 1-1: State URL to State ID
+		 */
+		History.urlToId = History.urlToId||{};
+
+		/**
+		 * History.storedStates
+		 * Store the states in an array
+		 */
+		History.storedStates = History.storedStates||[];
+
+		/**
+		 * History.savedStates
+		 * Saved the states in an array
+		 */
+		History.savedStates = History.savedStates||[];
+
+		/**
+		 * History.noramlizeStore()
+		 * Noramlize the store by adding necessary values
+		 */
+		History.normalizeStore = function(){
+			History.store.idToState = History.store.idToState||{};
+			History.store.urlToId = History.store.urlToId||{};
+			History.store.stateToId = History.store.stateToId||{};
+		};
+
+		/**
+		 * History.getState()
+		 * Get an object containing the data, title and url of the current state
+		 * @param {Boolean} friendly
+		 * @param {Boolean} create
+		 * @return {Object} State
+		 */
+		History.getState = function(friendly,create){
+			// Prepare
+			if ( typeof friendly === 'undefined' ) { friendly = true; }
+			if ( typeof create === 'undefined' ) { create = true; }
+
+			// Fetch
+			var State = History.getLastSavedState();
+
+			// Create
+			if ( !State && create ) {
+				State = History.createStateObject();
+			}
+
+			// Adjust
+			if ( friendly ) {
+				State = History.cloneObject(State);
+				State.url = State.cleanUrl||State.url;
+			}
+
+			// Return
+			return State;
+		};
+
+		/**
+		 * History.getIdByState(State)
+		 * Gets a ID for a State
+		 * @param {State} newState
+		 * @return {String} id
+		 */
+		History.getIdByState = function(newState){
+
+			// Fetch ID
+			var id = History.extractId(newState.url),
+				str;
+			
+			if ( !id ) {
+				// Find ID via State String
+				str = History.getStateString(newState);
+				if ( typeof History.stateToId[str] !== 'undefined' ) {
+					id = History.stateToId[str];
+				}
+				else if ( typeof History.store.stateToId[str] !== 'undefined' ) {
+					id = History.store.stateToId[str];
+				}
+				else {
+					// Generate a new ID
+					while ( true ) {
+						id = (new Date()).getTime() + String(Math.random()).replace(/\D/g,'');
+						if ( typeof History.idToState[id] === 'undefined' && typeof History.store.idToState[id] === 'undefined' ) {
+							break;
+						}
+					}
+
+					// Apply the new State to the ID
+					History.stateToId[str] = id;
+					History.idToState[id] = newState;
+				}
+			}
+
+			// Return ID
+			return id;
+		};
+
+		/**
+		 * History.normalizeState(State)
+		 * Expands a State Object
+		 * @param {object} State
+		 * @return {object}
+		 */
+		History.normalizeState = function(oldState){
+			// Variables
+			var newState, dataNotEmpty;
+
+			// Prepare
+			if ( !oldState || (typeof oldState !== 'object') ) {
+				oldState = {};
+			}
+
+			// Check
+			if ( typeof oldState.normalized !== 'undefined' ) {
+				return oldState;
+			}
+
+			// Adjust
+			if ( !oldState.data || (typeof oldState.data !== 'object') ) {
+				oldState.data = {};
+			}
+
+			// ----------------------------------------------------------------
+
+			// Create
+			newState = {};
+			newState.normalized = true;
+			newState.title = oldState.title||'';
+			newState.url = History.getFullUrl(History.unescapeString(oldState.url||document.location.href));
+			newState.hash = History.getShortUrl(newState.url);
+			newState.data = History.cloneObject(oldState.data);
+
+			// Fetch ID
+			newState.id = History.getIdByState(newState);
+
+			// ----------------------------------------------------------------
+
+			// Clean the URL
+			newState.cleanUrl = newState.url.replace(/\??\&_suid.*/,'');
+			newState.url = newState.cleanUrl;
+
+			// Check to see if we have more than just a url
+			dataNotEmpty = !History.isEmptyObject(newState.data);
+
+			// Apply
+			if ( newState.title || dataNotEmpty ) {
+				// Add ID to Hash
+				newState.hash = History.getShortUrl(newState.url).replace(/\??\&_suid.*/,'');
+				if ( !/\?/.test(newState.hash) ) {
+					newState.hash += '?';
+				}
+				newState.hash += '&_suid='+newState.id;
+			}
+
+			// Create the Hashed URL
+			newState.hashedUrl = History.getFullUrl(newState.hash);
+
+			// ----------------------------------------------------------------
+
+			// Update the URL if we have a duplicate
+			if ( (History.emulated.pushState || History.bugs.safariPoll) && History.hasUrlDuplicate(newState) ) {
+				newState.url = newState.hashedUrl;
+			}
+
+			// ----------------------------------------------------------------
+
+			// Return
+			return newState;
+		};
+
+		/**
+		 * History.createStateObject(data,title,url)
+		 * Creates a object based on the data, title and url state params
+		 * @param {object} data
+		 * @param {string} title
+		 * @param {string} url
+		 * @return {object}
+		 */
+		History.createStateObject = function(data,title,url){
+			// Hashify
+			var State = {
+				'data': data,
+				'title': title,
+				'url': url
+			};
+
+			// Expand the State
+			State = History.normalizeState(State);
+
+			// Return object
+			return State;
+		};
+
+		/**
+		 * History.getStateById(id)
+		 * Get a state by it's UID
+		 * @param {String} id
+		 */
+		History.getStateById = function(id){
+			// Prepare
+			id = String(id);
+
+			// Retrieve
+			var State = History.idToState[id] || History.store.idToState[id] || undefined;
+
+			// Return State
+			return State;
+		};
+
+		/**
+		 * Get a State's String
+		 * @param {State} passedState
+		 */
+		History.getStateString = function(passedState){
+			// Prepare
+			var State, cleanedState, str;
+
+			// Fetch
+			State = History.normalizeState(passedState);
+
+			// Clean
+			cleanedState = {
+				data: State.data,
+				title: passedState.title,
+				url: passedState.url
+			};
+
+			// Fetch
+			str = JSON.stringify(cleanedState);
+
+			// Return
+			return str;
+		};
+
+		/**
+		 * Get a State's ID
+		 * @param {State} passedState
+		 * @return {String} id
+		 */
+		History.getStateId = function(passedState){
+			// Prepare
+			var State, id;
+			
+			// Fetch
+			State = History.normalizeState(passedState);
+
+			// Fetch
+			id = State.id;
+
+			// Return
+			return id;
+		};
+
+		/**
+		 * History.getHashByState(State)
+		 * Creates a Hash for the State Object
+		 * @param {State} passedState
+		 * @return {String} hash
+		 */
+		History.getHashByState = function(passedState){
+			// Prepare
+			var State, hash;
+			
+			// Fetch
+			State = History.normalizeState(passedState);
+
+			// Hash
+			hash = State.hash;
+
+			// Return
+			return hash;
+		};
+
+		/**
+		 * History.extractId(url_or_hash)
+		 * Get a State ID by it's URL or Hash
+		 * @param {string} url_or_hash
+		 * @return {string} id
+		 */
+		History.extractId = function ( url_or_hash ) {
+			// Prepare
+			var id,parts,url;
+
+			// Extract
+			parts = /(.*)\&_suid=([0-9]+)$/.exec(url_or_hash);
+			url = parts ? (parts[1]||url_or_hash) : url_or_hash;
+			id = parts ? String(parts[2]||'') : '';
+
+			// Return
+			return id||false;
+		};
+
+		/**
+		 * History.isTraditionalAnchor
+		 * Checks to see if the url is a traditional anchor or not
+		 * @param {String} url_or_hash
+		 * @return {Boolean}
+		 */
+		History.isTraditionalAnchor = function(url_or_hash){
+			// Check
+			var isTraditional = !(/[\/\?\.]/.test(url_or_hash));
+
+			// Return
+			return isTraditional;
+		};
+
+		/**
+		 * History.extractState
+		 * Get a State by it's URL or Hash
+		 * @param {String} url_or_hash
+		 * @return {State|null}
+		 */
+		History.extractState = function(url_or_hash,create){
+			// Prepare
+			var State = null, id, url;
+			create = create||false;
+
+			// Fetch SUID
+			id = History.extractId(url_or_hash);
+			if ( id ) {
+				State = History.getStateById(id);
+			}
+
+			// Fetch SUID returned no State
+			if ( !State ) {
+				// Fetch URL
+				url = History.getFullUrl(url_or_hash);
+
+				// Check URL
+				id = History.getIdByUrl(url)||false;
+				if ( id ) {
+					State = History.getStateById(id);
+				}
+
+				// Create State
+				if ( !State && create && !History.isTraditionalAnchor(url_or_hash) ) {
+					State = History.createStateObject(null,null,url);
+				}
+			}
+
+			// Return
+			return State;
+		};
+
+		/**
+		 * History.getIdByUrl()
+		 * Get a State ID by a State URL
+		 */
+		History.getIdByUrl = function(url){
+			// Fetch
+			var id = History.urlToId[url] || History.store.urlToId[url] || undefined;
+
+			// Return
+			return id;
+		};
+
+		/**
+		 * History.getLastSavedState()
+		 * Get an object containing the data, title and url of the current state
+		 * @return {Object} State
+		 */
+		History.getLastSavedState = function(){
+			return History.savedStates[History.savedStates.length-1]||undefined;
+		};
+
+		/**
+		 * History.getLastStoredState()
+		 * Get an object containing the data, title and url of the current state
+		 * @return {Object} State
+		 */
+		History.getLastStoredState = function(){
+			return History.storedStates[History.storedStates.length-1]||undefined;
+		};
+
+		/**
+		 * History.hasUrlDuplicate
+		 * Checks if a Url will have a url conflict
+		 * @param {Object} newState
+		 * @return {Boolean} hasDuplicate
+		 */
+		History.hasUrlDuplicate = function(newState) {
+			// Prepare
+			var hasDuplicate = false,
+				oldState;
+
+			// Fetch
+			oldState = History.extractState(newState.url);
+
+			// Check
+			hasDuplicate = oldState && oldState.id !== newState.id;
+
+			// Return
+			return hasDuplicate;
+		};
+
+		/**
+		 * History.storeState
+		 * Store a State
+		 * @param {Object} newState
+		 * @return {Object} newState
+		 */
+		History.storeState = function(newState){
+			// Store the State
+			History.urlToId[newState.url] = newState.id;
+
+			// Push the State
+			History.storedStates.push(History.cloneObject(newState));
+
+			// Return newState
+			return newState;
+		};
+
+		/**
+		 * History.isLastSavedState(newState)
+		 * Tests to see if the state is the last state
+		 * @param {Object} newState
+		 * @return {boolean} isLast
+		 */
+		History.isLastSavedState = function(newState){
+			// Prepare
+			var isLast = false,
+				newId, oldState, oldId;
+
+			// Check
+			if ( History.savedStates.length ) {
+				newId = newState.id;
+				oldState = History.getLastSavedState();
+				oldId = oldState.id;
+
+				// Check
+				isLast = (newId === oldId);
+			}
+
+			// Return
+			return isLast;
+		};
+
+		/**
+		 * History.saveState
+		 * Push a State
+		 * @param {Object} newState
+		 * @return {boolean} changed
+		 */
+		History.saveState = function(newState){
+			// Check Hash
+			if ( History.isLastSavedState(newState) ) {
+				return false;
+			}
+
+			// Push the State
+			History.savedStates.push(History.cloneObject(newState));
+
+			// Return true
+			return true;
+		};
+
+		/**
+		 * History.getStateByIndex()
+		 * Gets a state by the index
+		 * @param {integer} index
+		 * @return {Object}
+		 */
+		History.getStateByIndex = function(index){
+			// Prepare
+			var State = null;
+
+			// Handle
+			if ( typeof index === 'undefined' ) {
+				// Get the last inserted
+				State = History.savedStates[History.savedStates.length-1];
+			}
+			else if ( index < 0 ) {
+				// Get from the end
+				State = History.savedStates[History.savedStates.length+index];
+			}
+			else {
+				// Get from the beginning
+				State = History.savedStates[index];
+			}
+
+			// Return State
+			return State;
+		};
+
+
+		// ====================================================================
+		// Hash Helpers
+
+		/**
+		 * History.getHash()
+		 * Gets the current document hash
+		 * @return {string}
+		 */
+		History.getHash = function(){
+			var hash = History.unescapeHash(document.location.hash);
+			return hash;
+		};
+
+		/**
+		 * History.unescapeString()
+		 * Unescape a string
+		 * @param {String} str
+		 * @return {string}
+		 */
+		History.unescapeString = function(str){
+			// Prepare
+			var result = str,
+				tmp;
+
+			// Unescape hash
+			while ( true ) {
+				tmp = window.unescape(result);
+				if ( tmp === result ) {
+					break;
+				}
+				result = tmp;
+			}
+
+			// Return result
+			return result;
+		};
+
+		/**
+		 * History.unescapeHash()
+		 * normalize and Unescape a Hash
+		 * @param {String} hash
+		 * @return {string}
+		 */
+		History.unescapeHash = function(hash){
+			// Prepare
+			var result = History.normalizeHash(hash);
+
+			// Unescape hash
+			result = History.unescapeString(result);
+
+			// Return result
+			return result;
+		};
+
+		/**
+		 * History.normalizeHash()
+		 * normalize a hash across browsers
+		 * @return {string}
+		 */
+		History.normalizeHash = function(hash){
+			// Prepare
+			var result = hash.replace(/[^#]*#/,'').replace(/#.*/, '');
+
+			// Return result
+			return result;
+		};
+
+		/**
+		 * History.setHash(hash)
+		 * Sets the document hash
+		 * @param {string} hash
+		 * @return {History}
+		 */
+		History.setHash = function(hash,queue){
+			// Prepare
+			var adjustedHash, State, pageUrl;
+
+			// Handle Queueing
+			if ( queue !== false && History.busy() ) {
+				// Wait + Push to Queue
+				//History.debug('History.setHash: we must wait', arguments);
+				History.pushQueue({
+					scope: History,
+					callback: History.setHash,
+					args: arguments,
+					queue: queue
+				});
+				return false;
+			}
+
+			// Log
+			//History.debug('History.setHash: called',hash);
+
+			// Prepare
+			adjustedHash = History.escapeHash(hash);
+
+			// Make Busy + Continue
+			History.busy(true);
+
+			// Check if hash is a state
+			State = History.extractState(hash,true);
+			if ( State && !History.emulated.pushState ) {
+				// Hash is a state so skip the setHash
+				//History.debug('History.setHash: Hash is a state so skipping the hash set with a direct pushState call',arguments);
+
+				// PushState
+				History.pushState(State.data,State.title,State.url,false);
+			}
+			else if ( document.location.hash !== adjustedHash ) {
+				// Hash is a proper hash, so apply it
+
+				// Handle browser bugs
+				if ( History.bugs.setHash ) {
+					// Fix Safari Bug https://bugs.webkit.org/show_bug.cgi?id=56249
+
+					// Fetch the base page
+					pageUrl = History.getPageUrl();
+
+					// Safari hash apply
+					History.pushState(null,null,pageUrl+'#'+adjustedHash,false);
+				}
+				else {
+					// Normal hash apply
+					document.location.hash = adjustedHash;
+				}
+			}
+
+			// Chain
+			return History;
+		};
+
+		/**
+		 * History.escape()
+		 * normalize and Escape a Hash
+		 * @return {string}
+		 */
+		History.escapeHash = function(hash){
+			// Prepare
+			var result = History.normalizeHash(hash);
+
+			// Escape hash
+			result = window.escape(result);
+
+			// IE6 Escape Bug
+			if ( !History.bugs.hashEscape ) {
+				// Restore common parts
+				result = result
+					.replace(/\%21/g,'!')
+					.replace(/\%26/g,'&')
+					.replace(/\%3D/g,'=')
+					.replace(/\%3F/g,'?');
+			}
+
+			// Return result
+			return result;
+		};
+
+		/**
+		 * History.getHashByUrl(url)
+		 * Extracts the Hash from a URL
+		 * @param {string} url
+		 * @return {string} url
+		 */
+		History.getHashByUrl = function(url){
+			// Extract the hash
+			var hash = String(url)
+				.replace(/([^#]*)#?([^#]*)#?(.*)/, '$2')
+				;
+
+			// Unescape hash
+			hash = History.unescapeHash(hash);
+
+			// Return hash
+			return hash;
+		};
+
+		/**
+		 * History.setTitle(title)
+		 * Applies the title to the document
+		 * @param {State} newState
+		 * @return {Boolean}
+		 */
+		History.setTitle = function(newState){
+			// Prepare
+			var title = newState.title,
+				firstState;
+
+			// Initial
+			if ( !title ) {
+				firstState = History.getStateByIndex(0);
+				if ( firstState && firstState.url === newState.url ) {
+					title = firstState.title||History.options.initialTitle;
+				}
+			}
+
+			// Apply
+			try {
+				document.getElementsByTagName('title')[0].innerHTML = title.replace('<','&lt;').replace('>','&gt;').replace(' & ',' &amp; ');
+			}
+			catch ( Exception ) { }
+			document.title = title;
+
+			// Chain
+			return History;
+		};
+
+
+		// ====================================================================
+		// Queueing
+
+		/**
+		 * History.queues
+		 * The list of queues to use
+		 * First In, First Out
+		 */
+		History.queues = [];
+
+		/**
+		 * History.busy(value)
+		 * @param {boolean} value [optional]
+		 * @return {boolean} busy
+		 */
+		History.busy = function(value){
+			// Apply
+			if ( typeof value !== 'undefined' ) {
+				//History.debug('History.busy: changing ['+(History.busy.flag||false)+'] to ['+(value||false)+']', History.queues.length);
+				History.busy.flag = value;
+			}
+			// Default
+			else if ( typeof History.busy.flag === 'undefined' ) {
+				History.busy.flag = false;
+			}
+
+			// Queue
+			if ( !History.busy.flag ) {
+				// Execute the next item in the queue
+				clearTimeout(History.busy.timeout);
+				var fireNext = function(){
+					var i, queue, item;
+					if ( History.busy.flag ) return;
+					for ( i=History.queues.length-1; i >= 0; --i ) {
+						queue = History.queues[i];
+						if ( queue.length === 0 ) continue;
+						item = queue.shift();
+						History.fireQueueItem(item);
+						History.busy.timeout = setTimeout(fireNext,History.options.busyDelay);
+					}
+				};
+				History.busy.timeout = setTimeout(fireNext,History.options.busyDelay);
+			}
+
+			// Return
+			return History.busy.flag;
+		};
+
+		/**
+		 * History.busy.flag
+		 */
+		History.busy.flag = false;
+
+		/**
+		 * History.fireQueueItem(item)
+		 * Fire a Queue Item
+		 * @param {Object} item
+		 * @return {Mixed} result
+		 */
+		History.fireQueueItem = function(item){
+			return item.callback.apply(item.scope||History,item.args||[]);
+		};
+
+		/**
+		 * History.pushQueue(callback,args)
+		 * Add an item to the queue
+		 * @param {Object} item [scope,callback,args,queue]
+		 */
+		History.pushQueue = function(item){
+			// Prepare the queue
+			History.queues[item.queue||0] = History.queues[item.queue||0]||[];
+
+			// Add to the queue
+			History.queues[item.queue||0].push(item);
+
+			// Chain
+			return History;
+		};
+
+		/**
+		 * History.queue (item,queue), (func,queue), (func), (item)
+		 * Either firs the item now if not busy, or adds it to the queue
+		 */
+		History.queue = function(item,queue){
+			// Prepare
+			if ( typeof item === 'function' ) {
+				item = {
+					callback: item
+				};
+			}
+			if ( typeof queue !== 'undefined' ) {
+				item.queue = queue;
+			}
+
+			// Handle
+			if ( History.busy() ) {
+				History.pushQueue(item);
+			} else {
+				History.fireQueueItem(item);
+			}
+
+			// Chain
+			return History;
+		};
+
+		/**
+		 * History.clearQueue()
+		 * Clears the Queue
+		 */
+		History.clearQueue = function(){
+			History.busy.flag = false;
+			History.queues = [];
+			return History;
+		};
+
+
+		// ====================================================================
+		// IE Bug Fix
+
+		/**
+		 * History.stateChanged
+		 * States whether or not the state has changed since the last double check was initialised
+		 */
+		History.stateChanged = false;
+
+		/**
+		 * History.doubleChecker
+		 * Contains the timeout used for the double checks
+		 */
+		History.doubleChecker = false;
+
+		/**
+		 * History.doubleCheckComplete()
+		 * Complete a double check
+		 * @return {History}
+		 */
+		History.doubleCheckComplete = function(){
+			// Update
+			History.stateChanged = true;
+
+			// Clear
+			History.doubleCheckClear();
+
+			// Chain
+			return History;
+		};
+
+		/**
+		 * History.doubleCheckClear()
+		 * Clear a double check
+		 * @return {History}
+		 */
+		History.doubleCheckClear = function(){
+			// Clear
+			if ( History.doubleChecker ) {
+				clearTimeout(History.doubleChecker);
+				History.doubleChecker = false;
+			}
+
+			// Chain
+			return History;
+		};
+
+		/**
+		 * History.doubleCheck()
+		 * Create a double check
+		 * @return {History}
+		 */
+		History.doubleCheck = function(tryAgain){
+			// Reset
+			History.stateChanged = false;
+			History.doubleCheckClear();
+
+			// Fix IE6,IE7 bug where calling history.back or history.forward does not actually change the hash (whereas doing it manually does)
+			// Fix Safari 5 bug where sometimes the state does not change: https://bugs.webkit.org/show_bug.cgi?id=42940
+			if ( History.bugs.ieDoubleCheck ) {
+				// Apply Check
+				History.doubleChecker = setTimeout(
+					function(){
+						History.doubleCheckClear();
+						if ( !History.stateChanged ) {
+							//History.debug('History.doubleCheck: State has not yet changed, trying again', arguments);
+							// Re-Attempt
+							tryAgain();
+						}
+						return true;
+					},
+					History.options.doubleCheckInterval
+				);
+			}
+
+			// Chain
+			return History;
+		};
+
+
+		// ====================================================================
+		// Safari Bug Fix
+
+		/**
+		 * History.safariStatePoll()
+		 * Poll the current state
+		 * @return {History}
+		 */
+		History.safariStatePoll = function(){
+			// Poll the URL
+
+			// Get the Last State which has the new URL
+			var
+				urlState = History.extractState(document.location.href),
+				newState;
+
+			// Check for a difference
+			if ( !History.isLastSavedState(urlState) ) {
+				newState = urlState;
+			}
+			else {
+				return;
+			}
+
+			// Check if we have a state with that url
+			// If not create it
+			if ( !newState ) {
+				//History.debug('History.safariStatePoll: new');
+				newState = History.createStateObject();
+			}
+
+			// Apply the New State
+			//History.debug('History.safariStatePoll: trigger');
+			History.Adapter.trigger(window,'popstate');
+
+			// Chain
+			return History;
+		};
+
+
+		// ====================================================================
+		// State Aliases
+
+		/**
+		 * History.back(queue)
+		 * Send the browser history back one item
+		 * @param {Integer} queue [optional]
+		 */
+		History.back = function(queue){
+			//History.debug('History.back: called', arguments);
+
+			// Handle Queueing
+			if ( queue !== false && History.busy() ) {
+				// Wait + Push to Queue
+				//History.debug('History.back: we must wait', arguments);
+				History.pushQueue({
+					scope: History,
+					callback: History.back,
+					args: arguments,
+					queue: queue
+				});
+				return false;
+			}
+
+			// Make Busy + Continue
+			History.busy(true);
+
+			// Fix certain browser bugs that prevent the state from changing
+			History.doubleCheck(function(){
+				History.back(false);
+			});
+
+			// Go back
+			history.go(-1);
+
+			// End back closure
+			return true;
+		};
+
+		/**
+		 * History.forward(queue)
+		 * Send the browser history forward one item
+		 * @param {Integer} queue [optional]
+		 */
+		History.forward = function(queue){
+			//History.debug('History.forward: called', arguments);
+
+			// Handle Queueing
+			if ( queue !== false && History.busy() ) {
+				// Wait + Push to Queue
+				//History.debug('History.forward: we must wait', arguments);
+				History.pushQueue({
+					scope: History,
+					callback: History.forward,
+					args: arguments,
+					queue: queue
+				});
+				return false;
+			}
+
+			// Make Busy + Continue
+			History.busy(true);
+
+			// Fix certain browser bugs that prevent the state from changing
+			History.doubleCheck(function(){
+				History.forward(false);
+			});
+
+			// Go forward
+			history.go(1);
+
+			// End forward closure
+			return true;
+		};
+
+		/**
+		 * History.go(index,queue)
+		 * Send the browser history back or forward index times
+		 * @param {Integer} queue [optional]
+		 */
+		History.go = function(index,queue){
+			//History.debug('History.go: called', arguments);
+
+			// Prepare
+			var i;
+
+			// Handle
+			if ( index > 0 ) {
+				// Forward
+				for ( i=1; i<=index; ++i ) {
+					History.forward(queue);
+				}
+			}
+			else if ( index < 0 ) {
+				// Backward
+				for ( i=-1; i>=index; --i ) {
+					History.back(queue);
+				}
+			}
+			else {
+				throw new Error('History.go: History.go requires a positive or negative integer passed.');
+			}
+
+			// Chain
+			return History;
+		};
+
+
+		// ====================================================================
+		// HTML5 State Support
+
+		// Non-Native pushState Implementation
+		if ( History.emulated.pushState ) {
+			/*
+			 * Provide Skeleton for HTML4 Browsers
+			 */
+
+			// Prepare
+			var emptyFunction = function(){};
+			History.pushState = History.pushState||emptyFunction;
+			History.replaceState = History.replaceState||emptyFunction;
+		} // History.emulated.pushState
+
+		// Native pushState Implementation
+		else {
+			/*
+			 * Use native HTML5 History API Implementation
+			 */
+
+			/**
+			 * History.onPopState(event,extra)
+			 * Refresh the Current State
+			 */
+			History.onPopState = function(event,extra){
+				// Prepare
+				var stateId = false, newState = false, currentHash, currentState;
+
+				// Reset the double check
+				History.doubleCheckComplete();
+
+				// Check for a Hash, and handle apporiatly
+				currentHash	= History.getHash();
+				if ( currentHash ) {
+					// Expand Hash
+					currentState = History.extractState(currentHash||document.location.href,true);
+					if ( currentState ) {
+						// We were able to parse it, it must be a State!
+						// Let's forward to replaceState
+						//History.debug('History.onPopState: state anchor', currentHash, currentState);
+						History.replaceState(currentState.data, currentState.title, currentState.url, false);
+					}
+					else {
+						// Traditional Anchor
+						//History.debug('History.onPopState: traditional anchor', currentHash);
+						History.Adapter.trigger(window,'anchorchange');
+						History.busy(false);
+					}
+
+					// We don't care for hashes
+					History.expectedStateId = false;
+					return false;
+				}
+
+				// Ensure
+				stateId = History.Adapter.extractEventData('state',event,extra) || false;
+
+				// Fetch State
+				if ( stateId ) {
+					// Vanilla: Back/forward button was used
+					newState = History.getStateById(stateId);
+				}
+				else if ( History.expectedStateId ) {
+					// Vanilla: A new state was pushed, and popstate was called manually
+					newState = History.getStateById(History.expectedStateId);
+				}
+				else {
+					// Initial State
+					newState = History.extractState(document.location.href);
+				}
+
+				// The State did not exist in our store
+				if ( !newState ) {
+					// Regenerate the State
+					newState = History.createStateObject(null,null,document.location.href);
+				}
+
+				// Clean
+				History.expectedStateId = false;
+
+				// Check if we are the same state
+				if ( History.isLastSavedState(newState) ) {
+					// There has been no change (just the page's hash has finally propagated)
+					//History.debug('History.onPopState: no change', newState, History.savedStates);
+					History.busy(false);
+					return false;
+				}
+
+				// Store the State
+				History.storeState(newState);
+				History.saveState(newState);
+
+				// Force update of the title
+				History.setTitle(newState);
+
+				// Fire Our Event
+				History.Adapter.trigger(window,'statechange');
+				History.busy(false);
+
+				// Return true
+				return true;
+			};
+			History.Adapter.bind(window,'popstate',History.onPopState);
+
+			/**
+			 * History.pushState(data,title,url)
+			 * Add a new State to the history object, become it, and trigger onpopstate
+			 * We have to trigger for HTML4 compatibility
+			 * @param {object} data
+			 * @param {string} title
+			 * @param {string} url
+			 * @return {true}
+			 */
+			History.pushState = function(data,title,url,queue){
+				//History.debug('History.pushState: called', arguments);
+
+				// Check the State
+				if ( History.getHashByUrl(url) && History.emulated.pushState ) {
+					throw new Error('History.js does not support states with fragement-identifiers (hashes/anchors).');
+				}
+
+				// Handle Queueing
+				if ( queue !== false && History.busy() ) {
+					// Wait + Push to Queue
+					//History.debug('History.pushState: we must wait', arguments);
+					History.pushQueue({
+						scope: History,
+						callback: History.pushState,
+						args: arguments,
+						queue: queue
+					});
+					return false;
+				}
+
+				// Make Busy + Continue
+				History.busy(true);
+
+				// Create the newState
+				var newState = History.createStateObject(data,title,url);
+
+				// Check it
+				if ( History.isLastSavedState(newState) ) {
+					// Won't be a change
+					History.busy(false);
+				}
+				else {
+					// Store the newState
+					History.storeState(newState);
+					History.expectedStateId = newState.id;
+
+					// Push the newState
+					history.pushState(newState.id,newState.title,newState.url);
+
+					// Fire HTML5 Event
+					History.Adapter.trigger(window,'popstate');
+				}
+
+				// End pushState closure
+				return true;
+			};
+
+			/**
+			 * History.replaceState(data,title,url)
+			 * Replace the State and trigger onpopstate
+			 * We have to trigger for HTML4 compatibility
+			 * @param {object} data
+			 * @param {string} title
+			 * @param {string} url
+			 * @return {true}
+			 */
+			History.replaceState = function(data,title,url,queue){
+				//History.debug('History.replaceState: called', arguments);
+
+				// Check the State
+				if ( History.getHashByUrl(url) && History.emulated.pushState ) {
+					throw new Error('History.js does not support states with fragement-identifiers (hashes/anchors).');
+				}
+
+				// Handle Queueing
+				if ( queue !== false && History.busy() ) {
+					// Wait + Push to Queue
+					//History.debug('History.replaceState: we must wait', arguments);
+					History.pushQueue({
+						scope: History,
+						callback: History.replaceState,
+						args: arguments,
+						queue: queue
+					});
+					return false;
+				}
+
+				// Make Busy + Continue
+				History.busy(true);
+
+				// Create the newState
+				var newState = History.createStateObject(data,title,url);
+
+				// Check it
+				if ( History.isLastSavedState(newState) ) {
+					// Won't be a change
+					History.busy(false);
+				}
+				else {
+					// Store the newState
+					History.storeState(newState);
+					History.expectedStateId = newState.id;
+
+					// Push the newState
+					history.replaceState(newState.id,newState.title,newState.url);
+
+					// Fire HTML5 Event
+					History.Adapter.trigger(window,'popstate');
+				}
+
+				// End replaceState closure
+				return true;
+			};
+
+		} // !History.emulated.pushState
+
+
+		// ====================================================================
+		// Initialise
+
+		/**
+		 * Load the Store
+		 */
+		if ( sessionStorage ) {
+			// Fetch
+			try {
+				History.store = JSON.parse(sessionStorage.getItem('History.store'))||{};
+			}
+			catch ( err ) {
+				History.store = {};
+			}
+
+			// Normalize
+			History.normalizeStore();
+		}
+		else {
+			// Default Load
+			History.store = {};
+			History.normalizeStore();
+		}
+
+		/**
+		 * Clear Intervals on exit to prevent memory leaks
+		 */
+		History.Adapter.bind(window,"beforeunload",History.clearAllIntervals);
+		History.Adapter.bind(window,"unload",History.clearAllIntervals);
+
+		/**
+		 * Create the initial State
+		 */
+		History.saveState(History.storeState(History.extractState(document.location.href,true)));
+
+		/**
+		 * Bind for Saving Store
+		 */
+		if ( sessionStorage ) {
+			// When the page is closed
+			History.onUnload = function(){
+				// Prepare
+				var	currentStore, item;
+
+				// Fetch
+				try {
+					currentStore = JSON.parse(sessionStorage.getItem('History.store'))||{};
+				}
+				catch ( err ) {
+					currentStore = {};
+				}
+
+				// Ensure
+				currentStore.idToState = currentStore.idToState || {};
+				currentStore.urlToId = currentStore.urlToId || {};
+				currentStore.stateToId = currentStore.stateToId || {};
+
+				// Sync
+				for ( item in History.idToState ) {
+					if ( !History.idToState.hasOwnProperty(item) ) {
+						continue;
+					}
+					currentStore.idToState[item] = History.idToState[item];
+				}
+				for ( item in History.urlToId ) {
+					if ( !History.urlToId.hasOwnProperty(item) ) {
+						continue;
+					}
+					currentStore.urlToId[item] = History.urlToId[item];
+				}
+				for ( item in History.stateToId ) {
+					if ( !History.stateToId.hasOwnProperty(item) ) {
+						continue;
+					}
+					currentStore.stateToId[item] = History.stateToId[item];
+				}
+
+				// Update
+				History.store = currentStore;
+				History.normalizeStore();
+
+				// Store
+				sessionStorage.setItem('History.store',JSON.stringify(currentStore));
+			};
+
+			// For Internet Explorer
+			History.intervalList.push(setInterval(History.onUnload,History.options.storeInterval));
+			
+			// For Other Browsers
+			History.Adapter.bind(window,'beforeunload',History.onUnload);
+			History.Adapter.bind(window,'unload',History.onUnload);
+			
+			// Both are enabled for consistency
+		}
+
+		// Non-Native pushState Implementation
+		if ( !History.emulated.pushState ) {
+			// Be aware, the following is only for native pushState implementations
+			// If you are wanting to include something for all browsers
+			// Then include it above this if block
+
+			/**
+			 * Setup Safari Fix
+			 */
+			if ( History.bugs.safariPoll ) {
+				History.intervalList.push(setInterval(History.safariStatePoll, History.options.safariPollInterval));
+			}
+
+			/**
+			 * Ensure Cross Browser Compatibility
+			 */
+			if ( navigator.vendor === 'Apple Computer, Inc.' || (navigator.appCodeName||'') === 'Mozilla' ) {
+				/**
+				 * Fix Safari HashChange Issue
+				 */
+
+				// Setup Alias
+				History.Adapter.bind(window,'hashchange',function(){
+					History.Adapter.trigger(window,'popstate');
+				});
+
+				// Initialise Alias
+				if ( History.getHash() ) {
+					History.Adapter.onDomLoad(function(){
+						History.Adapter.trigger(window,'hashchange');
+					});
+				}
+			}
+
+		} // !History.emulated.pushState
+
+
+	}; // History.initCore
+
+	// Try and Initialise History
+	History.init();
+
+})(window);
+;this["app"] = this["app"] || {};
 this["app"]["templates"] = this["app"]["templates"] || {};
 
 this["app"]["templates"]["contact"] = function (Handlebars,depth0,helpers,partials,data) {
@@ -17881,7 +18861,7 @@ function program1(depth0,data) {
   buffer += "\n		<div class=\"social-icon\">\n			<a href=\"";
   stack1 = depth0.url;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\">\n				<img src=\"/images/";
+  buffer += escapeExpression(stack1) + "\" rel=\"external\">\n				<img src=\"/images/";
   stack1 = depth0.img;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
   buffer += escapeExpression(stack1) + "\" width=\"64\" height=\"64\" alt=\"";
@@ -17925,7 +18905,16 @@ this["app"]["templates"]["open-source"] = function (Handlebars,depth0,helpers,pa
   
 
 
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Open Source</h3>\n		<p>\n			Here at Umbra Engineering, we develop a number of open source works which can be found on our\n			<a href=\"https://github.com/UmbraEngineering\">GitHub</a> profile. Most of the projects there are\n			small Node modules.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<p>\n			One of our biggest open source projects is an application framework called\n			<a href=\"https://github.com/UmbraEngineering/redis-nodes\">redis-nodes</a>. It allows you to create an\n			application containing several individual processes that communicate with each other using redis\n			pub/sub. It assumes very little about your application allowing you to make any kind of project using\n			it. This is not a web-app framework like Connect or Express, but you can run one of those (or any other\n			similar framework) inside of one your redis-nodes processes.\n		</p>\n	</div>\n</div>\n-->\n";};
+  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Open Source</h3>\n		<p>\n			Here at Umbra Engineering, we develop a number of open source works which can be found on our\n			<a href=\"https://github.com/UmbraEngineering\" rel=\"external\">GitHub</a> profile. Most of the projects there are\n			small Node modules.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<p>\n			One of our biggest open source projects is an application framework called\n			<a href=\"https://github.com/UmbraEngineering/redis-nodes\">redis-nodes</a>. It allows you to create an\n			application containing several individual processes that communicate with each other using redis\n			pub/sub. It assumes very little about your application allowing you to make any kind of project using\n			it. This is not a web-app framework like Connect or Express, but you can run one of those (or any other\n			similar framework) inside of one your redis-nodes processes.\n		</p>\n	</div>\n</div>\n-->\n";};
+
+this["app"]["templates"]["careers"] = function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "";
+
+
+  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Careers</h3>\n		<p>\n			";
+  buffer += "\n		</p>\n	</div>\n</div>\n";
+  return buffer;};
 
 this["app"]["templates"]["portfolio"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -17939,54 +18928,218 @@ this["app"]["templates"]["index"] = function (Handlebars,depth0,helpers,partials
   
 
 
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Welcome</h3>\n		<p>\n			Umbra Engineering is a web application development shop in Portland Oregon specializing\n			in JavaScript, both on the client and on the server in the form of <a href=\"http://nodejs.org\">Node.js</a>.\n			Not only do we work for our clients, but we also work on a number of <a href=\"/open-source\">open source\n			projects</a>.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Clients</h3>\n		<p>\n			Umbra has done work for a number of clients right here in the Portland, OR area. We are no strangers\n			to the world of startups and aren't affraid to take on risky jobs and help you build your company. At\n			the same time, we are also glad to work for those who already have there footing and are looking to\n			keep moving forward.\n		</p>\n		<div id=\"clients\">\n			<div class=\"row\">\n				<div class=\"four columns\">\n					<a href=\"https://www.sportzing.com\" class=\"client\">\n						<img src=\"/images/szlogo-mono.png\" alt=\"SportZing\" title=\"\" />\n					</a>\n				</div>\n			</div>\n		</div>\n	</div>\n</div>\n-->\n\n";};
+  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Welcome</h3>\n		<p>\n			Umbra Engineering is a web application development shop in Portland Oregon specializing in JavaScript, both on the client\n			and on the server in the form of <a href=\"http://nodejs.org\" rel=\"external\">Node.js</a>. Not only do we work for our clients,\n			but we also work on a number of <a href=\"/open-source\">open source projects</a>.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Clients</h3>\n		<p>\n			Umbra has done work for a number of clients right here in the Portland, OR area. We are no strangers\n			to the world of startups and aren't affraid to take on risky jobs and help you build your company. At\n			the same time, we are also glad to work for those who already have there footing and are looking to\n			keep moving forward.\n		</p>\n		<div id=\"clients\">\n			<div class=\"row\">\n				<div class=\"four columns\">\n					<a href=\"https://www.sportzing.com\" class=\"client\" rel=\"external\">\n						<img src=\"/images/szlogo-mono.png\" alt=\"SportZing\" title=\"\" />\n					</a>\n				</div>\n			</div>\n		</div>\n	</div>\n</div>\n-->\n\n";};
 
 this["app"]["templates"]["services"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
   
 
 
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Services</h3>\n		<p>\n			We supply services in web application development using the Node.js platform.\n		</p>\n	</div>\n</div>\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Have a Job For Us?</h3>\n		<p>\n			If you would like to get in contact with us to talk about a job and get a quote, please go to\n			the <a href=\"/contact\">contact</a> page and send us a message.\n		</p>\n	</div>\n</div>\n";};
+  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Services</h3>\n		<p>\n			We supply services in web application development using the Node.js platform.\n		</p>\n	</div>\n</div>\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Have a Job For Us?</h3>\n		<p>\n			If you would like to get in contact with us to talk about a job and get a quote, please go to\n			the <a href=\"/contact\">contact</a> page and send us a message.\n		</p>\n	</div>\n</div>\n";};;
+Class.mixin('InternalLinks', {
 
-this["app"]["templates"]["contact-email"] = function (Handlebars,depth0,helpers,partials,data) {
-  helpers = helpers || Handlebars.helpers;
-  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression;
+	initializeInternalLinks: function() {
+		this.events = _.extend({ }, this.events || { }, {
+			'click a:not([rel~=external]):not([rel~=no-parse])': 'handleInternalLink'
+		});
+	},
 
+// -------------------------------------------------------------
+	
+	handleInternalLink: function(evt) {
+		if (! History.enabled) {return;}
+		
+		// Allow ctrl+click/cmd+click to go through normally
+		if (evt.metaKey || evt.ctrlKey) {return;}
 
-  buffer += "<b>From:</b> ";
-  foundHelper = helpers.name;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + " <<a href=\"mailto:";
-  foundHelper = helpers.email;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.email; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\">";
-  foundHelper = helpers.email;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.email; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</a>><br />\n<b>Company:</b> ";
-  foundHelper = helpers.company;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.company; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "<br />\n<br />\n<p>\n	";
-  foundHelper = helpers.message;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.message; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\n</p>\n\n";
-  return buffer;};;
-yepnope({
-	load: [
-		'/javascripts/jquery-1.7.2.min.js',
-		'/javascripts/placeholder.js',
-		'/javascripts/lodash.js',
-		'/javascripts/eventemitter2.js',
-		'/javascripts/spin.js',
-		'/javascripts/spin.jquery.js',
-		'/javascripts/app.js'
-	],
-	complete: function() {
-		window.app = new App();
+		evt.preventDefault();
+
+		History.pushState(null, null, $(evt.target).attr('href'));
 	}
+
+});
+;
+Class('LayoutView').Extends('View').Uses(['InternalLinks'], {
+
+	initialize: function() {
+		this.$elem = $('#wrapper');
+
+		this.initializeInternalLinks();
+		this.bindEvents();
+	}
+
+});
+;
+Class('PageView').Extends('View').Uses(['InternalLinks'], {
+
+	initialize: function() {
+		this.$root = $('#content');
+		this.$elem = $('<div class="page" />');
+
+		this.initializeInternalLinks();
+	},
+
+	events: { },
+	
+	draw: function(locals) {
+		this.$elem.hide();
+		this.$root.append(this.$elem);
+		this.$elem.html(this.render(locals));
+
+		this.bindEvents();
+	},
+
+// -------------------------------------------------------------
+
+	show: function(callback) {
+		this.$elem.animate(this.showHideProperties('show'), 500, callback);
+	},
+
+	hide: function(callback) {
+		this.$elem.animate(this.showHideProperties('hide'), 500, callback);
+	},
+
+	showHideProperties: function(showHideToggle) {
+		return {opacity: showHideToggle};
+		/*return {
+			height: showHideToggle,
+			marginTop: showHideToggle,
+			marginBottom: showHideToggle,
+			paddingTop: showHideToggle,
+			paddingBottom: showHideToggle,
+			opacity: showHideToggle
+		};*/
+	}
+	
+});
+;
+Class('IndexPageView').Extends('PageView', {
+
+	template: app.templates.index,
+
+	initialize: function() {
+		this._super.initialize.call(this);
+	},
+
+	draw: function() {
+		this.draw.parent(this);
+	}
+
+});
+;
+Class('ServicesPageView').Extends('PageView', {
+
+	template: app.templates.services,
+
+	initialize: function() {
+		this._super.initialize.call(this);
+	},
+
+	draw: function() {
+		this.draw.parent(this);
+	}
+
+});
+;
+Class('PortfolioPageView').Extends('PageView', {
+
+	template: app.templates.portfolio,
+
+	initialize: function() {
+		this._super.initialize.call(this);
+	},
+
+	draw: function() {
+		this.draw.parent(this);
+	}
+
+});
+;
+Class('OpenSourcePageView').Extends('PageView', {
+
+	template: app.templates['open-source'],
+
+	initialize: function() {
+		this._super.initialize.call(this);
+	},
+
+	draw: function() {
+		this.draw.parent(this);
+	}
+
+});
+;
+Class('CareersPageView').Extends('PageView', {
+
+	template: app.templates.careers,
+
+	initialize: function() {
+		this._super.initialize.call(this);
+	},
+
+	draw: function() {
+		this.draw.parent(this);
+	}
+
+});
+;
+app.routes = {
+	'/':             app.IndexPageView,
+	'/index':        app.IndexPageView,
+	'/services':     app.ServicesPageView,
+	// '/contact':      app.ContactPageView,
+	'/portfolio':    app.PortfolioPageView,
+	'/open-source':  app.OpenSourcePageView,
+	'/careers':      app.CareersPageView
+};
+
+//
+// When the app is ready, start initializing things
+//
+app.on('ready', function() {
+
+	// When a statechange (popstate) event occurs, load the appropriate page
+	app.on('history.statechange', function(state) {
+		app.drawPage(state.hash);
+	});
+
+	// Listen for history.statechange events and reemit them
+	if (History.enabled) {
+		$(window).on('statechange', function() {
+			app.emit('history.statechange', History.getState());
+		});
+	}
+
+	// Initialize the layout view
+	app.layout = new app.LayoutView();
+
+	// Render the first page
+	app.drawPage(location.pathname);
+	
 });
 
+// -------------------------------------------------------------
+
+//
+// Draw the appropriate page for a given href
+//
+app.drawPage = function(href) {
+	if (href.charAt(0) !== '/') {
+		href = '/' + href;
+	}
+
+	if (app.currentPage) {
+		app.currentPage.hide(function() {
+			app.currentPage.destroy();
+			drawNew();
+		});
+	} else {
+		drawNew();
+	}
+
+	function drawNew() {
+		app.currentPage = new app.routes[href]();
+		app.currentPage.draw();
+		app.currentPage.show();
+	}
+};

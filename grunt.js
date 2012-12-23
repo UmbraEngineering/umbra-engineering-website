@@ -18,7 +18,10 @@ exports.stylesheets = [
 
 exports.javascripts = [
 // Core
-	js + '/cloak.js',
+	js + '/lib/cloak.js',
+	js + '/lib/history.adapter.jquery.js',
+	js + '/lib/history.html4.js',
+	js + '/lib/history.js',
 
 // Templates
 	js + '/templates.js',
@@ -30,7 +33,14 @@ exports.javascripts = [
 	// ...
 
 // Views
-	// ...
+	js + '/views/layout.js',
+	js + '/views/page.js',
+	js + '/views/index.js',
+	js + '/views/services.js',
+	// js + '/views/contact.js',
+	js + '/views/portfolio.js',
+	js + '/views/open-source.js',
+	js + '/views/careers.js',
 
 // Starter Script
 	js + '/main.js'
@@ -42,7 +52,7 @@ function init(grunt) {
 	// JS Lint
 		lint: {
 			// Only lint our JS code, not third-party stuff
-			all: exports.javascripts.slice(2)
+			all: exports.javascripts.slice(5)
 		},
 		jshint: {
 			options: {

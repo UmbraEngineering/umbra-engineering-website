@@ -11,7 +11,7 @@ function program1(depth0,data) {
   buffer += "\n		<div class=\"social-icon\">\n			<a href=\"";
   stack1 = depth0.url;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\">\n				<img src=\"/images/";
+  buffer += escapeExpression(stack1) + "\" rel=\"external\">\n				<img src=\"/images/";
   stack1 = depth0.img;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
   buffer += escapeExpression(stack1) + "\" width=\"64\" height=\"64\" alt=\"";
@@ -55,7 +55,16 @@ this["app"]["templates"]["open-source"] = function (Handlebars,depth0,helpers,pa
   
 
 
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Open Source</h3>\n		<p>\n			Here at Umbra Engineering, we develop a number of open source works which can be found on our\n			<a href=\"https://github.com/UmbraEngineering\">GitHub</a> profile. Most of the projects there are\n			small Node modules.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<p>\n			One of our biggest open source projects is an application framework called\n			<a href=\"https://github.com/UmbraEngineering/redis-nodes\">redis-nodes</a>. It allows you to create an\n			application containing several individual processes that communicate with each other using redis\n			pub/sub. It assumes very little about your application allowing you to make any kind of project using\n			it. This is not a web-app framework like Connect or Express, but you can run one of those (or any other\n			similar framework) inside of one your redis-nodes processes.\n		</p>\n	</div>\n</div>\n-->\n";};
+  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Open Source</h3>\n		<p>\n			Here at Umbra Engineering, we develop a number of open source works which can be found on our\n			<a href=\"https://github.com/UmbraEngineering\" rel=\"external\">GitHub</a> profile. Most of the projects there are\n			small Node modules.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<p>\n			One of our biggest open source projects is an application framework called\n			<a href=\"https://github.com/UmbraEngineering/redis-nodes\">redis-nodes</a>. It allows you to create an\n			application containing several individual processes that communicate with each other using redis\n			pub/sub. It assumes very little about your application allowing you to make any kind of project using\n			it. This is not a web-app framework like Connect or Express, but you can run one of those (or any other\n			similar framework) inside of one your redis-nodes processes.\n		</p>\n	</div>\n</div>\n-->\n";};
+
+this["app"]["templates"]["careers"] = function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "";
+
+
+  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Careers</h3>\n		<p>\n			";
+  buffer += "\n		</p>\n	</div>\n</div>\n";
+  return buffer;};
 
 this["app"]["templates"]["portfolio"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -69,7 +78,7 @@ this["app"]["templates"]["index"] = function (Handlebars,depth0,helpers,partials
   
 
 
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Welcome</h3>\n		<p>\n			Umbra Engineering is a web application development shop in Portland Oregon specializing\n			in JavaScript, both on the client and on the server in the form of <a href=\"http://nodejs.org\">Node.js</a>.\n			Not only do we work for our clients, but we also work on a number of <a href=\"/open-source\">open source\n			projects</a>.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Clients</h3>\n		<p>\n			Umbra has done work for a number of clients right here in the Portland, OR area. We are no strangers\n			to the world of startups and aren't affraid to take on risky jobs and help you build your company. At\n			the same time, we are also glad to work for those who already have there footing and are looking to\n			keep moving forward.\n		</p>\n		<div id=\"clients\">\n			<div class=\"row\">\n				<div class=\"four columns\">\n					<a href=\"https://www.sportzing.com\" class=\"client\">\n						<img src=\"/images/szlogo-mono.png\" alt=\"SportZing\" title=\"\" />\n					</a>\n				</div>\n			</div>\n		</div>\n	</div>\n</div>\n-->\n\n";};
+  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Welcome</h3>\n		<p>\n			Umbra Engineering is a web application development shop in Portland Oregon specializing in JavaScript, both on the client\n			and on the server in the form of <a href=\"http://nodejs.org\" rel=\"external\">Node.js</a>. Not only do we work for our clients,\n			but we also work on a number of <a href=\"/open-source\">open source projects</a>.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Clients</h3>\n		<p>\n			Umbra has done work for a number of clients right here in the Portland, OR area. We are no strangers\n			to the world of startups and aren't affraid to take on risky jobs and help you build your company. At\n			the same time, we are also glad to work for those who already have there footing and are looking to\n			keep moving forward.\n		</p>\n		<div id=\"clients\">\n			<div class=\"row\">\n				<div class=\"four columns\">\n					<a href=\"https://www.sportzing.com\" class=\"client\" rel=\"external\">\n						<img src=\"/images/szlogo-mono.png\" alt=\"SportZing\" title=\"\" />\n					</a>\n				</div>\n			</div>\n		</div>\n	</div>\n</div>\n-->\n\n";};
 
 this["app"]["templates"]["services"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -77,31 +86,3 @@ this["app"]["templates"]["services"] = function (Handlebars,depth0,helpers,parti
 
 
   return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Services</h3>\n		<p>\n			We supply services in web application development using the Node.js platform.\n		</p>\n	</div>\n</div>\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Have a Job For Us?</h3>\n		<p>\n			If you would like to get in contact with us to talk about a job and get a quote, please go to\n			the <a href=\"/contact\">contact</a> page and send us a message.\n		</p>\n	</div>\n</div>\n";};
-
-this["app"]["templates"]["contact-email"] = function (Handlebars,depth0,helpers,partials,data) {
-  helpers = helpers || Handlebars.helpers;
-  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-  buffer += "<b>From:</b> ";
-  foundHelper = helpers.name;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + " <<a href=\"mailto:";
-  foundHelper = helpers.email;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.email; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\">";
-  foundHelper = helpers.email;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.email; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</a>><br />\n<b>Company:</b> ";
-  foundHelper = helpers.company;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.company; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "<br />\n<br />\n<p>\n	";
-  foundHelper = helpers.message;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
-  else { stack1 = depth0.message; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\n</p>\n\n";
-  return buffer;};
