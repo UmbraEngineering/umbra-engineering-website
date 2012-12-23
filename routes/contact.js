@@ -1,4 +1,4 @@
-
+/*
 var consts      = require('consts');
 var app         = require(consts.LIB_PATH + '/app');
 var mailer      = require(consts.BASE_PATH + '/helpers/mailer');
@@ -177,3 +177,4 @@ app.post('/contact', function(req, res) {
 
 
 
+*/

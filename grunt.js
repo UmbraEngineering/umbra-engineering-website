@@ -1,71 +1,107 @@
 
-require('exists-patch').patch();
-
 module.exports = exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-css');
+	grunt.loadNpmTasks('grunt-contrib-handlebars');
 	init(grunt);
 };
-	
+
+var js = 'public/javascripts';
+var css = 'public/stylesheets';
+
 exports.stylesheets = [
-	'public/stylesheets/globals.css',
-	'public/stylesheets/ui.css',
-//	'public/stylesheets/forms.css',
-	'public/stylesheets/orbit.css',
-	'public/stylesheets/reveal.css',
-	'public/stylesheets/app.css',
-	'public/stylesheets/mobile.css'
+	css + '/district-thin.font.css',
+	css + '/tangerine.font.css',
+	css + '/rocksalt.font.css',
+	css + '/foundation.css',
+	css + '/app.css'
 ];
-	
+
 exports.javascripts = [
-	'public/javascripts/jquery-1.7.2.min.js',
-	'public/javascripts/placeholder.js',
-	'public/javascripts/lodash.js',
-	'public/javascripts/eventemitter2.js',
-	'public/javascripts/spin.js',
-	'public/javascripts/spin.jquery.js',
-	'public/javascripts/app.js',
-	'public/javascripts/main.prod.js'
+// Core
+	js + '/cloak.js',
+
+// Templates
+	js + '/templates.js',
+
+// Mixins
+	js + '/mixins/**/*.js',
+
+// Models
+	// ...
+
+// Views
+	// ...
+
+// Starter Script
+	js + '/main.js'
 ];
 
 function init(grunt) {
 	
 	grunt.initConfig({
-	// CSS Lint
-		csslint: {
-			all: {
-				src: exports.stylesheets,
-				rules: {
-					'import': false,
-					'overqualified-elements': 2
-				}
-			}
-		},
-	// CSS Min
-		cssmin: {
-			all: {
-				src: exports.stylesheets,
-				dest: 'public/style.min.css'
-			}
-		},
 	// JS Lint
 		lint: {
-			all: ['public/javascripts/main.js', 'public/javascripts/app.js']
+			// Only lint our JS code, not third-party stuff
+			all: exports.javascripts.slice(2)
 		},
 		jshint: {
 			options: {
-				browser: true
+				browser: true,
+				bitwise: false,
+				camelcase: false,
+				eqnull: true,
+				latedef: false,
+				plusplus: false,
+				jquery: true,
+				shadow: true,
+				smarttabs: true,
+				loopfunc: true,
+				boss: true
+			}
+		},
+	// Handlebars template
+		handlebars: {
+			all: {
+				files: {
+					'public/javascripts/templates.js': 'templates/**/*.hbs'
+				},
+				options: {
+					namespace: 'app.templates',
+					processName: function(filename) {
+						return filename.replace(/\.hbs$/, '').split('/').slice(1).join('.');
+					}
+				}
+			}
+		},
+	// Concat
+		concat: {
+			js: {
+				src: exports.javascripts,
+				dest: js + '/app.js',
+				separator: ';'
+			},
+			css: {
+				src: exports.stylesheets,
+				dest: css + '/styles.css'
 			}
 		},
 	// JS Min
 		min: {
 			all: {
-				src: exports.javascripts,
-				dest: 'public/app.min.js'
+				src: js + '/app.js',
+				dest: js + '/app.min.js'
+			}
+		},
+	// CSS Min
+		cssmin: {
+			all: {
+				src: css + '/styles.css',
+				dest: css + '/styles.min.css'
 			}
 		}
 	});
 		
-	grunt.registerTask('default', 'cssmin lint min');
+	grunt.registerTask('default', 'lint clean handlebars concat:js min concat:css cssmin');
 	
 
 // Clean
@@ -73,8 +109,11 @@ function init(grunt) {
 		var fs    = require('fs');
 		var path  = require('path');
 		
-		fs.unlink(relpath('public/style.min.css'));
-		fs.unlink(relpath('public/app.min.js'));
+		fs.unlink(relpath(js + '/app.js'));
+		fs.unlink(relpath(js + '/app.min.js'));
+		fs.unlink(relpath(js + '/templates.js'));
+		fs.unlink(relpath(css + '/styles.css'));
+		fs.unlink(relpath(css + '/styles.min.css'));
 		
 		function relpath(file) {
 			return path.join(__dirname, file);
@@ -82,4 +121,3 @@ function init(grunt) {
 	});
 		
 }
-

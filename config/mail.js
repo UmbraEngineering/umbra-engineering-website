@@ -4,8 +4,8 @@ module.exports = function(app, conf) {
 	conf.transport = {
 		service: 'Gmail',
 		auth: {
-			user: 'james@umbraengineering.com',
-			pass: 'iOVXP0PFdr8q9T10XcczFKEOO'
+			user: 'mailing@umbraengineering.com',
+			pass: ')0k3ZoIk*?*=`6n]c.UTtS7Ea'
 		}
 	};
 	
