@@ -7,4 +7,8 @@ module.exports = function() {
 		return dateformat(new Date(), format);
 	});
 
+	hbs.registerHelper('json', function(value) {
+		return new hbs.handlebars.SafeString(JSON.stringify(value));
+	});
+
 };

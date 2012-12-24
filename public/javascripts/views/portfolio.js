@@ -1,6 +1,7 @@
 
 Class('PortfolioPageView').Extends('PageView', {
 
+	title: 'Portfolio',
 	template: app.templates.portfolio,
 
 	initialize: function() {

@@ -18972,6 +18972,11 @@ Class('LayoutView').Extends('View').Uses(['InternalLinks'], {
 ;
 Class('PageView').Extends('View').Uses(['InternalLinks'], {
 
+	title: '',
+	titlePrefix: '',
+	titleSuffix: 'Umbra Engineering',
+	titleSeparator: ' / ',
+
 	initialize: function() {
 		this.$root = $('#content');
 		this.$elem = $('<div class="page" />');
@@ -18986,7 +18991,21 @@ Class('PageView').Extends('View').Uses(['InternalLinks'], {
 		this.$root.append(this.$elem);
 		this.$elem.html(this.render(locals));
 
+		this.setTitle();
+
 		this.bindEvents();
+	},
+
+	setTitle: function() {
+		var title = '';
+		
+		title += this.titlePrefix;
+		title += (title && this.title) ? this.titleSeparator : '';
+		title += this.title;
+		title += (title && this.titleSuffix) ? this.titleSeparator : '';
+		title += this.titleSuffix;
+
+		document.title = title;
 	},
 
 // -------------------------------------------------------------
@@ -19029,6 +19048,7 @@ Class('IndexPageView').Extends('PageView', {
 ;
 Class('ServicesPageView').Extends('PageView', {
 
+	title: 'Services',
 	template: app.templates.services,
 
 	initialize: function() {
@@ -19041,8 +19061,42 @@ Class('ServicesPageView').Extends('PageView', {
 
 });
 ;
+Class('ContactPageView').Extends('PageView', {
+
+	template: app.templates.contact,
+
+	initialize: function() {
+		this._super.initialize.call(this);
+	},
+
+	draw: function() {
+		this.draw.parent(this, {
+			socialIcons: [
+				{
+					alt: 'Facebook',
+					img: 'facebook.png',
+					url: 'http://facebook.com/UmbraEngineering',
+					text: 'Connect with us on Facebook'
+				}, {
+					alt: 'Twitter',
+					img: 'twitter.png',
+					url: 'http://twitter.com/UmbraEng',
+					text: 'Follow us on Twitter'
+				}, {
+					alt: 'LinkedIn',
+					img: 'linkedin.png',
+					url: 'http://linkedin.com/company/umbra-engineering',
+					text: 'Check us out on LinkedIn'
+				}
+			]
+		});
+	}
+
+});
+;
 Class('PortfolioPageView').Extends('PageView', {
 
+	title: 'Portfolio',
 	template: app.templates.portfolio,
 
 	initialize: function() {
@@ -19057,6 +19111,7 @@ Class('PortfolioPageView').Extends('PageView', {
 ;
 Class('OpenSourcePageView').Extends('PageView', {
 
+	title: 'Open Source',
 	template: app.templates['open-source'],
 
 	initialize: function() {
@@ -19071,6 +19126,7 @@ Class('OpenSourcePageView').Extends('PageView', {
 ;
 Class('CareersPageView').Extends('PageView', {
 
+	title: 'Careers',
 	template: app.templates.careers,
 
 	initialize: function() {
@@ -19087,7 +19143,7 @@ app.routes = {
 	'/':             app.IndexPageView,
 	'/index':        app.IndexPageView,
 	'/services':     app.ServicesPageView,
-	// '/contact':      app.ContactPageView,
+	'/contact':      app.ContactPageView,
 	'/portfolio':    app.PortfolioPageView,
 	'/open-source':  app.OpenSourcePageView,
 	'/careers':      app.CareersPageView
@@ -19115,7 +19171,6 @@ app.on('ready', function() {
 
 	// Render the first page
 	app.drawPage(location.pathname);
-	
 });
 
 // -------------------------------------------------------------

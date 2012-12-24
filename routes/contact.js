@@ -1,29 +1,8 @@
-/*
+
 var consts      = require('consts');
 var app         = require(consts.LIB_PATH + '/app');
 var mailer      = require(consts.BASE_PATH + '/helpers/mailer');
 var validation  = require(consts.BASE_PATH + '/helpers/validation');
-
-var socialIcons = [
-	{
-		alt: 'Facebook',
-		img: 'facebook.png',
-		url: 'http://facebook.com/UmbraEngineering',
-		text: 'Connect with us on Facebook'
-	}, {
-		alt: 'Twitter',
-		img: 'twitter.png',
-		url: 'http://twitter.com/UmbraEng',
-		text: 'Follow us on Twitter'
-	}, {
-		alt: 'LinkedIn',
-		img: 'linkedin.png',
-		url: 'http://linkedin.com/company/umbra-engineering',
-		text: 'Check us out on LinkedIn'
-	}
-];
-
-// ------------------------------------------------------------------
 
 var contactForm = new validation.Validator({
 	name: validation.textField({
@@ -94,10 +73,6 @@ var validationErrorMessages = {
 
 // ------------------------------------------------------------------
 
-app.get('/contact', function(req, res) {
-	res.renderPage('contact', {socialIcons: socialIcons, prefill: { }});
-});
-
 app.post('/contact', function(req, res) {
 	var data = {
 		name: req.body.name,
@@ -127,8 +102,8 @@ app.post('/contact', function(req, res) {
 		if (req.xhr) {
 			res.json({errors: errors}, 400);
 		} else {
-			res.renderPage('contact', {
-				socialIcons: socialIcons,
+			res.status(status).render('layout', {
+				layout: false,
 				errors: errors,
 				prefill: req.body
 			});
@@ -158,8 +133,8 @@ app.post('/contact', function(req, res) {
 					message: msg
 				}, status);
 			} else {
-				res.status(status).renderPage('contact', {
-					socialIcons: socialIcons,
+				res.status(status).render('layout', {
+					layout: false,
 					messages: [msg]
 				});
 			}
@@ -177,4 +152,3 @@ app.post('/contact', function(req, res) {
 
 
 
-*/

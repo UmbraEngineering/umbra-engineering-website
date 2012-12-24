@@ -37,7 +37,7 @@ exports.javascripts = [
 	js + '/views/page.js',
 	js + '/views/index.js',
 	js + '/views/services.js',
-	// js + '/views/contact.js',
+	js + '/views/contact.js',
 	js + '/views/portfolio.js',
 	js + '/views/open-source.js',
 	js + '/views/careers.js',

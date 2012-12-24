@@ -3,7 +3,7 @@ app.routes = {
 	'/':             app.IndexPageView,
 	'/index':        app.IndexPageView,
 	'/services':     app.ServicesPageView,
-	// '/contact':      app.ContactPageView,
+	'/contact':      app.ContactPageView,
 	'/portfolio':    app.PortfolioPageView,
 	'/open-source':  app.OpenSourcePageView,
 	'/careers':      app.CareersPageView
@@ -31,7 +31,6 @@ app.on('ready', function() {
 
 	// Render the first page
 	app.drawPage(location.pathname);
-	
 });
 
 // -------------------------------------------------------------

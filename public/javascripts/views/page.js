@@ -1,6 +1,11 @@
 
 Class('PageView').Extends('View').Uses(['InternalLinks'], {
 
+	title: '',
+	titlePrefix: '',
+	titleSuffix: 'Umbra Engineering',
+	titleSeparator: ' / ',
+
 	initialize: function() {
 		this.$root = $('#content');
 		this.$elem = $('<div class="page" />');
@@ -15,7 +20,21 @@ Class('PageView').Extends('View').Uses(['InternalLinks'], {
 		this.$root.append(this.$elem);
 		this.$elem.html(this.render(locals));
 
+		this.setTitle();
+
 		this.bindEvents();
+	},
+
+	setTitle: function() {
+		var title = '';
+		
+		title += this.titlePrefix;
+		title += (title && this.title) ? this.titleSeparator : '';
+		title += this.title;
+		title += (title && this.titleSuffix) ? this.titleSeparator : '';
+		title += this.titleSuffix;
+
+		document.title = title;
 	},
 
 // -------------------------------------------------------------

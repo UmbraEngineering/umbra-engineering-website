@@ -1,6 +1,7 @@
 
 Class('CareersPageView').Extends('PageView', {
 
+	title: 'Careers',
 	template: app.templates.careers,
 
 	initialize: function() {

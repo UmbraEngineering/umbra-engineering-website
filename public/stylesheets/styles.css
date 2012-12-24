@@ -4394,6 +4394,7 @@ body, html {
 #header a,
 #footer a {
 	color: #888;
+	transition: color .15s linear;
 }
 
 

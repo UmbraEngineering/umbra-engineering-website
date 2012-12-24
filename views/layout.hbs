@@ -64,6 +64,18 @@
 	
 	</div>
 
+	<script type="text/javascript">
+		{{! Output any variables that we need to send to the client }}
+		{{#if errors}}
+		var _errors = {{{json errors }}};
+		{{/if}}
+		{{#if messages}}
+		var _messages = {{{json messages }}};
+		{{/if}}
+		{{#if prefill}}
+		var _prefill = {{{json prefill }}};
+		{{/if}}
+	</script>
 	<script type="text/javascript" src="/javascripts/app.js"></script>
 	
 </body>

@@ -1,6 +1,7 @@
 
 Class('ServicesPageView').Extends('PageView', {
 
+	title: 'Services',
 	template: app.templates.services,
 
 	initialize: function() {
