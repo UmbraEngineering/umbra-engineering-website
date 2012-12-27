@@ -900,6 +900,7 @@ form.custom .custom.disabled
   max-width:1400px;
   min-width:768px;
   margin:0 auto;
+  padding: 0 25px;
 }
 
 .row .row

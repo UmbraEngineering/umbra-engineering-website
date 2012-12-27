@@ -166,6 +166,10 @@ body, html {
 			border-bottom: 1px #555 solid;
 		}
 
+			.content-section .row {
+				padding: 15px 50px;
+			}
+
 		#content .content-section:last-of-type {
 			padding-bottom: 275px;
 			border: 0;

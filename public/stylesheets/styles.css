@@ -965,6 +965,7 @@ form.custom .custom.disabled
   max-width:1400px;
   min-width:768px;
   margin:0 auto;
+  padding: 0 25px;
 }
 
 .row .row
@@ -4471,6 +4472,10 @@ body, html {
 			padding: 50px 0 100px;
 			border-bottom: 1px #555 solid;
 		}
+
+			.content-section .row {
+				padding: 15px 50px;
+			}
 
 		#content .content-section:last-of-type {
 			padding-bottom: 275px;
