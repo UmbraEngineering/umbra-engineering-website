@@ -23,7 +23,8 @@ function program1(depth0,data) {
   buffer += escapeExpression(stack1) + "</span>\n			</a>\n		</div>\n		";
   return buffer;}
 
-  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Contact Us</h3>\n		<p>\n			Want to work with us? Feel free to use the form below to contact us and we'll try to\n			get back to you soon.\n		</p>\n		<form action=\"/contact\" method=\"post\" id=\"contact-form\">\n			\n			<!-- Left Panel -->\n			<fieldset class=\"basics four columns\">\n			\n				<label class=\"name required\">\n					<div class=\"label\">Name</div>\n					<input type=\"text\" name=\"name\" value=\"";
+  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Contact Us</h3>\n		<p>\n			Want to work with us? Feel free to use the form below to contact us and we'll try to\n			get back to you soon.\n		</p>\n		<form action=\"/contact\" method=\"post\" id=\"contact-form\">\n			\n			";
+  buffer += "\n			<fieldset class=\"basics four columns\">\n			\n				<label class=\"name required\">\n					<div class=\"label\">Name</div>\n					<input type=\"text\" name=\"name\" value=\"";
   stack1 = depth0.prefill;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
@@ -39,7 +40,8 @@ function program1(depth0,data) {
   stack1 = depth0.prefill;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1['reason-other'];
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\"\n							placeholder=\"Enter reason here...\" />\n					</label></li>\n				</ul>\n				\n			</fieldset>\n			\n			<!-- Right Panel -->\n			<fieldset class=\"message eight columns\">\n			\n				<label class=\"message required\">\n					<div class=\"label\">Message</div>\n					<textarea name=\"message\" placeholder=\"Type you message here...\" required>";
+  buffer += escapeExpression(stack1) + "\"\n							placeholder=\"Enter reason here...\" />\n					</label></li>\n				</ul>\n				\n			</fieldset>\n			\n			";
+  buffer += "\n			<fieldset class=\"message eight columns\">\n			\n				<label class=\"message required\">\n					<div class=\"label\">Message</div>\n					<textarea name=\"message\" placeholder=\"Type you message here...\" required>";
   stack1 = depth0.prefill;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.message;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
@@ -59,11 +61,37 @@ this["app"]["templates"]["open-source"] = function (Handlebars,depth0,helpers,pa
 
 this["app"]["templates"]["careers"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
-  var buffer = "";
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n			<li>\n				<a href=\"/careers/";
+  stack1 = depth0.slug;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "\">";
+  stack1 = depth0.name;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "</a>\n			</li>\n			";
+  return buffer;}
+
+  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Careers</h3>\n		<p>\n			At Umbra, we are currently looking to expand. If you have skills and are interested in working with\n			us, take a look below at the positions we are looking to fill.\n		</p>\n	</div>\n	<div class=\"row\">\n		<ul class=\"careers-openings\">\n			";
+  stack1 = depth0.openings;
+  stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n		</ul>\n	</div>\n	<div class=\"row careers-current\"></div>\n</div>\n";
+  return buffer;};
+
+this["app"]["templates"]["message"] = function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression;
 
 
-  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Careers</h3>\n		<p>\n			";
-  buffer += "\n		</p>\n	</div>\n</div>\n";
+  buffer += "<p>";
+  foundHelper = helpers.message;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.message; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "</p>\n<a href=\"#\" class=\"close\">&times;</a>";
   return buffer;};
 
 this["app"]["templates"]["portfolio"] = function (Handlebars,depth0,helpers,partials,data) {
@@ -79,6 +107,53 @@ this["app"]["templates"]["index"] = function (Handlebars,depth0,helpers,partials
 
 
   return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Welcome</h3>\n		<p>\n			Umbra Engineering is a web application development shop in Portland Oregon specializing in JavaScript, both on the client\n			and on the server in the form of <a href=\"http://nodejs.org\" rel=\"external\">Node.js</a>. Not only do we work for our clients,\n			but we also work on a number of <a href=\"/open-source\">open source projects</a>.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Clients</h3>\n		<p>\n			Umbra has done work for a number of clients right here in the Portland, OR area. We are no strangers\n			to the world of startups and aren't affraid to take on risky jobs and help you build your company. At\n			the same time, we are also glad to work for those who already have there footing and are looking to\n			keep moving forward.\n		</p>\n		<div id=\"clients\">\n			<div class=\"row\">\n				<div class=\"four columns\">\n					<a href=\"https://www.sportzing.com\" class=\"client\" rel=\"external\">\n						<img src=\"/images/szlogo-mono.png\" alt=\"SportZing\" title=\"\" />\n					</a>\n				</div>\n			</div>\n		</div>\n	</div>\n</div>\n-->\n\n";};
+
+this["app"]["templates"]["error"] = function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Error ";
+  foundHelper = helpers.code;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.code; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + ": ";
+  foundHelper = helpers.name;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "</h3>\n		<p>\n			";
+  foundHelper = helpers.message;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.message; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "\n		</p>\n	</div>\n</div>";
+  return buffer;};
+
+this["app"]["templates"]["careers-opening"] = function (Handlebars,depth0,helpers,partials,data) {
+  helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "";
+  buffer += "\n		<li>";
+  depth0 = typeof depth0 === functionType ? depth0() : depth0;
+  buffer += escapeExpression(depth0) + "</li>\n	";
+  return buffer;}
+
+  buffer += "<h3>";
+  foundHelper = helpers.name;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "</h3>\n<p>\n	";
+  foundHelper = helpers.description;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.description; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "\n</p>\n<h4>Requirements</h4>\n<ul class=\"career-requirements\">\n	";
+  stack1 = depth0.requirements;
+  stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</ul>\n";
+  return buffer;};
 
 this["app"]["templates"]["services"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

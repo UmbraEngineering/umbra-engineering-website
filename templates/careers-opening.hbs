@@ -1,0 +1,10 @@
+<h3>{{ name }}</h3>
+<p>
+	{{ description }}
+</p>
+<h4>Requirements</h4>
+<ul class="career-requirements">
+	{{#each requirements }}
+		<li>{{ this }}</li>
+	{{/each}}
+</ul>

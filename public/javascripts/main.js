@@ -1,13 +1,14 @@
 
-app.routes = {
-	'/':             app.IndexPageView,
-	'/index':        app.IndexPageView,
-	'/services':     app.ServicesPageView,
-	'/contact':      app.ContactPageView,
-	'/portfolio':    app.PortfolioPageView,
-	'/open-source':  app.OpenSourcePageView,
-	'/careers':      app.CareersPageView
-};
+app.router = new app.Router({
+	'/':                  app.IndexPageView,
+	'/index':             app.IndexPageView,
+	'/services':          app.ServicesPageView,
+	'/contact':           app.ContactPageView,
+	'/portfolio':         app.PortfolioPageView,
+	'/open-source':       app.OpenSourcePageView,
+	'/careers':           app.CareersPageView,
+	'/careers/:opening':  app.CareersPageView
+});
 
 //
 // When the app is ready, start initializing things
@@ -31,6 +32,11 @@ app.on('ready', function() {
 
 	// Render the first page
 	app.drawPage(location.pathname);
+
+	// DEBUG Show a development warning
+	setTimeout(function() {
+		app.MessageView.create('This site is under construction; Some aspects may not function correctly.');
+	}, 1000);
 });
 
 // -------------------------------------------------------------
@@ -43,17 +49,48 @@ app.drawPage = function(href) {
 		href = '/' + href;
 	}
 
-	if (app.currentPage) {
-		app.currentPage.hide(function() {
-			app.currentPage.destroy();
-			drawNew();
+	var view = app.router.find(href);
+
+	// If no matching view was found, draw a 404 error
+	if (! view) {
+		hideCurrent(draw404);
+	}
+
+	// If we already have one of these views open, send it a message
+	else if (app.currentPage && app.currentPage instanceof view.func) {
+		app.currentPage.load(view.href, view.params);
+	}
+
+	// Otherwise, create/draw the new view
+	else {
+		hideCurrent(drawNew);
+	}
+
+	// -------------------------------------------------------------
+
+	function hideCurrent(callback) {
+		if (app.currentPage) {
+			app.currentPage.hide(function() {
+				app.currentPage.destroy();
+				callback();
+			});
+		} else {
+			callback();
+		}
+	}
+
+	function draw404() {
+		app.currentPage = new app.ErrorPageView({
+			code: 404,
+			name: 'Not Found',
+			message: 'The page you requested could not be found'
 		});
-	} else {
-		drawNew();
+		app.currentPage.draw();
+		app.currentPage.show();
 	}
 
 	function drawNew() {
-		app.currentPage = new app.routes[href]();
+		app.currentPage = new view.func(view.href, view.params);
 		app.currentPage.draw();
 		app.currentPage.show();
 	}

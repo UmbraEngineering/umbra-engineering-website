@@ -22,6 +22,7 @@ exports.javascripts = [
 	js + '/lib/history.adapter.jquery.js',
 	js + '/lib/history.html4.js',
 	js + '/lib/history.js',
+	js + '/router.js',
 
 // Templates
 	js + '/templates.js',
@@ -34,6 +35,7 @@ exports.javascripts = [
 
 // Views
 	js + '/views/layout.js',
+	js + '/views/message.js',
 	js + '/views/page.js',
 	js + '/views/index.js',
 	js + '/views/services.js',
@@ -41,6 +43,7 @@ exports.javascripts = [
 	js + '/views/portfolio.js',
 	js + '/views/open-source.js',
 	js + '/views/careers.js',
+	js + '/views/error.js',
 
 // Starter Script
 	js + '/main.js'
@@ -52,7 +55,7 @@ function init(grunt) {
 	// JS Lint
 		lint: {
 			// Only lint our JS code, not third-party stuff
-			all: exports.javascripts.slice(5)
+			all: exports.javascripts.slice(6)
 		},
 		jshint: {
 			options: {
