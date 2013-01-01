@@ -34,11 +34,29 @@ Class('CareersPageView').Extends('PageView', {
 
 	openings: function() {
 		return [
-			/*{
-				slug: 'ui-developer',
-				name: 'UI Developer',
-				description: 'User Interface Developer'
-			}*/
+			{
+				slug: 'front-end-engineer',
+				name: 'Front End Web Engineer (Contractor)',
+				description: 'Umbra Engineering is looking for Web Engineers with an understanding of modern web programming ' +
+					'challenges and browser development of entry to mid skill level in the local Portland area. Umbra Engineering ' +
+					'offers a chance for Web Engineers to show off their skills, as well as  provides skill training if necessary. ' +
+					'Web Engineers will be free to work from any location and create their own hours in a part-time/full-time manor.',
+				requirements: [
+					'2 years minimum experience',
+					'Deep understanding of HTML5 and CSS3',
+					'Awesomely epic JavaScript skills (experience with libraries like jQuery and Underscore a plus)',
+					'Understanding of modern web programing challenges and cross-browser development',
+					'Experience working with AJAX/XHR and asynchronous programing',
+					'Understanding of MVC concepts and RESTful design a big plus',
+					'Self-motivated and self-managing'
+				],
+				offered: [
+					'Work where you want on your own hours',
+					'Training offered for additional skills as needed',
+					'Opportunity to work with bleeding edge web technologies in a quickly growing startup',
+					'Part-time and full-time work offered'
+				]
+			}
 		];
 	},
 

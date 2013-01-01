@@ -5063,6 +5063,35 @@ ul.careers-openings {
 		padding: 5px 10px;
 	}
 
+div.careers-current {
+	display: none;
+	margin-top: 50px;
+	border-radius: 10px;
+	background: rgba(255,255,255,0.4);
+}
+	
+	div.careers-current .career-more {
+		padding: 0 35px;
+	}
+
+		div.careers-current h4 {
+			color: #555;
+			font-size: 12px;
+			font-size: 1.2rem;
+			margin-top: 25px;
+			text-shadow: 1px 1px 1px #fff;
+		}
+
+		div.careers-current ul {
+			margin-left: 35px;
+		}
+
+			div.careers-current ul li {
+				color: #555;
+				font-size: 16px;
+				font-size: 1.6rem;
+			}
+
 
 
 /* ==  Footer  == */

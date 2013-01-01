@@ -19292,9 +19292,19 @@ this["app"]["templates"]["careers-opening"] = function (Handlebars,depth0,helper
 function program1(depth0,data) {
   
   var buffer = "";
-  buffer += "\n		<li>";
+  buffer += "\n			<li>";
   depth0 = typeof depth0 === functionType ? depth0() : depth0;
-  buffer += escapeExpression(depth0) + "</li>\n	";
+  if(depth0 || depth0 === 0) { buffer += depth0; }
+  buffer += "</li>\n		";
+  return buffer;}
+
+function program3(depth0,data) {
+  
+  var buffer = "";
+  buffer += "\n			<li>";
+  depth0 = typeof depth0 === functionType ? depth0() : depth0;
+  if(depth0 || depth0 === 0) { buffer += depth0; }
+  buffer += "</li>\n		";
   return buffer;}
 
   buffer += "<h3>";
@@ -19305,11 +19315,15 @@ function program1(depth0,data) {
   foundHelper = helpers.description;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.description; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\n</p>\n<h4>Requirements</h4>\n<ul class=\"career-requirements\">\n	";
+  buffer += escapeExpression(stack1) + "\n</p>\n<div class=\"career-more\">\n	<h4>Requirements</h4>\n	<ul class=\"career-requirements\">\n		";
   stack1 = depth0.requirements;
   stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>\n";
+  buffer += "\n	</ul>\n	<h4>What We're Offering</h4>\n	<ul class=\"career-offerings\">\n		";
+  stack1 = depth0.offered;
+  stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(3, program3, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	</ul>\n</div>";
   return buffer;};;
 Class.mixin('InternalLinks', {
 
@@ -19624,11 +19638,29 @@ Class('CareersPageView').Extends('PageView', {
 
 	openings: function() {
 		return [
-			/*{
-				slug: 'ui-developer',
-				name: 'UI Developer',
-				description: 'User Interface Developer'
-			}*/
+			{
+				slug: 'front-end-engineer',
+				name: 'Front End Web Engineer (Contractor)',
+				description: 'Umbra Engineering is looking for Web Engineers with an understanding of modern web programming ' +
+					'challenges and browser development of entry to mid skill level in the local Portland area. Umbra Engineering ' +
+					'offers a chance for Web Engineers to show off their skills, as well as  provides skill training if necessary. ' +
+					'Web Engineers will be free to work from any location and create their own hours in a part-time/full-time manor.',
+				requirements: [
+					'2 years minimum experience',
+					'Deep understanding of HTML5 and CSS3',
+					'Awesomely epic JavaScript skills (experience with libraries like jQuery and Underscore a plus)',
+					'Understanding of modern web programing challenges and cross-browser development',
+					'Experience working with AJAX/XHR and asynchronous programing',
+					'Understanding of MVC concepts and RESTful design a big plus',
+					'Self-motivated and self-managing'
+				],
+				offered: [
+					'Work where you want on your own hours',
+					'Training offered for additional skills as needed',
+					'Opportunity to work with bleeding edge web technologies in a quickly growing startup',
+					'Part-time and full-time work offered'
+				]
+			}
 		];
 	},
 

@@ -146,9 +146,19 @@ this["app"]["templates"]["careers-opening"] = function (Handlebars,depth0,helper
 function program1(depth0,data) {
   
   var buffer = "";
-  buffer += "\n		<li>";
+  buffer += "\n			<li>";
   depth0 = typeof depth0 === functionType ? depth0() : depth0;
-  buffer += escapeExpression(depth0) + "</li>\n	";
+  if(depth0 || depth0 === 0) { buffer += depth0; }
+  buffer += "</li>\n		";
+  return buffer;}
+
+function program3(depth0,data) {
+  
+  var buffer = "";
+  buffer += "\n			<li>";
+  depth0 = typeof depth0 === functionType ? depth0() : depth0;
+  if(depth0 || depth0 === 0) { buffer += depth0; }
+  buffer += "</li>\n		";
   return buffer;}
 
   buffer += "<h3>";
@@ -159,9 +169,13 @@ function program1(depth0,data) {
   foundHelper = helpers.description;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.description; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\n</p>\n<h4>Requirements</h4>\n<ul class=\"career-requirements\">\n	";
+  buffer += escapeExpression(stack1) + "\n</p>\n<div class=\"career-more\">\n	<h4>Requirements</h4>\n	<ul class=\"career-requirements\">\n		";
   stack1 = depth0.requirements;
   stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n</ul>\n";
+  buffer += "\n	</ul>\n	<h4>What We're Offering</h4>\n	<ul class=\"career-offerings\">\n		";
+  stack1 = depth0.offered;
+  stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(3, program3, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	</ul>\n</div>";
   return buffer;};
