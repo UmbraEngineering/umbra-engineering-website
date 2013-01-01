@@ -13,6 +13,7 @@ exports.stylesheets = [
 	css + '/tangerine.font.css',
 	css + '/rocksalt.font.css',
 	css + '/foundation.css',
+	css + '/github.css',
 	css + '/app.css'
 ];
 
@@ -22,6 +23,7 @@ exports.javascripts = [
 	js + '/lib/history.adapter.jquery.js',
 	js + '/lib/history.html4.js',
 	js + '/lib/history.js',
+	js + '/lib/jquery.github.js',
 	js + '/router.js',
 
 // Templates
@@ -55,7 +57,7 @@ function init(grunt) {
 	// JS Lint
 		lint: {
 			// Only lint our JS code, not third-party stuff
-			all: exports.javascripts.slice(6)
+			all: exports.javascripts.slice(7)
 		},
 		jshint: {
 			options: {

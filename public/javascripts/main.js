@@ -2,7 +2,6 @@
 app.router = new app.Router({
 	'/':                  app.IndexPageView,
 	'/index':             app.IndexPageView,
-	'/services':          app.ServicesPageView,
 	'/contact':           app.ContactPageView,
 	'/portfolio':         app.PortfolioPageView,
 	'/open-source':       app.OpenSourcePageView,

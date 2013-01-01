@@ -4305,10 +4305,250 @@ table.show-for-xlarge,table.show-for-large,table.hide-for-small,table.hide-for-m
     width:100%;
   }
 }
+/*Root wrapper*/
+#ghw-github {
+	font-size: 13px;
+	font-family: "Helvetica Neue", Helvetica, sans-serif;
+	border-radius: 3px;
+	border: 1px solid rgba(0,0,0,0.4);
+	color: #444;
+}
+/*Utility styles*/
+.ghw-clear:after { content: "."; display: block; height: 0; clear: both; visibility: hidden;}
+html[xmlns] .ghw-clear { display: block;}
+* html .ghw-clear { height: 1%;}
+
+#ghw-github #ghw-header #ghw-logo a, #ghw-github #ghw-repos .ghw-fork {
+	background-image: url('../images/github-sprite.png');
+	background-repeat: no-repeat;
+}
+/*Header*/
+#ghw-github #ghw-header, #ghw-github #ghw-footer {
+	background: #d6d3d2;
+	background: linear-gradient(top, #d6d3d2 0%,#a9aaa7 100%);
+	background: linear-gradient(to bottom, #d6d3d2 0%,#a9aaa7 100%);
+}
+#ghw-github #ghw-header {
+	padding: 10px 10px 8px;
+	border-top: 1px solid #eeedee;
+	border-bottom:: 1px solid #bcb9b9;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	position: relative;
+}
+#ghw-github #ghw-header #ghw-logo {
+	float: left;
+	margin-top: 1px;
+}
+#ghw-github #ghw-header #ghw-logo a {
+	display: block;
+	width: 70px;
+	height: 31px;
+	text-indent: -9999px;
+	color: #444;
+	background-position: 0px 0px;
+}
+#ghw-github #ghw-header #ghw-user {
+	float: right;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	border-bottom: 1px solid #c0c4c1;
+}
+#ghw-github #ghw-header #ghw-user img {
+	display: block;
+	border-radius: 4px;
+	box-shadow: inset 1px 1px 1px 0px rgba(0,0,0,0.7);
+	border: 1px solid rgba(0,0,0,0.7);
+}
+.ghw-no-bottom-border {
+	border-bottom-right-radius: 0!important;
+	border-bottom-left-radius: 0!important;
+}
+#ghw-github #ghw-header #ghw-extended-user-info {
+	display: none;
+	position: absolute;
+	width: 60%;
+	top: 45px;
+	right: 10px;
+	padding: 15px;
+	color: #fff;
+	background: rgba(0,0,0,0.9);
+	border: 1px solid #000;
+	text-shadow: 1px 1px 1px #000;
+	font-size: 11px;
+	border-radius: 3px;
+	border-top-right-radius: 0;
+	z-index: 500;
+}
+#ghw-github #ghw-header #ghw-extended-user-info .ghw-name {
+	font-size: 13px;
+}
+#ghw-github #ghw-header #ghw-extended-user-info .ghw-place {
+	opacity: 0.5;
+}
+#ghw-github #ghw-header #ghw-extended-user-info .ghw-bio {
+	border-top: 1px solid rgba(255,255,255,0.4);
+	padding-top: 15px;
+	margin: 15px 0px 25px;
+}
+#ghw-github #ghw-header #ghw-extended-user-info .ghw-repos, #ghw-github #ghw-header #ghw-extended-user-info .ghw-gists {
+	display: inline-block;
+	padding: 3px 5px 4px;
+    border-radius: 2px;
+    margin-right: 10px;
+}
+#ghw-github #ghw-header #ghw-extended-user-info .ghw-repos {
+	background: #7e943a;
+	text-shadow: 1px 1px 1px #64772a;
+}
+#ghw-github #ghw-header #ghw-extended-user-info .ghw-gists {
+	background: #357292;
+	text-shadow: 1px 1px 1px #1e4e67;
+}
+#ghw-github #ghw-header #ghw-extended-user-info p {
+	margin: 0px;
+}
+#ghw-github #ghw-header #ghw-github-user-data {
+	float: right;
+	margin: 3px 0px 0px 0px;
+	padding: 0px 12px;
+	text-shadow: 0px 0px 1px #fff;
+	text-align: right;
+	color: #9f9f9f;
+}
+#ghw-github #ghw-header #ghw-github-user-data h2 {
+	margin: 0px;
+	line-height: 12px;
+}
+#ghw-github #ghw-header #ghw-github-user-data h2 a {
+	font-size: 14px;
+	font-weight: normal;
+	text-decoration: none;
+	color: #444;
+	text-shadow: 1px 1px 1px #fff;
+}
+#ghw-github #ghw-header #ghw-github-user-data a:hover {
+	opacity: 0.8;
+}
+#ghw-github #ghw-header #ghw-github-user-data #ghw-current-followers, #ghw-github #ghw-header #ghw-github-user-data #ghw-header-total-repos {
+	color: #686868!important;
+	text-decoration: none!important;
+	font-size: 11px!important;
+}
+#ghw-github #ghw-repos {
+	background: #fff;
+	border-top: 1px solid #868686;
+}
+#ghw-github #ghw-repos #ghw-github-loader {
+	width: 100%;
+	height: 200px;
+	background: url("https://a248.e.akamai.net/assets.github.com/images/spinners/octocat-spinner-32.gif") center no-repeat;
+}
+#ghw-github #ghw-repos ul {
+	display: none;
+	padding: 0px;
+	margin: 0px;
+}
+#ghw-github #ghw-repos li {
+	list-style: none;
+	border-bottom: 1px solid #e3e3e3;
+	padding: 13px;
+}
+#ghw-github #ghw-repos li p {
+	margin: 0px;
+	padding: 0px;
+}
+#ghw-github #ghw-repos li .ghw-left {
+	float: left;
+	width: 70%:
+}
+#ghw-github #ghw-repos li .ghw-right {
+	float: right;
+	width: 30%;
+	opacity: 0.3;
+}
+#ghw-github #ghw-repos li.ghw-double .ghw-right {
+	margin-top: 5px;
+}
+#ghw-github #ghw-repos li .ghw-right span {
+	display: inline-block;
+	padding: 3px 7px;
+	color: #fff;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+	font-size: 11px;
+	margin-left: 3px;
+    border-radius: 2px;
+    float: right;
+    position: relative;
+}
+#ghw-github .ghw-github-tooltip-content {
+	position: absolute;
+	top: 23px;
+	background: rgba(0,0,0,0.9);
+	color: #fff;
+	text-shadow: 1px 1px 1px #000;
+	border: 1px solid #000;
+	padding: 7px 10px;
+	border-radius: 3px;
+	right: 0px;
+	z-index: 250;
+	min-width: 150px;
+	text-align: center;
+}
+#ghw-github #ghw-repos li .ghw-right .ghw-forks {
+	background: #7e943a;
+}
+#ghw-github #ghw-repos li .ghw-right .ghw-watchers {
+	background: #357292;
+}
+#ghw-github #ghw-repos li .ghw-right .ghw-issues {
+	background: #a53131;
+}
+
+#ghw-github #ghw-repos li .ghw-meta-data {
+	font-size: 11px;
+	color: #999;
+}
+#ghw-github #ghw-repos .ghw-fork {
+	padding-left: 18px;
+	background-position: 0px -35px;
+}
+#ghw-github #ghw-repos li {
+	position: relative;
+}
+#ghw-github #ghw-repos li:last-child {
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
+	background-clip: padding-box;
+}
+#ghw-github #ghw-repos li .ghw-title a {
+	color: #444;
+	text-decoration: none;
+}
+#ghw-github #ghw-repos li .ghw-title a .ghw-github-tooltip-content {
+	left: 5px;
+	top: 6px;
+	font-size: 11px;
+	text-align: left;
+	width: 72%;
+	line-height: 120%;
+	color: #999;
+}
+#ghw-github #ghw-repos li .ghw-title a .ghw-github-tooltip-content p {
+	font-size: 13px;
+	margin-bottom: 10px;
+	color: #fff;
+}
+#ghw-github #ghw-repos li .ghw-title a:hover{
+	text-decoration: underline;
+}
+#ghw-github #ghw-repos li:last-child {
+	border-bottom: 0px;
+}
 
 body, html {
 	height: 100%;
-	background: #ccc;
+	background: #ccc url('../images/bg.png') top left repeat;
 }
 
 ::selection {
@@ -4334,7 +4574,7 @@ body, html {
 
 #header {
 	color: #aaa;
-	background: #222 url('../images/bg.png') top left repeat;
+	background: #222 url('../images/heading-bg.png') top left repeat;
 	padding: 50px 10px 25px;
 	box-shadow: 0 6px 6px #111;
 	border-bottom: 35px solid #333;
@@ -4465,7 +4705,7 @@ body, html {
 }
 
 	#content {
-		
+		/**/
 	}
 
 		.content-section {
@@ -4483,7 +4723,7 @@ body, html {
 		}
 
 		.content-section.darker-1 {
-			background: #88888c;
+			background: rgba(0,0,0,0.25);
 			border-color: #aaa;
 		}
 
@@ -4512,7 +4752,7 @@ body, html {
 	}
 
 	#content .darker-1 p {
-		color: #ddd;
+		color: #fff;
 		text-shadow: 0px 1px 1px #555;
 	}
 
@@ -4550,6 +4790,56 @@ body, html {
 			padding: 0;
 			border: 0;
 		}
+
+
+
+/* ==  Services  == */
+
+#services {
+	width: 80%;
+	margin: auto;
+}
+
+	#services li {
+		padding: 10px;
+	}
+
+		#services .service {
+			min-height: 225px;
+			padding: 25px 10px;
+			border-radius: 6px;
+			border: 1px #ddd solid;
+			text-shadow: 1px 1px 1px #fff;
+			box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+			background: linear-gradient(top, #fff 0%, #e0e0e0 100%);
+			position: relative;
+			transition: top .15s ease-in-out, box-shadow .15s ease-in-out;
+		}
+
+		#services .service:hover {
+			top: -10px;
+			box-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+		}
+
+			#services .service h4 {
+				margin: 0;
+				padding: 0 0 10px;
+				color: #666;
+				text-align: center;
+				font-size: 28px;
+				font-size: 2.8rem;
+				font-weight: normal;
+				font-family: DistrictThin;
+			}
+
+			#services .service p {
+				margin: 0;
+				padding: 10px;
+				color: #888;
+				font-size: 14px;
+				font-size: 1.4rem;
+				font-style: italic;
+			}
 
 
 
@@ -4598,6 +4888,7 @@ form label {
 }
 	
 	form label .label {
+		color: #555;
 		background: transparent;
 	}
 
@@ -4738,6 +5029,23 @@ input[type="reset"]:active {
 		#content .social-icon a span {
 			position: relative;
 			top: -25px;
+		}
+
+
+
+/* ==  Open Source  == */
+
+.github-repos {
+	padding-top: 25px;
+}
+
+	.github-repos #ghw-github {
+		margin: auto;
+	}
+		
+		.github-repos #ghw-github #ghw-extended-user-info p {
+			color: #fff;
+			text-shadow: none;
 		}
 
 

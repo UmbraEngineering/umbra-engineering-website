@@ -18848,6 +18848,241 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 	History.init();
 
 })(window);
+;(function ($, window, document, undefined) {
+	"use strict";
+	// Setup our defaults
+	var pluginName = 'github',
+		defaults = {
+			user: null,
+			org: null,
+			show_extended_info: true,
+			show_follows: true,
+			width: "400px",
+			show_repos: 10,
+			oldest_first: false
+		};
+
+	// The plugin constructor
+	function Github(element, options) {
+		// Set the element specified by the user
+		this.element = element;
+		// Combie in the defaults and options into a single options object
+		this.options = $.extend({}, defaults, options);
+		// Instantiate our init function, it inherits the options object, so we don't need to explicitly pass it
+		this.init();
+
+		this.errorType = '';
+	}
+
+	// Our Prototype!
+	Github.prototype = {
+		// Our controller
+		init: function () {
+			// Explicitly set our options and element so they can be inherited by functions
+			// Then init our functions to build the widget
+			var el = this.element,
+				options = this.options,
+				user, org, repos;
+
+			if (options.user) {
+				user = this.userModel("user", options.user, function (data) {
+					// Build layout view with user data and append it to the specified element
+					$(el).append(Github.prototype.view_layout(data.data, options));
+				});
+				repos = this.userModel("repos", options.user, drawRepos);
+			}
+
+			else if (options.org) {
+				user = this.orgModel("org", options.org, function (data) {
+					// Build layout view with org data and append it to the specified element
+					$(el).append(Github.prototype.view_layout(data.data, options));
+				});
+				repos = this.orgModel("repos", options.org, drawRepos);
+			}
+			
+			function drawRepos(data) {
+				// Build our repos partial and append it to the layout, which is already in the DOM
+				$(el).find("#ghw-repos ul").append(Github.prototype.view_partial_repos(data, options, el));
+				// Fade out the Github loader gif, and then fade in the repos we just appended
+				$(el).find("#ghw-repos #ghw-github-loader").slideUp(250, function () {
+					$(el).find("#ghw-repos ul").slideDown(250);
+				});
+				// Init our bind function once everything is present within the DOM
+				Github.prototype.bind(options);
+			}
+		},
+
+		// Our user model, get and set user data
+		userModel: function (type, user, callback) {
+			// Construct our endpoint URL depending on what is being requested
+			var url = "https://api.github.com/users/" + user.toLowerCase(); if (type === "repos") { url += "/repos"; } url += "?callback=?";
+			// Get data from Github user endpoint, JSONP bitches
+			$.getJSON(url, function (data) {
+				// Make sure our callback is defined and is of the right type, if it is fire it
+				if (typeof callback !== "undefined" && typeof callback === "function") {
+					callback(data);
+				}
+			});
+		},
+
+		// Our organization model, get and set org data
+		orgModel: function (type, org, callback) {
+			// Construct our endpoint URL depending on what is being requested
+			var url = "https://api.github.com/orgs/" + org.toLowerCase(); if (type === "repos") { url += "/repos"; } url += "?callback=?";
+			// Get data from Github user endpoint, JSONP bitches
+			$.getJSON(url, function (data) {
+				// Make sure our callback is defined and is of the right type, if it is fire it
+				if (typeof callback !== "undefined" && typeof callback === "function") {
+					callback(data);
+				}
+			});
+		},
+
+		// The main layout for the widget
+		view_layout: function (user, options) {
+			var markup = '';
+			// As it's setting a simple string, the width value can be anything acceptable to CSS (px/%/em/pt etc)
+			markup += '<div id="ghw-github" style="width: ' + options.width + '">';
+			markup += '<div id="ghw-header" class="ghw-clear">';
+			markup += '<div id="ghw-logo"><a href="https://github.com/">Github</a></div>';
+			markup += '<div id="ghw-user"><a href="' + user.html_url + '" id="ghw-github-user">';
+			// If the user has a custom avatar then show it, if not display the default github avatar (served from their CDN)
+			if (typeof user.avatar_url !== "undefined" && user.avatar_url.length > 0) {
+				markup += '<img src="' + user.avatar_url + '" alt="Avatar" width="34px" height="34px" />';
+			} else {
+				markup += '<img src="https://a248.e.akamai.net/assets.github.com/images/gravatars/gravatar-140.png" alt="Avatar" width="34px" height="34px" />';
+			}
+			markup += '</a></div>';
+			// Check if we should show the extended info, a custom option
+			// Within extended info we need to check for the existence of elements, as not everyone has the same info set in their Github profile
+			if (options.show_extended_info === true) {
+				markup += '<div id="ghw-extended-user-info">';
+				if (typeof user.name !== "undefined" && user.name.length > 0) {
+					markup += '<p class="ghw-name">' + user.name + '</p>';
+				}
+				markup += '<p class="ghw-place">';
+				if (user.company != null && user.company.length > 0) {
+					markup += user.company + ' ';
+				}
+				if (typeof user.location !== "undefined" && user.location.length > 0) {
+					markup += user.location;
+				}
+				markup += '</p>';
+				if (typeof user.bio === "string" && user.bio.length > 0) {
+					markup += '<p class="ghw-bio">' + user.bio + '</p>';
+				}
+				if (user.hireable === true) {
+					markup += '<p class="ghw-hireable">I\'m availabe for hire!</p>';
+				}
+				markup += '<span class="ghw-repos">' + user.public_repos + ' repos</span>';
+				markup += '<span class="ghw-gists">' + user.public_gists + ' gists</span>';
+				markup += '</div>';
+			}
+			markup += '<div id="ghw-github-user-data">';
+			markup += '<h2><a href="' + user.html_url + '">';
+			if (typeof user.login !== "undefined") {
+				markup += user.login;
+			} else {
+				markup += 'User not found';
+			}
+			markup += '</a></h2>';
+			markup += '<a href="' + user.html_url + '" id="ghw-header-total-repos">' + user.public_repos + ' repos</a>';
+			// Check if the option to show followers is set to true, if not, don't show it
+			if (options.show_follows === true && typeof user.login !== "undefined") {
+				markup += ' | <a href="https://github.com/' + user.login.toLowerCase() + '/followers" id="ghw-current-followers">' + user.followers + ' followers</a>';
+			}
+			markup += '</div>';
+			markup += '</div>';
+			// The element which the repos partial will eventually be appended to
+			markup += '<div id="ghw-repos"><div id="ghw-github-loader"></div><ul></ul></div>';
+			markup += '</div>';
+			return markup;
+		},
+
+		// Our repos partial, which will construct the repo list itself
+		view_partial_repos: function (data, options, el) {
+			var markup = '';
+			// Are we displaying our repos oldest first?
+			if (options.oldest_first === true) {
+				// Yes? use the reverse method to reverse the order of the data objects
+				data = data.data.reverse();
+			} else {
+				data = data.data;
+			}
+			// Iterate through the repos
+			var i = 0;
+			$.each(data, function () {
+				// Allow filtering repo results with some custom function
+				if (options.repo_filter && ! options.repo_filter(this)) {return;}
+				// Github returns pages of 30 repos per request, however we only want to show the number set in the options
+				if (i++ < options.show_repos) {
+					markup += '<li id="ghw-repo-' + i + '" class="ghw-clear ghw-repo';
+					// This is a little bit of a hack to make the CSS easier, if the repo has a language attribute, it will mean
+					// the box carries over two lines, which means the buttons on the right become missaligned. So therefore, if
+					// there are two lines, add a special class so we can style it more easily.
+					if (this.language !== null) {
+						markup += ' double';
+					}
+					markup += '">';
+					markup += '<div class="ghw-left">';
+					markup += '<p class="ghw-title"><a href="' + this.html_url + '" data-description="<p>' + this.name + '</p>' + this.description + '" class="ghw-github-tooltip">' + this.name + '</a></p>';
+					markup += '<p class="ghw-meta-data">';
+					if (this.language !== null) {
+						markup += '<span class="ghw-language">' + this.language + '</span></p>';
+					}
+					markup += '</div>';
+					markup += '<div class="ghw-right">';
+					markup += '<span class="ghw-forks ghw-github-tooltip" data-description="This repo has ' + this.forks + ' fork(s)">' + this.forks + '</span>';
+					markup += '<span class="ghw-watchers ghw-github-tooltip" data-description="This repo has ' + this.watchers + ' watcher(s)">' + this.watchers + '</span>';
+					markup += '<span class="ghw-issues ghw-github-tooltip" data-description="This project has ' + this.open_issues + ' open issues">' + this.open_issues + '</span>';
+					markup += '</div>';
+					markup += '</li>';
+				}
+			});
+			return markup;
+		},
+
+		// Our bin utility funciton that will be init'd once we have populated the DOM
+		bind: function (options) {
+			// If the option to show the extended user info is set to true then bind it to do so
+			if (options.show_extended_info === true) {
+				$("#ghw-github-user").hover(function () {
+					$("#ghw-github #ghw-header #ghw-extended-user-info").fadeIn(250, function () {
+						$("#ghw-github #ghw-header img").addClass("ghw-ghw-no-bottom-border");
+					});
+				}, function () {
+					$("#ghw-github #ghw-header #ghw-extended-user-info").fadeOut(250, function () {
+						$("#ghw-github #ghw-header img").removeClass("ghw-ghw-no-bottom-border");
+					});
+				});
+			}
+			// Make the buttons become opaque when hovering over a repo row
+			$("#ghw-github li").hover(function () {
+				$(this).find(".ghw-right").animate({opacity: 1}, 200);
+			}, function () {
+				$(this).find(".ghw-right").animate({opacity: 0.3}, 200);
+			});
+			// Our main tooltip function
+			$(".ghw-github-tooltip").hover(function () {
+				var markup = '<div class="ghw-github-tooltip-content">' + $(this).attr("data-description") + '</div>';
+				$(this).append(markup);
+			}, function () {
+				$(".ghw-github-tooltip-content").remove();
+			});
+		}
+	};
+
+	// Setup our plugin
+	$.fn[pluginName] = function (options) {
+		return this.each(function () {
+			if (!$.data(this, 'plugin_' + pluginName)) {
+				$.data(this, 'plugin_' + pluginName,
+					new Github(this, options));
+			}
+		});
+	};
+
+}(jQuery, window, document));
 ;
 Class('Router').Extends('AppObject', {
 
@@ -18965,10 +19200,11 @@ function program1(depth0,data) {
 
 this["app"]["templates"]["open-source"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
-  
+  var buffer = "";
 
 
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Open Source</h3>\n		<p>\n			Here at Umbra Engineering, we develop a number of open source works which can be found on our\n			<a href=\"https://github.com/UmbraEngineering\" rel=\"external\">GitHub</a> profile. Most of the projects there are\n			small Node modules.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<p>\n			One of our biggest open source projects is an application framework called\n			<a href=\"https://github.com/UmbraEngineering/redis-nodes\">redis-nodes</a>. It allows you to create an\n			application containing several individual processes that communicate with each other using redis\n			pub/sub. It assumes very little about your application allowing you to make any kind of project using\n			it. This is not a web-app framework like Connect or Express, but you can run one of those (or any other\n			similar framework) inside of one your redis-nodes processes.\n		</p>\n	</div>\n</div>\n-->\n";};
+  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Open Source</h3>\n		<p>\n			Here at Umbra Engineering, we develop a number of <a href=\"https://github.com/UmbraEngineering\" rel=\"external\">open source\n			works</a> which we host on GitHub. Most of these projects are small Node.js modules that we have developed for previous\n			projects that we release open source for the public to use. Some of these project repositories can be previewed below.\n		</p>\n	</div>\n	<div class=\"row\">\n		<div class=\"github-repos\"></div>\n	</div>\n</div>\n";
+  return buffer;};
 
 this["app"]["templates"]["careers"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -19005,19 +19241,29 @@ this["app"]["templates"]["message"] = function (Handlebars,depth0,helpers,partia
   buffer += escapeExpression(stack1) + "</p>\n<a href=\"#\" class=\"close\">&times;</a>";
   return buffer;};
 
-this["app"]["templates"]["portfolio"] = function (Handlebars,depth0,helpers,partials,data) {
-  helpers = helpers || Handlebars.helpers;
-  
-
-
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Portfolio</h3>\n		<p>\n			We have worked for a number of small companies here in Portland Oregon and enjoy helping these local\n			businesses move forward.\n		</p>\n	</div>\n</div>\n";};
-
 this["app"]["templates"]["index"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
   
+  var buffer = "", stack1;
+  buffer += "\n			<li>\n				<div class=\"service\">\n					<h4>";
+  stack1 = depth0.title;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "</h4>\n					<p>\n						";
+  stack1 = depth0.content;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n					</p>\n				</div>\n			</li>\n			";
+  return buffer;}
 
-
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Welcome</h3>\n		<p>\n			Umbra Engineering is a web application development shop in Portland Oregon specializing in JavaScript, both on the client\n			and on the server in the form of <a href=\"http://nodejs.org\" rel=\"external\">Node.js</a>. Not only do we work for our clients,\n			but we also work on a number of <a href=\"/open-source\">open source projects</a>.\n		</p>\n	</div>\n</div>\n<!--\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Clients</h3>\n		<p>\n			Umbra has done work for a number of clients right here in the Portland, OR area. We are no strangers\n			to the world of startups and aren't affraid to take on risky jobs and help you build your company. At\n			the same time, we are also glad to work for those who already have there footing and are looking to\n			keep moving forward.\n		</p>\n		<div id=\"clients\">\n			<div class=\"row\">\n				<div class=\"four columns\">\n					<a href=\"https://www.sportzing.com\" class=\"client\" rel=\"external\">\n						<img src=\"/images/szlogo-mono.png\" alt=\"SportZing\" title=\"\" />\n					</a>\n				</div>\n			</div>\n		</div>\n	</div>\n</div>\n-->\n\n";};
+  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Welcome</h3>\n		<p>\n			Umbra Engineering is a web application development shop in Portland Oregon specializing in JavaScript, both on the client\n			and on the server in the form of <a href=\"http://nodejs.org\" rel=\"external\">Node.js</a>. Not only do we work for our clients,\n			but we also work on a number of <a href=\"/open-source\">open source projects</a>. We have a large array of skills for building\n			web applications.\n		</p>\n	</div>\n	<div class=\"row\">\n		<ul id=\"services\" class=\"block-grid three-up mobile\">\n			";
+  stack1 = depth0.services;
+  stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n		</ul>\n	</div>\n</div>";
+  return buffer;};
 
 this["app"]["templates"]["error"] = function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
@@ -19064,14 +19310,7 @@ function program1(depth0,data) {
   stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</ul>\n";
-  return buffer;};
-
-this["app"]["templates"]["services"] = function (Handlebars,depth0,helpers,partials,data) {
-  helpers = helpers || Handlebars.helpers;
-  
-
-
-  return "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Services</h3>\n		<p>\n			We supply services in web application development using the Node.js platform.\n		</p>\n	</div>\n</div>\n<div class=\"content-section darker-1\">\n	<div class=\"row\">\n		<h3>Have a Job For Us?</h3>\n		<p>\n			If you would like to get in contact with us to talk about a job and get a quote, please go to\n			the <a href=\"/contact\">contact</a> page and send us a message.\n		</p>\n	</div>\n</div>\n";};;
+  return buffer;};;
 Class.mixin('InternalLinks', {
 
 	initializeInternalLinks: function() {
@@ -19268,22 +19507,27 @@ Class('IndexPageView').Extends('PageView', {
 	},
 
 	draw: function() {
-		this.draw.parent(this);
-	}
-
-});
-;
-Class('ServicesPageView').Extends('PageView', {
-
-	title: 'Services',
-	template: app.templates.services,
-
-	initialize: function() {
-		this._super.initialize.call(this);
+		this.draw.parent(this, {
+			services: this.services()
+		});
 	},
 
-	draw: function() {
-		this.draw.parent(this);
+	services: function() {
+		return [
+			{
+				title: 'HTML/CSS',
+				content: 'We have experience with the latest HTML5 and CSS3 features as well as with responsive ' +
+					'design, so your application will be fast and good looking where ever you put it.'
+			}, {
+				title: 'JavaScript',
+				content: 'JavaScript is our specialty. We have experience not only with raw JS, but also with ' +
+					'many of the common libraries and frameworks like jQuery, Underscore, and Backbone.'
+			}, {
+				title: 'Node',
+				content: 'We use the Node.js platform to build application back-ends and API servers. We have also ' +
+					'built <a href="/open-source">several stand-alone Node modules</a> for performing various tasks.'
+			}
+		];
 	}
 
 });
@@ -19321,21 +19565,6 @@ Class('ContactPageView').Extends('PageView', {
 
 });
 ;
-Class('PortfolioPageView').Extends('PageView', {
-
-	title: 'Portfolio',
-	template: app.templates.portfolio,
-
-	initialize: function() {
-		this._super.initialize.call(this);
-	},
-
-	draw: function() {
-		this.draw.parent(this);
-	}
-
-});
-;
 Class('OpenSourcePageView').Extends('PageView', {
 
 	title: 'Open Source',
@@ -19347,6 +19576,15 @@ Class('OpenSourcePageView').Extends('PageView', {
 
 	draw: function() {
 		this.draw.parent(this);
+
+		this.$('.github-repos').github({
+			org: 'UmbraEngineering',
+			width: '80%',
+			show_repos: 10,
+			repo_filter: function(repo) {
+				return (! repo.fork);
+			}
+		});
 	}
 
 });
@@ -19469,7 +19707,6 @@ Class('ErrorPageView').Extends('PageView', {
 app.router = new app.Router({
 	'/':                  app.IndexPageView,
 	'/index':             app.IndexPageView,
-	'/services':          app.ServicesPageView,
 	'/contact':           app.ContactPageView,
 	'/portfolio':         app.PortfolioPageView,
 	'/open-source':       app.OpenSourcePageView,

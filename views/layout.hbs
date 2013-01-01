@@ -12,7 +12,11 @@
 	
 	<title>Umbra Engineering</title>
 
+	{{#if env.isProduction}}
+	<link rel="stylesheet" type="text/css" href="/stylesheets/styles.min.css" />
+	{{else}}
 	<link rel="stylesheet" type="text/css" href="/stylesheets/styles.css" />
+	{{/if}}
 	
 	<script type="text/javascript" src="/javascripts/lib/prefixfree.min.js"></script>
 	
@@ -31,11 +35,9 @@
 					</div>
 					<div class="seven columns" id="nav">
 						<ul class="top-level">
-							<li><a href="/services">Services</a></li>
-							<li><a href="/contact">Contact</a></li>
-							<li><a href="/portfolio">Portfolio</a></li>
 							<li><a href="/open-source">Open Source</a></li>
 							<li><a href="/careers">Careers</a></li>
+							<li><a href="/contact">Contact</a></li>
 						</ul>
 					</div>
 				</div>
@@ -78,7 +80,12 @@
 		var _prefill = {{{json prefill }}};
 		{{/if}}
 	</script>
+
+	{{#if env.isProduction}}
+	<script type="text/javascript" src="/javascripts/app.min.js"></script>
+	{{else}}
 	<script type="text/javascript" src="/javascripts/app.js"></script>
+	{{/if}}
 	
 </body>
 </html>

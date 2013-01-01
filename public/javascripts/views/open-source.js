@@ -10,6 +10,15 @@ Class('OpenSourcePageView').Extends('PageView', {
 
 	draw: function() {
 		this.draw.parent(this);
+
+		this.$('.github-repos').github({
+			org: 'UmbraEngineering',
+			width: '80%',
+			show_repos: 10,
+			repo_filter: function(repo) {
+				return (! repo.fork);
+			}
+		});
 	}
 
 });
