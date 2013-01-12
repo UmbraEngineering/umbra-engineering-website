@@ -33,9 +33,9 @@ app.on('ready', function() {
 	app.drawPage(location.pathname);
 
 	// DEBUG Show a development warning
-	setTimeout(function() {
+	/*setTimeout(function() {
 		app.MessageView.create('This site is under construction; Some aspects may not function correctly.');
-	}, 1000);
+	}, 1000);*/
 });
 
 // -------------------------------------------------------------

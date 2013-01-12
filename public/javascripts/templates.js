@@ -76,7 +76,7 @@ function program1(depth0,data) {
   buffer += escapeExpression(stack1) + "</a>\n			</li>\n			";
   return buffer;}
 
-  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Careers</h3>\n		<p>\n			At Umbra, we are currently looking to expand. If you have skills and are interested in working with\n			us, take a look below at the positions we are looking to fill.\n		</p>\n	</div>\n	<div class=\"row\">\n		<ul class=\"careers-openings\">\n			";
+  buffer += "<div class=\"content-section\">\n	<div class=\"row\">\n		<h3>Careers</h3>\n		<p>\n			At Umbra, we are currently looking to expand. If you have skills and are interested in working with\n			us, take a look below at the positions we are looking to fill. If you would like to apply for one of\n			these positions, please <a href=\"/contact\">contact us</a> with some info about yourself and links to\n			any relevant websites (like a GitHub, LinkedIn, etc.)\n		</p>\n	</div>\n	<div class=\"row\">\n		<ul class=\"careers-openings\">\n			";
   stack1 = depth0.openings;
   stack1 = helpers.each.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
