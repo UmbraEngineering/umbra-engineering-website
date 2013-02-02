@@ -15206,6 +15206,9 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 (function() {
 
+    if (! window.console) {window.console = { };}
+    if (! console.log) {console.log = function() { };}
+
 // -------------------------------------------------------------
 //  AppObject Class
 	

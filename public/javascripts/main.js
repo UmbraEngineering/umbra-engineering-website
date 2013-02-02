@@ -44,6 +44,10 @@ app.on('ready', function() {
 // Draw the appropriate page for a given href
 //
 app.drawPage = function(href) {
+	if (href.charAt(0) === '.') {
+		href = href.slice(1);
+	}
+	
 	if (href.charAt(0) !== '/') {
 		href = '/' + href;
 	}
