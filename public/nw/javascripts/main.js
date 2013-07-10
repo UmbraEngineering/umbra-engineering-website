@@ -1,6 +1,25 @@
 
 $(function() {
 
+	// Hostname security
+	if (! (location.hostname === 'localhost' || location.hostname === 'nw.umbraengineering.com')) {
+		var css = '* { display: none; }';
+		var head = document.getElementsByTagName('head')[0];
+		var style = document.createElement('style');
+
+		style.type = 'text/css';
+		
+		if (style.styleSheet){
+			style.styleSheet.cssText = css;
+		} else {
+			style.appendChild(document.createTextNode(css));
+		}
+
+		head.appendChild(style);
+	}
+
+// --------------------------------------------------------
+
 	var navigation = new NavMenu('#navigation');
 
 // --------------------------------------------------------
