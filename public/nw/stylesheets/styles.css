@@ -5,12 +5,26 @@ html, body {
 }
 
 .row {
-	max-width: none;
+	width: 100%;
+}
+
+img {
+	display: inline-block;
+	vertical-align: middle;
 }
 
 img.responsive {
 	width: 100%;
 	height: auto;
+}
+
+p {
+	font-family: inherit;
+	font-weight: normal;
+	font-size: 16px;
+	line-height: 1.6;
+	margin-bottom: 1.25em;
+	text-rendering: optimizeLegibility;
 }
 
 
@@ -290,8 +304,11 @@ img.responsive {
 }
 
 	@media only screen and (max-width: 1200px) {
-		.contact-info {
-			padding: 12px 8px;
+		div.contact-info {
+			padding: 12px 5px;
+		}
+
+		div.contact-info div {
 			font-size: 12px;
 		}
 	}
