@@ -29,6 +29,8 @@ p {
 
 
 
+
+
 /*  ==  Header  ==  */
 
 #header {
@@ -49,6 +51,8 @@ p {
 	#header-slogan {
 		/**/
 	}
+
+
 
 
 
@@ -125,7 +129,60 @@ p {
 
 
 
-/*  ==  Slider  ==  */
+
+
+/*  ==  Side Navigation  ==  */
+
+.sidenav {
+	padding: 0;
+	float: left;
+}
+	
+	.sidenav > div {
+		display: inline-block;
+		border: 1px #ccc solid;
+		background: #f2f2f2;
+		background: rgba(230,230,230,0.4);
+		min-height: 400px;
+		padding: 10px;
+	}
+	
+		.sidenav h2 {
+			font-size: 20px;
+		}
+		
+		.sidenav a {
+			display: block;
+			color: #1751A3;
+			font-size: smaller;
+			font-weight: bold;
+			padding: 5px 10px;
+		}
+
+			.sidenav a:hover {
+				background: #9a9a9a;
+				background: linear-gradient(to bottom, #9a9a9a 0%, #f2f2f2 100%);
+				background: linear-gradient(top, #9a9a9a 0%, #f2f2f2 100%);
+			}
+		
+		.sidenav > div > ul {
+			list-style: none;
+		}
+
+			.sidenav ul ul {
+				margin-left: 10px;
+				list-style-position: inside;
+			}
+
+			.sidenav li {
+				/**/
+			}
+
+
+
+
+
+/*  ==  Front Page Slider  ==  */
 
 .slider {
 	width: 100%;
@@ -216,6 +273,8 @@ p {
 		.slider .slider-manual-controls li.current {
 			background: #fff;
 		}
+
+
 
 
 
@@ -390,3 +449,182 @@ p {
 		bottom: 0;
 		left: 0;
 	}
+
+
+
+
+
+/*  ==  Other Content  ==  */
+
+.main-content {
+	overflow: hidden;
+}
+
+.main-content .row {
+	margin: 10px 0;
+}
+	
+	.main-content .row .panel {
+		height: 100%;
+		margin-bottom: 10px;
+		border: 0;
+		padding: 10px;
+		background: #f2f2f2;
+		background: rgba(230,230,230,0.4);
+	}
+
+.main-content iframe {
+	margin: 40px 0;
+	min-width: 796px;
+}
+
+.main-content h2 {
+	color: #1751A3;
+	font-size: 28px;
+	font-weight: normal;
+	margin: 40px 0 20px;
+}
+
+.main-content h3 {
+	color: #666;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 15px 0;
+}
+
+.main-content p {
+	color: #666;
+	font-size: 16px;
+	line-height: 1.3;
+	margin-bottom: 1.25em;
+}
+
+.main-content a {
+	color: #063;
+}
+
+.main-content ul {
+	color: #666;
+	margin-left: 15px;
+	list-style-position: inside;
+	padding: 30px 10px;
+}
+
+.small-image {
+	margin-bottom: 10px;
+	text-align: center;
+}
+	
+	.small-image img {
+		max-width: 600px;
+	}
+
+
+
+
+
+/*  ==  Other Content Responsiveness Fixes  ==  */
+
+@media only screen and (min-width: 1701px) {
+	.main-content h2 {
+		font-size: 30px;
+		margin: 40px 0 20px;
+	}
+
+	.main-content h3 {
+		font-size: 16px;
+	}
+
+	.main-content p {
+		font-size: 16px;
+		margin-bottom: 1.05em;
+	}
+
+	.main-content li {
+		font-size: 16px;
+	}
+}
+
+@media only screen and (max-width: 1700px) {
+	.main-content h2 {
+		font-size: 30px;
+		margin: 40px 0 20px;
+	}
+
+	.main-content h3 {
+		font-size: 16px;
+	}
+
+	.main-content p {
+		font-size: 16px;
+		margin-bottom: 1.05em;
+	}
+
+	.main-content li {
+		font-size: 16px;
+	}
+}
+
+@media only screen and (max-width: 1400px) {
+	.main-content h2 {
+		font-size: 26px;
+		margin: 30px 0 10px;
+	}
+
+	.main-content h3 {
+		font-size: 14px;
+	}
+
+	.main-content p {
+		font-size: 14px;
+		margin-bottom: 1.05em;
+	}
+
+	.main-content li {
+		font-size: 14px;
+	}
+}
+
+@media only screen and (max-width: 1200px) {
+	.main-content h2 {
+		font-size: 16px;
+		margin: 15px 0 10px;
+	}
+
+	.main-content h3 {
+		font-size: 13px;
+	}
+
+	.main-content p {
+		font-size: 13px;
+		margin-bottom: 0.65em;
+	}
+
+	.main-content li {
+		font-size: 13px;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

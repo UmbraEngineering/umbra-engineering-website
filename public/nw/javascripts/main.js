@@ -92,5 +92,32 @@ $(function() {
 			setTimeout(function() { slide.$content.animate(obj, 500); }, 500);
 		};
 	}
+
+// --------------------------------------------------------
+	
+	// 
+	// Level out row columns
+	// 
+
+	function levelColumns() {
+		$('.level-columns').each(function() {
+			var $row = $(this);
+			var $cols = $row.children();
+
+			$cols.css('height', 'auto');
+			$cols.css('height', $row.outerHeight() + 'px');
+		});
+	}
+
+	// 
+	// This is a bit ugly, but it gets the job done
+	// 
+
+	levelColumns();
+	setTimeout(levelColumns, 100);
+	setTimeout(levelColumns, 200);
+	setTimeout(levelColumns, 500);
+	setTimeout(levelColumns, 1000);
+	$(window).resize(levelColumns);
 	
 });
