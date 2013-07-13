@@ -507,6 +507,10 @@ p {
 	color: #666;
 	margin-left: 15px;
 	list-style-position: inside;
+	padding: 0 10px;
+}
+
+.main-content ul.spaced {
 	padding: 30px 10px;
 }
 

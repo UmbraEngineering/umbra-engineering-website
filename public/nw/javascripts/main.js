@@ -100,7 +100,7 @@ $(function() {
 	// 
 
 	function levelColumns() {
-		$('.level-columns').each(function() {
+		$('.level-cols').each(function() {
 			var $row = $(this);
 			var $cols = $row.children();
 
@@ -119,5 +119,13 @@ $(function() {
 	setTimeout(levelColumns, 500);
 	setTimeout(levelColumns, 1000);
 	$(window).resize(levelColumns);
+
+// --------------------------------------------------------
+	
+	// 
+	// Make external links and documents open in a new tab
+	// 
+
+	$('a[rel~=external], a[rel~=document]').attr('target', '_blank');
 	
 });
