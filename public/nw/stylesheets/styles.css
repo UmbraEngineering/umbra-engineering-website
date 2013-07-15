@@ -159,7 +159,8 @@ p {
 			padding: 5px 10px;
 		}
 
-			.sidenav a:hover {
+			.sidenav a:hover,
+			.sidenav a.selected {
 				background: #9a9a9a;
 				background: linear-gradient(to bottom, #9a9a9a 0%, #f2f2f2 100%);
 				background: linear-gradient(top, #9a9a9a 0%, #f2f2f2 100%);

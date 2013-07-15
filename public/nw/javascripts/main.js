@@ -20,7 +20,7 @@ $(function() {
 
 // --------------------------------------------------------
 
-	var navigation = new NavMenu('#navigation');
+	var navigation = new NavMenu('#navigation', '.sidenav');
 
 // --------------------------------------------------------
 
