@@ -355,49 +355,6 @@ p {
 					background: #eee;
 				}
 
-.contact-info {
-	padding: 15px;
-	color: #808080;
-	font-size: 15px;
-	line-height: 1.3;
-}
-
-	@media only screen and (max-width: 1200px) {
-		div.contact-info {
-			padding: 12px 5px;
-		}
-
-		div.contact-info div {
-			font-size: 12px;
-		}
-	}
-	
-	.contact-info > div {
-		padding: 10px;
-		border: 2px #aaa solid;
-		background: #eee;
-		background: radial-gradient(ellipse at center, #ffffff 0%, #dddddd 100%);
-		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdddddd', endColorstr='#ffffffff', GradientType=0);
-	}
-
-		.contact-info h2 {
-			color: #808080;
-			font-size: 20px;
-			font-weight: normal;
-			text-align: center;
-			margin: 0;
-			padding: 0;
-		}
-
-		.contact-info a {
-			color: inherit;
-			text-decoration: none;
-		}
-
-		.contact-info > div div {
-			margin: 10px 0;
-		}
-
 .front-page-lower-content {
 	margin-top: 25px;
 }
@@ -432,13 +389,13 @@ p {
 
 	@media only screen and (max-width: 1400px) {
 		.front-page-footer {
-			height: 27em;
+			height: 30em;
 		}
 	}
 
 	@media only screen and (max-width: 1200px) {
 		.front-page-footer {
-			height: 20em;
+			height: 27em;
 		}
 	}
 	
@@ -482,7 +439,7 @@ p {
 	color: #1751A3;
 	font-size: 28px;
 	font-weight: normal;
-	margin: 40px 0 20px;
+	margin: 0 0 20px;
 }
 
 .main-content h3 {
@@ -532,7 +489,7 @@ p {
 @media only screen and (min-width: 1701px) {
 	.main-content h2 {
 		font-size: 30px;
-		margin: 40px 0 20px;
+		margin: 0 0 20px;
 	}
 
 	.main-content h3 {
@@ -552,7 +509,7 @@ p {
 @media only screen and (max-width: 1700px) {
 	.main-content h2 {
 		font-size: 30px;
-		margin: 40px 0 20px;
+		margin: 0 0 20px;
 	}
 
 	.main-content h3 {
@@ -572,7 +529,7 @@ p {
 @media only screen and (max-width: 1400px) {
 	.main-content h2 {
 		font-size: 26px;
-		margin: 30px 0 10px;
+		margin: 0 0 10px;
 	}
 
 	.main-content h3 {
@@ -592,7 +549,7 @@ p {
 @media only screen and (max-width: 1200px) {
 	.main-content h2 {
 		font-size: 16px;
-		margin: 15px 0 10px;
+		margin: 0 0 10px;
 	}
 
 	.main-content h3 {
@@ -610,6 +567,53 @@ p {
 }
 
 
+
+
+
+/*  ==  Contact Info  ==  */
+
+.contact-info {
+	padding: 15px;
+	color: #808080;
+	font-size: 15px;
+	line-height: 1.3;
+}
+
+	@media only screen and (max-width: 1200px) {
+		div.contact-info {
+			padding: 12px 5px;
+		}
+
+		div.contact-info div {
+			font-size: 12px;
+		}
+	}
+	
+	.contact-info > div {
+		padding: 10px;
+		border: 2px #aaa solid;
+		background: #eee;
+		background: radial-gradient(ellipse at center, #ffffff 0%, #eeeeee 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffeeeeee', endColorstr='#ffffffff', GradientType=0);
+	}
+
+		.contact-info h2 {
+			color: #808080;
+			font-size: 20px;
+			font-weight: normal;
+			text-align: center;
+			margin: 0;
+			padding: 0;
+		}
+
+		.contact-info a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.contact-info > div div {
+			margin: 10px 0;
+		}
 
 
 
