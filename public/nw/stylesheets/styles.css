@@ -78,15 +78,15 @@ p {
 		display: inline-block;
 	}
 
+		.lt-ie9 #navigation > li {
+			padding: 0 1px;
+		}
+
 		#navigation > li > a {
 			display: block;
 			padding: 0 10px;
 			height: 25px;
 		}
-
-			.ie-lt9 #navigation > li > a {
-				padding: 0 50px;
-			}
 
 			#navigation a:hover,
 			#navigation a.selected,
