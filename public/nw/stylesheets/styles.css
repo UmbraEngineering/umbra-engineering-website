@@ -84,6 +84,10 @@ p {
 			height: 25px;
 		}
 
+			.ie-lt9 #navigation > li > a {
+				padding: 0 50px;
+			}
+
 			#navigation a:hover,
 			#navigation a.selected,
 			#navigation > li:hover > a {
