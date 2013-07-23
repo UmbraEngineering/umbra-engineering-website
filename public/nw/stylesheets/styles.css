@@ -27,6 +27,13 @@ p {
 	text-rendering: optimizeLegibility;
 }
 
+#wrapper {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	min-width: 1000px;
+}
+
 
 
 
@@ -126,7 +133,7 @@ p {
 
 				#navigation ul a {
 					display: block;
-					padding: 5px 10px;
+					padding: 5px 2px;
 					text-align: center;
 					font-size: 13px;
 				}
@@ -178,6 +185,11 @@ p {
 				margin-left: 10px;
 				list-style-position: inside;
 			}
+
+				.sidenav ul ul li {
+					display: block;
+					overflow: hidden;
+				}
 
 			.sidenav li {
 				/**/
@@ -597,6 +609,8 @@ p {
 	}
 	
 	.contact-info > div {
+		position: relative;
+		z-index: 500;
 		padding: 10px;
 		border: 2px #aaa solid;
 		background: #eee;

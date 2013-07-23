@@ -47,7 +47,7 @@
 			if (! $submenuItems.length) {return;}
 
 			// Make sure sub-menu items have the correct width
-			var widthPercent = Math.floor(99 / $submenuItems.length);
+			var widthPercent = 99.8 / $submenuItems.length;
 			$submenuItems.css('width', widthPercent + '%');
 		});
 	};
