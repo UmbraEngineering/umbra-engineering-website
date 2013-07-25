@@ -78,7 +78,7 @@ p {
 	#navigation a {
 		color: #1751A3;
 		font-weight: bold;
-		font-size: 13px;
+		font-size: 14px;
 	}
 	
 	#navigation > li {
@@ -91,7 +91,7 @@ p {
 
 		#navigation > li > a {
 			display: block;
-			padding: 0 10px;
+			padding: 0 4px;
 			height: 25px;
 		}
 
@@ -570,16 +570,16 @@ p {
 	}
 
 	.main-content h3 {
-		font-size: 13px;
+		font-size: 12px;
 	}
 
 	.main-content p {
-		font-size: 13px;
-		margin-bottom: 0.65em;
+		font-size: 12px;
+		margin-bottom: 0.5em;
 	}
 
 	.main-content li {
-		font-size: 13px;
+		font-size: 12px;
 	}
 }
 

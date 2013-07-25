@@ -127,5 +127,5 @@ $(function() {
 	// 
 
 	$('a[rel~=external], a[rel~=document]').attr('target', '_blank');
-	
+
 });

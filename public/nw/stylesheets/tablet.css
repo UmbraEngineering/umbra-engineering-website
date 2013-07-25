@@ -1,0 +1,51 @@
+
+/*  ==  Contains grid resizes for screens smaller than 1280px  ==  */
+
+@media only screen and (max-width: 1280px) {
+	
+	.tablet-one, .row .tablet-one { width: 8.33333%; }
+	.tablet-two, .row .tablet-two { width: 16.66667%; }
+	.tablet-three, .row .tablet-three { width: 25%; }
+	.tablet-four, .row .tablet-four { width: 33.33333%; }
+	.tablet-five, .row .tablet-five { width: 41.66667%; }
+	.tablet-six, .row .tablet-six { width: 50%; }
+	.tablet-seven, .row .tablet-seven { width: 58.33333%; }
+	.tablet-eight, .row .tablet-eight { width: 66.66667%; }
+	.tablet-nine, .row .tablet-nine { width: 75%; }
+	.tablet-ten, .row .tablet-ten { width: 83.33333%; }
+	.tablet-eleven, .row .tablet-eleven { width: 91.66667%; }
+	.tablet-twelve, .row .tablet-twelve { width: 100%; }
+
+	.row .tablet-offset-by-one { margin-left: 8.33333%; }
+	.row .tablet-offset-by-two { margin-left: 16.66667%; }
+	.row .tablet-offset-by-three { margin-left: 25%; }
+	.row .tablet-offset-by-four { margin-left: 33.33333%; }
+	.row .tablet-offset-by-five { margin-left: 41.66667%; }
+	.row .tablet-offset-by-six { margin-left: 50%; }
+	.row .tablet-offset-by-seven { margin-left: 58.33333%; }
+	.row .tablet-offset-by-eight { margin-left: 66.66667%; }
+	.row .tablet-offset-by-nine { margin-left: 75%; }
+	.row .tablet-offset-by-ten { margin-left: 83.33333%; }
+
+	.tablet-push-two { left: 16.66667%; }
+	.tablet-pull-two { right: 16.66667%; }
+	.tablet-push-three { left: 25%; }
+	.tablet-pull-three { right: 25%; }
+	.tablet-push-four { left: 33.33333%; }
+	.tablet-pull-four { right: 33.33333%; }
+	.tablet-push-five { left: 41.66667%; }
+	.tablet-pull-five { right: 41.66667%; }
+	.tablet-push-six { left: 50%; }
+	.tablet-pull-six { right: 50%; }
+	.tablet-push-seven { left: 58.33333%; }
+	.tablet-pull-seven { right: 58.33333%; }
+	.tablet-push-eight { left: 66.66667%; }
+	.tablet-pull-eight { right: 66.66667%; }
+	.tablet-push-nine { left: 75%; }
+	.tablet-pull-nine { right: 75%; }
+	.tablet-push-ten { left: 83.33333%; }
+	.tablet-pull-ten { right: 83.33333%; }
+
+}
+
+
