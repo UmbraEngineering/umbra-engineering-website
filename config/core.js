@@ -2,7 +2,7 @@ module.exports = function(app, conf) {
 	
 	app.configure('development', function() {
 		conf.port     = 3000;
-		conf.baseUrl  = 'http://umbra.local:' + conf.port;
+		conf.baseUrl  = 'http://localhost:' + conf.port;
 	});
 
 	app.configure('production', function() {

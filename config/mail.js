@@ -5,7 +5,7 @@ module.exports = function(app, conf) {
 		service: 'Gmail',
 		auth: {
 			user: 'mailing@umbraengineering.com',
-			pass: ')0k3ZoIk*?*=`6n]c.UTtS7Ea'
+			pass: process.env.MAIL_PASSWORD
 		}
 	};
 	
