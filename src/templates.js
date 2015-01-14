@@ -1,0 +1,17 @@
+module.exports["views"] = module.exports["views"] || {};
+module.exports["views"]["footer"] = module.exports["views"]["footer"] || {};
+module.exports["views"]["footer"]["footer"] = {"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<p>\n	Copyright &copy; 2015 Umbra Engineering LLC<br />\n	Powered by <a href=\"http://www.nodejs.org\">Node.js</a> and <a href=\"http://www.cloakjs.com\">Cloak.js</a>.\n	Hosted on <a href=\"http://www.heroku.com\">Heroku</a>.\n</p>";
+  },"useData":true};
+module.exports["views"]["header"] = module.exports["views"]["header"] || {};
+module.exports["views"]["header"]["header"] = {"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "\n<h1><a href=\"/\">Umbra Engineering</a></h1>\n<nav>\n	<a href=\"/open-source\">Open Source</a>\n	<a href=\"/services\">Services</a>\n	<a href=\"/contact\">Contact</a>\n</nav>";
+  },"useData":true};
+module.exports["views"]["home"] = module.exports["views"]["home"] || {};
+module.exports["views"]["home"]["home"] = {"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<h2>Professional Web Application Development</h2>\n<p>\n	Umbra Engineering is a dev shop in Portland Oregon specializing in JavaScript development in <a href=\"/services\">several different\n	environments</a>. We work on several different types of projects, from big corperate jobs to <a href=\"/services/local\">local small\n	businesses</a> and <a href=\"/services/nonprofit\">non-profits</a>, as well as a large amount of <a href=\"/open-source\">open source</a>\n	work.\n</p>\n<p>\n	Take a look around, and feel free to <a href=\"/contact\">contact us</a> if you would like more information, or if you would like to\n	talk about working together.\n</p>";
+  },"useData":true};
+module.exports["views"]["services"] = module.exports["views"]["services"] || {};
+module.exports["views"]["services"]["services"] = {"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  return "<h2>We provide several different services ...</h2>\n<ul class=\"services\">\n	<li class=\"service\">\n		<h3>Web Application Development</h3>\n		<p>\n			We use a full JavaScript stack to build web applications, including Node.js and MongoDB for writing API servers, often using our\n			own <a href=\"http://www.daggerjs.com\">dagger.js</a> API framework. We also make use <a href=\"http://www.cloakjs.com\">cloak.js</a>,\n			dagger's sister project, for front-end development.\n		</p>\n	</li>\n	<li class=\"service\">\n		<h3>Website Development</h3>\n		<p>\n			Our front-end skills also work for the creation of more simple projects, including making websites for our clients.\n		</p>\n	</li>\n	<li class=\"service\">\n		<h3>Desktop Application Development</h3>\n		<p>\n			Using <a href=\"https://github.com/rogerwang/node-webkit\">node-webkit</a>, we can build you a cross-platform desktop application\n			with all the same tools we use to build web apps.\n		</p>\n	</li>\n</ul>\n<p>\n	In addition, we also provide special deals for <a href=\"/services/local\">local small businesses</a> here in Portland, as well as for\n	<a href=\"/services/nonprofit\">non-profits</a>. We're willing to work with you to come to an arrangement that works for everyone.\n</p>";
+  },"useData":true};

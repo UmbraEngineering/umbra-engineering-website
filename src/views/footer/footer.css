@@ -1,0 +1,17 @@
+
+#wrapper {
+	padding-bottom: 150px;
+}
+
+#footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 25px;
+}
+
+	#footer p {
+		color: #888;
+		font-size: 11px;
+		line-height: 1.75;
+	}

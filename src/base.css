@@ -1,0 +1,32 @@
+
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	color: #444;
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+#wrapper {
+	max-width: 1400px;
+	min-height: 100%;
+	margin: 0 auto;
+	padding: 0 25px;
+	position: relative;
+}
+
+a {
+	color: #57b;
+	text-decoration: none;
+	transition: color .2s linear;
+}
+
+a:hover {
+	color: #359;
+}

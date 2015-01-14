@@ -1,0 +1,40 @@
+
+#header {
+	padding: 2em 0;
+}
+
+	#header h1 {
+		margin: 0;
+		float: left;
+		width: 350px;
+	}
+
+		#header h1 a {
+			color: #555;
+			font-weight: 100;
+		}
+
+	#header nav {
+		float: left;
+		position: relative;
+		top: 14px;
+	}
+
+		#header nav a {
+			color: #555;
+			font-size: 12px;
+			margin: 0 20px;
+		}
+
+	#header a:hover {
+		color: #000;
+	}
+
+	#header:after {
+		display: block;
+		visibility: hidden;
+		content: " ";
+		height: 0;
+		line-height: 0;
+		clear: left;
+	}
