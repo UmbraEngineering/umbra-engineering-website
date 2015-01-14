@@ -5,4 +5,4 @@
 /* SITE */
   Standards: HTML5, CSS3
   Components: jQuery, Underscore, Require, Express, Handlebars
-  Software: Gedit, Git
+  Software: Sublime Text 3, Git
