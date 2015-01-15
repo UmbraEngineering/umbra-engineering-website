@@ -3,15 +3,6 @@ section.services {
 	/**/
 }
 
-	section.services h2 {
-		color: #666;
-		font-size: 32px;
-		font-weight: 100;
-		letter-spacing: 1px;
-		text-align: center;
-		margin-top: 100px;
-	}
-
 	section.services ul.services {
 		width: 100%;
 		padding: 0;
@@ -27,6 +18,8 @@ section.services {
 			height: 250px;
 			background: #eee;
 			border: 1px #ddd solid;
+			border-radius: 6px;
+			box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
 		}
 
 			section.services li.service:first-of-type {
@@ -41,8 +34,8 @@ section.services {
 
 			section.services li.service p {
 				font-size: 14px;
-				line-height: 1.6;
 				padding: 10px 20px;
+				font-style: italic;
 			}
 
 		section.services ul.services:after {

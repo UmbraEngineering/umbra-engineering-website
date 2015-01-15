@@ -1,40 +1,51 @@
 
 #header {
-	padding: 2em 0;
+	width: 100%;
+	margin: 0;
+	padding: 0 0 12px;
+	overflow: hidden;
 }
 
-	#header h1 {
-		margin: 0;
-		float: left;
-		width: 350px;
+	#header > section {
+		background: #222 url('../images/heading-bg.png') top left repeat;
+		padding: 50px 10px 50px;
+		box-shadow: 0 6px 6px #111;
+		border-bottom: 35px solid #333;
 	}
 
-		#header h1 a {
-			color: #555;
-			font-weight: 100;
-		}
+			#header h1 {
+				margin: 0;
+				float: left;
+				width: 350px;
+			}
 
-	#header nav {
-		float: left;
-		position: relative;
-		top: 14px;
-	}
+				#header h1 a {
+					color: #ccc;
+					text-shadow: 1px 0 1px #000;
+					font-weight: 100;
+				}
 
-		#header nav a {
-			color: #555;
-			font-size: 12px;
-			margin: 0 20px;
-		}
+			#header nav {
+				float: left;
+				position: relative;
+				top: 14px;
+			}
 
-	#header a:hover {
-		color: #000;
-	}
+				#header nav a {
+					color: #555;
+					font-size: 14px;
+					margin: 0 20px;
+				}
 
-	#header:after {
-		display: block;
-		visibility: hidden;
-		content: " ";
-		height: 0;
-		line-height: 0;
-		clear: left;
-	}
+					#header nav a:hover {
+						color: #ccc;
+					}
+
+			#header section:after {
+				display: block;
+				visibility: hidden;
+				content: " ";
+				height: 0;
+				line-height: 0;
+				clear: left;
+			}

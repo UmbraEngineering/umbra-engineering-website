@@ -3,8 +3,15 @@
 	box-sizing: border-box;
 }
 
+::selection {
+	color: #888;
+	background: #222;
+	text-shadow: none;
+}
+
 html, body {
 	height: 100%;
+	background: #eee url('../images/bg.png') top left repeat;
 }
 
 body {
@@ -14,15 +21,37 @@ body {
 }
 
 #wrapper {
-	max-width: 1400px;
 	min-height: 100%;
-	margin: 0 auto;
-	padding: 0 25px;
 	position: relative;
 }
 
+.content-area {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 0 25px;
+}
+
+main {
+	/**/
+}
+
+	main p {
+		color: #555;
+		line-height: 1.6;
+		font-size: 18px;
+	}
+
+	main h2.title {
+		color: #666;
+		font-size: 32px;
+		font-weight: 100;
+		letter-spacing: 1px;
+		text-align: center;
+		margin: 75px 0 50px;
+	}
+
 a {
-	color: #57b;
+	color: #5b7c8f;
 	text-decoration: none;
 	transition: color .2s linear;
 }

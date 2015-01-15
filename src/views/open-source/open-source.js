@@ -1,10 +1,10 @@
 
 var View = require('cloak.view');
 
-var ServicesView = module.exports = View.extend({
+var OpenSourceView = module.exports = View.extend({
 
-	template: 'views/services/services.hbs',
-	className: 'services content-area',
+	template: 'views/open-source/open-source.hbs',
+	className: 'open-source content-area',
 
 	events: {
 		// 

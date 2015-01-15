@@ -1,12 +1,12 @@
 
-// Initialize internationalization
-require('i18n');
-
 // Set up templates
 var handlebars = require('cloak.view.handlebars');
 var templating = require('cloak.view/src/templating');
 var templates  = handlebars.runtime(require('templates'));
 templating.registerEngine('handlebars', templates);
+
+// Load the handlebars helpers
+require('handlebars-helpers');
 
 // Start the router
 require('routers');

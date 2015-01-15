@@ -1,6 +1,6 @@
 
 var Controller  = require('cloak.controller');
-var Animation   = require('controller-animation');
+var Animation   = require('animation/controller');
 
 var PageController = module.exports = Controller.extend(Animation, {
 

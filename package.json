@@ -39,11 +39,14 @@
   "dependencies": {
     "cloak.controller": "0.0.x",
     "cloak.core": "0.0.x",
-    "cloak.i18n": "0.0.x",
     "cloak.router": "0.0.x",
     "cloak.view": "0.0.x",
     "cloak.view.handlebars": "0.0.x",
+    "cloak.xhr": "0.0.x",
+    "handlebars": "^2.0.0",
+    "moment": "^2.9.0",
     "node-static": "^0.7.6",
+    "nodemailer": "0.7.x",
     "velocity-animate": "^1.2.1"
   }
 }

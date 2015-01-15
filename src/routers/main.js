@@ -1,20 +1,19 @@
 
-var Router              = require('cloak.router');
-var Promise             = require('cloak.core/utils/promise');
-var HomeController      = require('views/home');
-var ServicesController  = require('views/services');
+var Router                = require('cloak.router');
+var Promise               = require('cloak.core/utils/promise');
+var HomeController        = require('views/home');
+var ServicesController    = require('views/services');
+var OpenSourceController  = require('views/open-source');
+var ContactController     = require('views/contact');
+var NotFoundController    = require('views/notfound');
 
 var MainRouter = module.exports = Router.extend({
 
 	routes: {
-		'/':                         'home',
-		'/open-source':              'openSource',
-		'/open-source/cloak':        'cloak',
-		'/open-source/dagger':       'dagger',
-		'/services':                 'services',
-		'/services/local':           'localServices',
-		'/services/nonprofit':       'nonprofitServices',
-		'/contact':                  'contact'
+		'/':                'home',
+		'/open-source':     'openSource',
+		'/services':        'services',
+		'/contact':         'contact'
 	},
 
 	initialize: function() {
@@ -39,24 +38,7 @@ var MainRouter = module.exports = Router.extend({
 	// 
 	openSource: function() {
 		document.title = 'Open Source / Umbra Engineering';
-	},
-
-// -------------------------------------------------------------
-
-	// 
-	// Cloak.js open source page
-	// 
-	cloak: function() {
-		document.title = 'Cloak.js / Umbra Engineering';
-	},
-
-// -------------------------------------------------------------
-
-	// 
-	// Dagger.js open source page
-	// 
-	dagger: function() {
-		document.title = 'Dagger.js / Umbra Engineering';
+		this.drawPage(OpenSourceController);
 	},
 
 // -------------------------------------------------------------
@@ -70,32 +52,13 @@ var MainRouter = module.exports = Router.extend({
 	},
 
 // -------------------------------------------------------------
-
-	// 
-	// Local services page
-	// 
-	localServices: function() {
-		document.title = 'Local Small Business Services / Umbra Engineering';
-		this.drawPage(ServicesController);
-	},
-
-// -------------------------------------------------------------
-
-	// 
-	// Non-profit services page
-	// 
-	nonprofitServices: function() {
-		document.title = 'Non-profit Services / Umbra Engineering';
-		this.drawPage(ServicesController);
-	},
-
-// -------------------------------------------------------------
 	
 	// 
 	// Contact page
 	// 
 	contact: function() {
 		document.title = 'Contact / Umbra Engineering';
+		this.drawPage(ContactController);
 	},
 
 // -------------------------------------------------------------
@@ -105,6 +68,7 @@ var MainRouter = module.exports = Router.extend({
 	// 
 	notfound: function() {
 		document.title = 'Not Found / Umbra Engineering';
+		this.drawPage(NotFoundController);
 	},
 
 // -------------------------------------------------------------

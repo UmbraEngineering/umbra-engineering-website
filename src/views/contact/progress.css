@@ -1,0 +1,65 @@
+/**
+ * (C)Leanest CSS spinner ever
+ */
+
+@keyframes spin {
+  to { transform: rotate(1turn); }
+}
+
+.progress {
+  position: relative;
+  display: inline-block;
+  width: 5em;
+  height: 5em;
+  margin: 0 .5em;
+  font-size: 12px;
+  text-indent: 999em;
+  overflow: hidden;
+  animation: spin 1s infinite steps(8);
+}
+
+.tiny.progress {
+  font-size: 4px;
+}
+
+.small.progress {
+  font-size: 6px;
+}
+
+.large.progress {
+  font-size: 24px;
+}
+
+.progress:before,
+.progress:after,
+.progress > div:before,
+.progress > div:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 2.25em; /* (container width - part width)/2  */
+  width: .5em;
+  height: 1.5em;
+  border-radius: .2em;
+  background: transparent;
+  transform-origin: 50% 2.5em; /* container height / 2 */
+}
+
+.progress:before {
+  background: #69b;
+}
+
+.progress:after {
+  transform: rotate(-45deg);
+  background: #7ac;
+}
+
+.progress > div:before {
+  transform: rotate(-90deg);
+  background: #8bd;
+}
+
+.progress > div:after {
+  transform: rotate(-135deg);
+  background: #9ce;
+}

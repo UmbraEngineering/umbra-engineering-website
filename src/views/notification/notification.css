@@ -1,0 +1,38 @@
+
+section.notification {
+	height: 0;
+	opacity: 0;
+	overflow: hidden;
+	transition:
+		opacity .5s linear,
+		height .5s linear,
+		padding .5s linear,
+		margin .5s linear;
+	padding: 0 10px;
+	background: #F2DEDE;
+	border: 1px #EBCCD1 solid;
+	border-radius: 10px;
+	font-size: 16px;
+	color: #A94442;
+	position: relative;
+	box-shadow: 3px 3px 3px rgba(0,0,0,0.1);
+	max-width: 800px;
+	margin: auto;
+}
+
+	section.notification.shown {
+		opacity: 1;
+		height: 44px;
+		padding: 10px;
+		margin-bottom: 5px;
+	}
+
+	section.notification .close {
+		font-size: 20px;
+		position: absolute;
+		top: 12px;
+		right: 15px;
+		line-height: 20px;
+		cursor: pointer;
+		color: #000;
+	}

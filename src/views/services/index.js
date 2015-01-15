@@ -1,7 +1,7 @@
 
 var PageController = require('page-controller');
 
-var HomeController = module.exports = PageController.extend({
+var ServicesController = module.exports = PageController.extend({
 
 	View: require('./services')
 

@@ -1,10 +1,10 @@
 
 var View = require('cloak.view');
 
-var ServicesView = module.exports = View.extend({
+var NotFoundView = module.exports = View.extend({
 
-	template: 'views/services/services.hbs',
-	className: 'services content-area',
+	template: 'views/notfound/notfound.hbs',
+	className: 'notfound content-area',
 
 	events: {
 		// 

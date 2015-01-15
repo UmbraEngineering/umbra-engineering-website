@@ -4,7 +4,7 @@ var View = require('cloak.view');
 var HomeView = module.exports = View.extend({
 
 	template: 'views/home/home.hbs',
-	className: 'home',
+	className: 'home content-area',
 
 	events: {
 		// 

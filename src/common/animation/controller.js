@@ -1,7 +1,7 @@
 
 var animate     = require('velocity-animate');
-var Controller  = require('cloak.controller');
 var Promise     = require('cloak.core/utils/promise');
+var shortcuts   = require('./shortcuts');
 
 // 
 // Base animation method, applies an animation to the scope element
@@ -22,22 +22,6 @@ exports.animate = function(animation, opts) {
 	});
 };
 
-// 
-// Apply a fade in animation
-// 
-// @param {opts} optional; options object
-// @return promise
-// 
-exports.fadeIn = function(opts) {
-	return this.animate({ opacity: 1 }, opts);
-};
-
-// 
-// Apply a fade out animation
-// 
-// @param {opts} optional; options object
-// @return promise
-// 
-exports.fadeOut = function(opts) {
-	return this.animate({ opacity: 0 }, opts);
-};
+Object.keys(shortcuts).forEach(function(key) {
+	exports[key] = shortcuts[key];
+});
