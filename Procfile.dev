@@ -1,1 +1,1 @@
-web: env $(cat .env) nodemon start.js
+web: env $(cat .env) nodemon main.js

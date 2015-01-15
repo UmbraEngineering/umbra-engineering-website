@@ -1,0 +1,28 @@
+
+#wrapper {
+	padding-bottom: 300px;
+}
+
+#footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 50px 25px;
+	width: 100%;
+	background: #181818;
+	border-top: 1px #bbb solid;
+}
+
+	#footer p {
+		color: #888;
+		font-size: 11px;
+		line-height: 1.75;
+	}
+
+	#footer a {
+		color: #ccc;
+	}
+
+		#footer a:hover {
+			color: #eee;
+		}
